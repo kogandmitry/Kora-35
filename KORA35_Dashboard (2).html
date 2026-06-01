@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КОРА 35 — Дашборд проекта</title>
+<style>
+:root {
+  --green: #5a8a1e;
+  --green-dark: #3d6012;
+  --green-lt: #eaf5d3;
+  --yellow: #FFD200;
+  --yellow-dk: #b89200;
+  --red: #e53935;
+  --orange: #f57c00;
+  --ink: #1a1a1a;
+  --grey: #555;
+  --grey-lt: #888;
+  --line: #e4e4e4;
+  --bg: #f7f9f5;
+  --card: #ffffff;
+  --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  font-size: 15px;
+  line-height: 1.55;
+}
+a { color: var(--green); text-decoration: none; }
+
+/* ── LAYOUT ── */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 24px 20px 80px; }
+
+/* ── HEADER ── */
+header {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, #7ab02a 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 28px 32px 22px;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+header::after {
+  content: '35';
+  position: absolute; right: 28px; top: 50%; transform: translateY(-50%);
+  font-size: 120px; font-weight: 900; opacity: .08; line-height: 1;
+  letter-spacing: -4px; pointer-events: none;
+}
+header h1 { font-size: 28px; letter-spacing: .3px; font-weight: 800; }
+header .sub { opacity: .85; font-style: italic; margin-top: 3px; font-size: 14px; }
+.countdown-bar {
+  margin-top: 16px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.cd-box {
+  background: rgba(255,255,255,.18);
+  border-radius: 10px;
+  padding: 8px 16px;
+  text-align: center;
+  min-width: 80px;
+}
+.cd-box .num { font-size: 26px; font-weight: 800; line-height: 1; }
+.cd-box .lbl { font-size: 10px; text-transform: uppercase; opacity: .75; letter-spacing: .5px; margin-top: 2px; }
+.event-badge {
+  background: var(--yellow);
+  color: var(--yellow-dk);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* ── KPI PILLS ── */
+.kpi-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+.kpi {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  flex: 1 1 140px;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.kpi .k { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--grey-lt); }
+.kpi .v { font-size: 22px; font-weight: 800; margin-top: 2px; color: var(--ink); }
+.kpi.accent { border-left: 4px solid var(--green); }
+.kpi.warn   { border-left: 4px solid var(--yellow); }
+.kpi.hot    { border-left: 4px solid var(--red); }
+
+/* ── SECTIONS ── */
+.section { margin-bottom: 28px; }
+.sec-title {
+  font-size: 17px; font-weight: 700; color: var(--green-dark);
+  border-left: 5px solid var(--yellow);
+  padding-left: 12px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.sec-title .badge {
+  font-size: 11px; font-weight: 600; background: var(--yellow);
+  color: var(--yellow-dk); padding: 2px 8px; border-radius: 20px;
+}
+
+/* ── GRID ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+@media(max-width:700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  transition: box-shadow .15s, transform .15s;
+}
+.card:hover { box-shadow: 0 5px 20px rgba(0,0,0,.09); transform: translateY(-2px); }
+
+/* ── STATUS TAGS ── */
+.tag {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: .3px;
+}
+.tag-hot  { background: #fdecea; color: var(--red); }
+.tag-go   { background: #fff8e1; color: #b06000; }
+.tag-work { background: var(--green-lt); color: var(--green-dark); }
+.tag-plan { background: #f0f0f0; color: var(--grey); }
+.tag-done { background: #e8f5e9; color: #2e7d32; }
+
+/* ── TIMELINE ── */
+.timeline { list-style: none; }
+.tl-item {
+  display: flex; gap: 14px; padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.tl-item:last-child { border-bottom: none; }
+.tl-date {
+  min-width: 90px; font-weight: 700; font-size: 13px;
+  color: var(--green-dark); white-space: nowrap;
+}
+.tl-text { flex: 1; font-size: 14px; }
+.tl-who { font-size: 12px; color: var(--grey-lt); margin-top: 2px; }
+.tl-urgent .tl-date { color: var(--red); }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer;
+  font-size: 14px;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li.done { opacity: .55; text-decoration: line-through; }
+.cb {
+  width: 20px; height: 20px; border: 2px solid var(--green);
+  border-radius: 5px; flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.checklist li.done .cb { background: var(--green); border-color: var(--green); }
+.cb::after { content: ''; display: none; }
+.checklist li.done .cb::after {
+  content: '✓'; display: block; color: #fff; font-size: 13px; font-weight: 700;
+}
+.cl-phase {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  color: var(--grey-lt); letter-spacing: .5px; padding: 10px 0 4px;
+}
+
+/* ── BUDGET ── */
+.budget-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.btab {
+  padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 2px solid var(--line); background: var(--card);
+  color: var(--grey); transition: .15s;
+}
+.btab.active { background: var(--green); color: #fff; border-color: var(--green); }
+.budget-view { display: none; }
+.budget-view.active { display: block; }
+.brow {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px;
+}
+.brow:last-child { border-bottom: none; }
+.brow .lbl { flex: 1; }
+.brow .amt { font-weight: 700; min-width: 120px; text-align: right; color: var(--green-dark); }
+.brow.fixed .lbl::before { content: '🔒 '; }
+.brow.total {
+  font-weight: 800; font-size: 16px; color: var(--ink);
+  padding-top: 14px; margin-top: 4px; border-top: 2px solid var(--line);
+  border-bottom: none;
+}
+.brow.total .amt { color: var(--green); font-size: 18px; }
+.brow .bar-wrap { width: 120px; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.brow .bar-fill { height: 100%; background: var(--green); border-radius: 3px; }
+
+/* ── TEAM ── */
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.team-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+  letter-spacing: -1px;
+}
+.team-card .name { font-weight: 700; font-size: 15px; }
+.team-card .role { font-size: 12px; color: var(--grey-lt); margin-top: 2px; line-height: 1.4; }
+
+/* ── PROGRESS ── */
+.progress-big {
+  height: 20px; background: var(--line); border-radius: 10px; overflow: hidden; margin: 8px 0;
+}
+.progress-big .fill {
+  height: 100%; border-radius: 10px;
+  background: linear-gradient(90deg, var(--green-dark), var(--green));
+  transition: width .6s ease;
+}
+
+/* ── DIRECTIONS CARD ── */
+.dir-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.dir-card .num-badge {
+  display: inline-block; background: var(--green); color: #fff;
+  width: 28px; height: 28px; border-radius: 50%;
+  text-align: center; line-height: 28px; font-weight: 800; font-size: 14px;
+  margin-right: 8px;
+}
+.dir-card h3 { display: inline; font-size: 16px; }
+.dir-card p { color: var(--grey); font-size: 13px; margin: 8px 0 10px; }
+
+/* ── QUOTE ── */
+.quote {
+  background: var(--green-lt);
+  border-left: 5px solid var(--green);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 14px 20px;
+  font-style: italic; font-size: 15px; color: var(--green-dark);
+  margin: 16px 0;
+}
+
+/* ── TABS (checklist) ── */
+.cl-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.cl-tab {
+  padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 2px solid var(--line); background: var(--card);
+  color: var(--grey); transition: .15s;
+}
+.cl-tab.active { background: var(--green); color: #fff; border-color: var(--green); }
+.cl-panel { display: none; }
+.cl-panel.active { display: block; }
+
+/* ── PROGRESS STAT ── */
+.prog-stat { font-size: 13px; color: var(--grey-lt); margin-top: 6px; }
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 40px; color: var(--grey-lt); font-size: 12px;
+  border-top: 1px solid var(--line); padding-top: 14px; font-style: italic;
+}
+
+/* ── PULSE ── */
+.pulse {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--red);
+  display: inline-block;
+  box-shadow: 0 0 0 0 rgba(229,57,53,.4);
+  animation: pulse 1.8s infinite;
+}
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(229,57,53,.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(229,57,53,0); }
+  100% { box-shadow: 0 0 0 0 rgba(229,57,53,0); }
+}
+
+/* ── IDEA BANK ── */
+.idea-list { list-style: none; }
+.idea-list li {
+  padding: 8px 0 8px 22px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px; position: relative;
+}
+.idea-list li:last-child { border-bottom: none; }
+.idea-list li::before { content: '💡'; position: absolute; left: 0; top: 8px; }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <h1>ГК КОРА · 35 лет</h1>
+  <div class="sub">Дашборд юбилейного проекта · «Придавая форму воображению» · 15 августа 2026, ГЦДТ, Набережные Челны</div>
+  <div class="countdown-bar">
+    <div class="cd-box"><div class="num" id="cd-days">—</div><div class="lbl">дней</div></div>
+    <div class="cd-box"><div class="num" id="cd-hours">—</div><div class="lbl">часов</div></div>
+    <div class="cd-box"><div class="num" id="cd-min">—</div><div class="lbl">минут</div></div>
+    <div class="event-badge">🎉 15 августа 2026 · 10:00</div>
+  </div>
+</header>
+
+<!-- ═══ KPI ═══ -->
+<div class="kpi-row">
+  <div class="kpi accent"><div class="k">Аудитория</div><div class="v">~280</div></div>
+  <div class="kpi accent"><div class="k">Место</div><div class="v">ГЦДТ</div></div>
+  <div class="kpi warn"><div class="k">Бюджет (вариант А)</div><div class="v">825 тыс ₽</div></div>
+  <div class="kpi warn"><div class="k">Бюджет (вариант Б)</div><div class="v">1,56 млн ₽</div></div>
+  <div class="kpi hot"><div class="k">Зафиксировано</div><div class="v">172 500 ₽</div></div>
+  <div class="kpi"><div class="k">Архитектор</div><div class="v">Д. Коган</div></div>
+</div>
+
+<!-- ═══ ПРОГРЕСС ═══ -->
+<div class="section">
+  <div class="sec-title">📊 Общий прогресс проекта</div>
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span style="font-weight:700;">Готовность к событию</span>
+      <span style="font-weight:800; color:var(--green); font-size:18px;" id="pct-label">28%</span>
+    </div>
+    <div class="progress-big"><div class="fill" id="main-progress" style="width:28%"></div></div>
+    <div class="prog-stat" id="days-progress">До 15 августа 2026 — считаем...</div>
+  </div>
+</div>
+
+<!-- ═══ СРОЧНОЕ СЕЙЧАС ═══ -->
+<div class="section">
+  <div class="sec-title">🔴 Срочно сейчас <span class="badge">Июнь 2026</span></div>
+  <div class="card">
+    <ul class="timeline">
+      <li class="tl-item tl-urgent">
+        <div class="tl-date">1 июня</div>
+        <div><div class="tl-text">Анонс детской экскурсии в ЭЛМА (День защиты детей)</div><div class="tl-who">Настя Бурд</div></div>
+      </li>
+      <li class="tl-item tl-urgent">
+        <div class="tl-date">1 июня</div>
+        <div><div class="tl-text">Утвердить смету детской экскурсии</div><div class="tl-who">Ф.Н. Хабиев</div></div>
+      </li>
+      <li class="tl-item tl-urgent">
+        <div class="tl-date">1 июня</div>
+        <div><div class="tl-text">Разговор с Настей Бурд — роль администратора проекта</div><div class="tl-who">Д. Коган</div></div>
+      </li>
+      <li class="tl-item tl-urgent">
+        <div class="tl-date">1 июня</div>
+        <div><div class="tl-text">Встреча с орггруппой (молодёжный вектор, задачи июня)</div><div class="tl-who">ОГ</div></div>
+      </li>
+      <li class="tl-item">
+        <div class="tl-date">до 15 июня</div>
+        <div><div class="tl-text">Обучить экскурсоводов, подготовить мастер-классы (3D, сварочные сувениры)</div><div class="tl-who">ОГ</div></div>
+      </li>
+      <li class="tl-item">
+        <div class="tl-date">15–20 июня</div>
+        <div><div class="tl-text">Детская экскурсия на автобусе НефАЗ-5299 КОРА</div><div class="tl-who">Дети-направление</div></div>
+      </li>
+      <li class="tl-item">
+        <div class="tl-date">Июнь</div>
+        <div><div class="tl-text">Концепция главного события: формат, зоны, хронометраж</div><div class="tl-who">Д. Коган + ОГ</div></div>
+      </li>
+      <li class="tl-item">
+        <div class="tl-date">Июнь</div>
+        <div><div class="tl-text">Тендер/выбор подрядчиков: event-агентство, кейтеринг, звук/свет, мерч, медиа</div><div class="tl-who">ОГ</div></div>
+      </li>
+      <li class="tl-item">
+        <div class="tl-date">Июнь</div>
+        <div><div class="tl-text">Разработать фирменный стиль юбилея (логотип, паттерн, цвета)</div><div class="tl-who">Женя</div></div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ ЧЕКЛИСТ ═══ -->
+<div class="section">
+  <div class="sec-title">✅ Чек-лист подготовки <span class="badge" id="cl-progress-badge">0/0</span></div>
+  <div class="card">
+    <div class="cl-tabs">
+      <div class="cl-tab active" onclick="showTab('may')">🔴 Май (просрочен)</div>
+      <div class="cl-tab" onclick="showTab('jun')">🟡 Июнь</div>
+      <div class="cl-tab" onclick="showTab('jul')">🟢 Июль</div>
+      <div class="cl-tab" onclick="showTab('aug')">🔴 Август</div>
+      <div class="cl-tab" onclick="showTab('after')">🎉 После</div>
+    </div>
+
+    <!-- МАЙ -->
+    <div id="panel-may" class="cl-panel active">
+      <ul class="checklist" id="cl-may">
+        <li onclick="toggle(this)"><div class="cb"></div>Получить ответы Дмитрия на 7 ключевых вопросов по юбилею</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Ретроспектива 30-летия КОРА (архив, фото, истории)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Проанализировать результаты Hermes-ресёрча (R-3, R-4, R-6)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Выбрать нарративный вектор (А/Б/В или синтез)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Определить масштаб: бюджетная рамка</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Определить площадку (ГЦДТ)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Назначить ответственного от КОРА</li>
+      </ul>
+    </div>
+
+    <!-- ИЮНЬ -->
+    <div id="panel-jun" class="cl-panel">
+      <ul class="checklist" id="cl-jun">
+        <li onclick="toggle(this)"><div class="cb"></div>Программа года (что уже было в Q1–Q2, что запустить)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Концепция главного события 15.08: формат (гала / фестиваль / open day)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Хронометраж: 1 день или несколько?</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Зоны: сцена + интерактив + детская + VIP</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Бюджетная детализация по статьям</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Тендер/выбор event-агентства (режиссура, логистика)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Тендер: кейтеринг, звук/свет/сцена</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Тендер: мерч/сувениры (3D-принтер, монеты, футболки)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Тендер: медиа (фото/видео/стрим)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Запустить «Голос мастеров» (видео-вики ветеранов)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Разработать фирменный стиль юбилея (логотип, паттерн)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Анонс детской экскурсии в ЭЛМА (1 июня)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Детская экскурсия на НефАЗ-5299 (15–20 июня)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Обучить экскурсоводов-сотрудников</li>
+      </ul>
+    </div>
+
+    <!-- ИЮЛЬ -->
+    <div id="panel-jul" class="cl-panel">
+      <ul class="checklist" id="cl-jul">
+        <li onclick="toggle(this)"><div class="cb"></div>Финальная программа главного события</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Приглашения: VIP, партнёры (КАМАЗ, ГАЗ), власти, бывшие сотрудники</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Технический райдер площадки ГЦДТ</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Заказ мерча (значки, КОРАчки, сувениры)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Репетиция / прогон с ведущими</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Медиа-план: анонсы в СМИ и соцсетях</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Подготовка детской зоны / квест-игры</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Подготовка ИИ/робототехнической зоны</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Сувенирные мастерские: 3D-принтер, монетный аттракцион</li>
+      </ul>
+    </div>
+
+    <!-- АВГУСТ -->
+    <div id="panel-aug" class="cl-panel">
+      <ul class="checklist" id="cl-aug">
+        <li onclick="toggle(this)"><div class="cb"></div>Финальная сверка всех подрядчиков (1–14 авг)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Логистика: транспорт, парковка, питание</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Подготовка наградных материалов (ветераны, лучшие сотрудники)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Генеральная репетиция</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Пресс-кит для СМИ</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Проведение главного события (15 авг, 10:00–13:00)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Фото/видеосъёмка события</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Стриминг (если нужен)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Сбор обратной связи</li>
+      </ul>
+    </div>
+
+    <!-- ПОСЛЕ -->
+    <div id="panel-after" class="cl-panel">
+      <ul class="checklist" id="cl-after">
+        <li onclick="toggle(this)"><div class="cb"></div>Монтаж документального фильма / фотокниги</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Публикация «Голоса мастеров» (видео-вики)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Вручение наград по итогам года</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Закладка «капсулы времени» (на 40-летие КОРА)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Ретроспектива проекта: что сработало, что нет</li>
+        <li onclick="toggle(this)"><div class="cb"></div>Галерея портретов «Лица КОРА» в офисе (печать, монтаж)</li>
+        <li onclick="toggle(this)"><div class="cb"></div>2–3 тёплые встречи коллектива после концерта</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 7 НАПРАВЛЕНИЙ ═══ -->
+<div class="section">
+  <div class="sec-title">🗂️ Семь направлений</div>
+  <div class="grid-3">
+    <div class="dir-card">
+      <span class="num-badge">1</span><h3>Дети</h3>
+      <p>Экскурсия на автобусе НефАЗ-5299 КОРА. Мастер-классы: 3D-принтер, сварочные сувениры. Квест-игра. Анонс 1 июня, заезды 15–20 июня.</p>
+      <span class="tag tag-hot">Старт · 1 июня</span>
+    </div>
+    <div class="dir-card">
+      <span class="num-badge">2</span><h3>Концерт 15.08</h3>
+      <p>Главное событие в ГЦДТ: фуршет 10:00 → ролик → признания → номера → финал. По правилу peak-end rule (Канеман). Аудитория ~280 + семьи.</p>
+      <span class="tag tag-work">В работе</span>
+    </div>
+    <div class="dir-card">
+      <span class="num-badge">3</span><h3>Молодёжь</h3>
+      <p>Активный формат на природе + пространства самореализации. Нияз считает формат выезда. Обсуждение на встрече ОГ.</p>
+      <span class="tag tag-go">Обсуждается</span>
+    </div>
+    <div class="dir-card">
+      <span class="num-badge">4</span><h3>Признание людей</h3>
+      <p>КОРАчки — именные папки А5 с письмом от основателей + QR (350 шт). Значки ветеранам (серебро 925 + позолота, 35 шт). Интервью с сотрудниками.</p>
+      <span class="tag tag-plan">Планируется</span>
+    </div>
+    <div class="dir-card">
+      <span class="num-badge">5</span><h3>«Голос мастеров»</h3>
+      <p>Видео-вики ветеранов: 10–15 роликов по 30–60 сек. Интервьюеры — пара (муж./жен.). Сохранение корпоративной памяти.</p>
+      <span class="tag tag-plan">Планируется</span>
+    </div>
+    <div class="dir-card">
+      <span class="num-badge">6</span><h3>Культура после</h3>
+      <p>«Капельное орошение» — засеять нормы лучшей культуры за 2,5 мес. подготовки. ДМС / массаж / спорт для ветеранов (30 чел × 5 000 ₽). Портреты «Лица КОРА» в офисе.</p>
+      <span class="tag tag-plan">Планируется</span>
+    </div>
+    <div class="dir-card">
+      <span class="num-badge">7</span><h3>Связь и платформа</h3>
+      <p>Telegram-канал (с Restrict saving), веб-платформа (Марат / Игорь), дашборд. Hermes Agent v0.14.0 на VPS. Загрузить 18 файлов КОРА v2.1.</p>
+      <span class="tag tag-work">В работе</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ БЮДЖЕТ ═══ -->
+<div class="section">
+  <div class="sec-title">💰 Бюджет</div>
+  <div class="card">
+    <div class="budget-tabs">
+      <div class="btab active" onclick="showBudget('a')">Вариант А — «Концертный зал» · 825 тыс ₽</div>
+      <div class="btab" onclick="showBudget('b')">Вариант Б — «Оживление» · 1 562 тыс ₽</div>
+    </div>
+
+    <div id="budget-a" class="budget-view active">
+      <div style="font-size:13px;color:var(--grey-lt);margin-bottom:12px;">15 августа, ГЦДТ · Базовый сценарий</div>
+      <div class="brow fixed"><div class="lbl">Аренда зала и холла (3 часа)</div><div class="amt">22 500 ₽</div></div>
+      <div class="brow fixed"><div class="lbl">Фуршет на ~500 человек (сотрудники с супругами)</div><div class="amt">150 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Значки ветеранам — серебро 925 + позолота (35 шт)</div><div class="amt">105 000 ₽</div></div>
+      <div class="brow"><div class="lbl">КОРАчка — именная папка А5 с письмом + QR (350 шт)</div><div class="amt">52 500 ₽</div></div>
+      <div class="brow"><div class="lbl">Видеоролик истории компании (монтаж архива 35 лет)</div><div class="amt">60 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Профессиональный ведущий вечера</div><div class="amt">50 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Музыка / приглашённые артисты</div><div class="amt">60 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Детская программа в холле (аниматоры, оформление, призы)</div><div class="amt">45 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Фото и видеосъёмка вечера</div><div class="amt">40 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Баннеры, оформление холла, галерея историй, музей</div><div class="amt">45 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Книга воспоминаний, программки, таблички</div><div class="amt">20 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Промо-сайт юбилея</div><div class="amt">35 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Зарплаты волонтёрам (дети сотрудников)</div><div class="amt">25 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Премии организаторам (1–2 сотрудника)</div><div class="amt">40 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Резерв (~10%)</div><div class="amt">75 000 ₽</div></div>
+      <div class="brow total"><div class="lbl">ИТОГО Вариант А</div><div class="amt">825 000 ₽</div></div>
+    </div>
+
+    <div id="budget-b" class="budget-view">
+      <div style="font-size:13px;color:var(--grey-lt);margin-bottom:12px;">3 этапа + активное вовлечение сотрудников · Май–Сентябрь</div>
+      <div class="brow"><div class="lbl">Всё из Варианта А</div><div class="amt">825 000 ₽</div></div>
+      <div style="margin:10px 0 6px;font-weight:700;font-size:13px;color:var(--grey)">Подготовительный период (май–июль)</div>
+      <div class="brow"><div class="lbl">Telegram/ВК — ведение + контент-план 4 мес.</div><div class="amt">35 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Видеоинтервью сотрудников (10–15 роликов 30–60 сек)</div><div class="amt">40 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Летняя фитнес-программа (тренер, май–август)</div><div class="amt">60 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Фотопроект «Жизнь КОРА»</div><div class="amt">50 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Конкурсы: фото, истории, «лучший момент» (призы)</div><div class="amt">40 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Экскурсии и мастер-классы для детей сотрудников</div><div class="amt">30 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Цифровая игра про предприятие КОРА</div><div class="amt">75 000 ₽</div></div>
+      <div style="margin:10px 0 6px;font-weight:700;font-size:13px;color:var(--grey)">Вечер (расширенная программа)</div>
+      <div class="brow"><div class="lbl">ДМС / массаж / спорт для ветеранов (30 чел × 5 000 ₽)</div><div class="amt">150 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Расширенный видеоряд, инфографики, заставки</div><div class="amt">50 000 ₽</div></div>
+      <div style="margin:10px 0 6px;font-weight:700;font-size:13px;color:var(--grey)">После юбилея (сентябрь+)</div>
+      <div class="brow"><div class="lbl">Тёплые встречи коллектива (2–3 встречи)</div><div class="amt">60 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Галерея «Лица КОРА» в офисе (печать, оформление)</div><div class="amt">30 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Дополнительные премии организаторам</div><div class="amt">50 000 ₽</div></div>
+      <div class="brow"><div class="lbl">Резерв (~10%)</div><div class="amt">67 000 ₽</div></div>
+      <div class="brow total"><div class="lbl">ИТОГО Вариант Б</div><div class="amt">1 562 000 ₽</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ КОМАНДА ═══ -->
+<div class="section">
+  <div class="sec-title">👥 Команда проекта</div>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="avatar">ДК</div>
+      <div><div class="name">Дмитрий Коган</div><div class="role">Архитектор + менеджер проекта (~2,5–3 ч/день)</div></div>
+    </div>
+    <div class="team-card">
+      <div class="avatar">НИ</div>
+      <div><div class="name">Нияз</div><div class="role">Ведущий, интервьюер, лицо контента</div></div>
+    </div>
+    <div class="team-card">
+      <div class="avatar">ДМ</div>
+      <div><div class="name">Дима Кузмич</div><div class="role">Гл. экскурсовод, интервьюер, 3D-куратор</div></div>
+    </div>
+    <div class="team-card">
+      <div class="avatar">НП</div>
+      <div><div class="name">Настя + Полина</div><div class="role">Документы, координация, администрирование</div></div>
+    </div>
+    <div class="team-card">
+      <div class="avatar">ЖЕ</div>
+      <div><div class="name">Женя</div><div class="role">Дизайн КОРАчек, фирменный стиль, галерея</div></div>
+    </div>
+    <div class="team-card">
+      <div class="avatar">ЕВ</div>
+      <div><div class="name">Евгения</div><div class="role">Фото/видео сотрудников, фотопроект</div></div>
+    </div>
+    <div class="team-card">
+      <div class="avatar">МИ</div>
+      <div><div class="name">Марат / Игорь</div><div class="role">Веб-платформа юбилея</div></div>
+    </div>
+    <div class="team-card">
+      <div class="avatar">ЛИ</div>
+      <div><div class="name">Лина</div><div class="role">Оздоровительные мероприятия (3–4 тыс./шт.)</div></div>
+    </div>
+  </div>
+  <div style="margin-top:16px; font-size:13px; color:var(--grey-lt);">
+    <b>Учредители:</b> Евгений Коган (Основатель №1), Борис Сорокин (Основатель №2), Ф.Н. Хабиев (Основатель №3)
+  </div>
+</div>
+
+<!-- ═══ ПРОГРАММА ДНЯ ═══ -->
+<div class="section">
+  <div class="sec-title">🎭 Программа дня · 15 августа 2026</div>
+  <div class="card">
+    <ul class="timeline">
+      <li class="tl-item">
+        <div class="tl-date">10:00–10:45</div>
+        <div><div class="tl-text"><b>Фойе ГЦДТ</b> — Фотогалерея, фуршет, встречи, мастерская для детей</div></div>
+      </li>
+      <li class="tl-item">
+        <div class="tl-date">10:45–13:00</div>
+        <div><div class="tl-text"><b>Главный зал</b> — Торжественная часть: Ролик истории → Признания → Концертные номера → Финал</div></div>
+      </li>
+      <li class="tl-item">
+        <div class="tl-date">13:00+</div>
+        <div><div class="tl-text"><b>Фойе</b> — Живое общение, фотосессии, сувениры</div></div>
+      </li>
+    </ul>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--grey);">
+      <b>Принцип:</b> Peak-end rule (Канеман/Фредриксон) — люди помнят пик и финал. Power of Moments (Хиз): Elevation · Pride · Insight · Connection
+    </div>
+  </div>
+</div>
+
+<!-- ═══ БАНК ИДЕЙ ═══ -->
+<div class="section">
+  <div class="sec-title">💡 Банк идей «На горизонте»</div>
+  <div class="card">
+    <ul class="idea-list">
+      <li><b>Молодёжный вектор</b> — система самореализации, лояльность = завершённость потока ценностей</li>
+      <li><b>Экскурсионный автобус</b> — аудиопрограмма голосами сотрудников, маршрут ГЭС → пл.Азатлык → город</li>
+      <li><b>Бывшие сотрудники</b> — пригласить, спецпрезент (значок КОРА + ДМС/санаторий)</li>
+      <li><b>Подарок основателям</b> — картина «Три богатыря» с лицами учредителей</li>
+      <li><b>«Капельное орошение»</b> — засеять зёрна лучшей корпоративной культуры в 2,5 мес. подготовки</li>
+      <li><b>Цифровая игра про КОРА</b> — интерактив для сотрудников и детей (история компании в игровой форме)</li>
+      <li><b>«Голос мастеров»</b> — видео-вики: 10–15 роликов с ветеранами (30–60 сек каждый)</li>
+      <li><b>Капсула времени</b> — закладка на 40-летие КОРА (письма, артефакты, фото 2026 года)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ ЦИТАТА ═══ -->
+<div class="quote">
+  «КОРА устояла в условиях дикого капитализма и сохранила человеческие качества — это редкость, о которой стоит говорить вслух.»
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  Дашборд КОРА-35 · Архитектор проекта: Дмитрий Коган · Обновлено: 1 июня 2026 ·
+  Данные: KORA35_MASTER_STATE.md, checklist.md, budget-v6.txt
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+// ── COUNTDOWN ──
+function updateCountdown() {
+  const event = new Date('2026-08-15T10:00:00');
+  const now = new Date();
+  const diff = event - now;
+  if (diff <= 0) {
+    document.getElementById('cd-days').textContent = '0';
+    document.getElementById('cd-hours').textContent = '0';
+    document.getElementById('cd-min').textContent = '0';
+    return;
+  }
+  const days  = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const min   = Math.floor((diff % 3600000) / 60000);
+  document.getElementById('cd-days').textContent  = days;
+  document.getElementById('cd-hours').textContent = hours;
+  document.getElementById('cd-min').textContent   = min;
+
+  // Progress bar: project start assumed 1 Feb 2026
+  const start = new Date('2026-02-01');
+  const total = event - start;
+  const elapsed = now - start;
+  const pct = Math.max(0, Math.min(100, Math.round(elapsed / total * 100)));
+  document.getElementById('main-progress').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+  document.getElementById('days-progress').textContent =
+    'До события ' + days + ' дн. · Проект начат 1 февраля 2026';
+}
+updateCountdown();
+setInterval(updateCountdown, 30000);
+
+// ── CHECKLIST TOGGLE ──
+const STORAGE_KEY = 'kora35_cl';
+let state = {};
+try { state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e){}
+
+function toggle(li) {
+  li.classList.toggle('done');
+  const id = li.dataset.id;
+  state[id] = li.classList.contains('done');
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+  updateBadge();
+}
+
+function updateBadge() {
+  const allLi = document.querySelectorAll('.checklist li');
+  const done = document.querySelectorAll('.checklist li.done').length;
+  document.getElementById('cl-progress-badge').textContent = done + '/' + allLi.length;
+}
+
+// Assign IDs and restore state
+document.querySelectorAll('.checklist li').forEach((li, i) => {
+  li.dataset.id = 'cl' + i;
+  if (state['cl' + i]) li.classList.add('done');
+});
+updateBadge();
+
+// ── CHECKLIST TABS ──
+function showTab(name) {
+  document.querySelectorAll('.cl-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cl-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── BUDGET TABS ──
+function showBudget(v) {
+  document.querySelectorAll('.budget-view').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.btab').forEach(t => t.classList.remove('active'));
+  document.getElementById('budget-' + v).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
