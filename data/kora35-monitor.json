@@ -1,0 +1,1245 @@
+{
+  "project": {
+    "id": "kora35",
+    "title": "КОРА 35",
+    "subtitle": "Юбилей как запуск регулярной системы заботы о благополучии сотрудников",
+    "eventDate": "2026-08-15",
+    "lastUpdated": "2026-07-06",
+    "status": "action_needed",
+    "confidence": "partial",
+    "summary": "Публичный статический прототип монитора показывает безопасную часть картины проекта. Внутренний уровень Дмитрия остается в локальном/VPS-контуре."
+  },
+  "roles": [
+    {
+      "id": "customer",
+      "title": "Заказчики",
+      "depth": 2
+    },
+    {
+      "id": "coordinator",
+      "title": "Координаторы",
+      "depth": 3
+    },
+    {
+      "id": "participant",
+      "title": "Участники",
+      "depth": 2
+    },
+    {
+      "id": "public",
+      "title": "Публичный обзор",
+      "depth": 1
+    }
+  ],
+  "directions": [
+    {
+      "id": "wellbeing-system",
+      "title": "Система благополучия",
+      "color": "#6fb24a",
+      "status": "in_progress",
+      "readiness": 35,
+      "owner": "Дмитрий Коган",
+      "summary": "Смысловая рамка: юбилей как старт регулярной заботы о людях КОРА.",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ],
+      "map": {
+        "x": 50,
+        "y": 18
+      }
+    },
+    {
+      "id": "children",
+      "title": "Детский и семейный трек",
+      "color": "#f0c94b",
+      "status": "action_needed",
+      "readiness": 70,
+      "owner": "Дмитрий Кузьмич / куратор уточняется / Дмитрий Коган",
+      "summary": "Экскурсия 24.06 проведена, требуется закрыть финансовые хвосты и закрепить куратора детского трека.",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ],
+      "map": {
+        "x": 78,
+        "y": 34
+      }
+    },
+    {
+      "id": "youth",
+      "title": "Молодежный контур",
+      "color": "#7dbb5a",
+      "status": "not_started",
+      "readiness": 15,
+      "owner": "Нияз / координатор уточняется",
+      "summary": "Нужны формат, координатор и бюджет следующего активного события.",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ],
+      "map": {
+        "x": 76,
+        "y": 68
+      }
+    },
+    {
+      "id": "gcdt",
+      "title": "ГЦДТ 15 августа",
+      "color": "#a6c84f",
+      "status": "action_needed",
+      "readiness": 25,
+      "owner": "Дмитрий Коган / Нияз",
+      "summary": "Главное событие требует сценарного и производственного контура.",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ],
+      "map": {
+        "x": 50,
+        "y": 82
+      }
+    },
+    {
+      "id": "recognition",
+      "title": "Признание и КОРАчки",
+      "color": "#d9b83f",
+      "status": "action_needed",
+      "readiness": 30,
+      "owner": "Настя Бурд / Миляуша Фарукшина",
+      "summary": "Именные письма, значки, истории сотрудников и ветеранов.",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ],
+      "map": {
+        "x": 23,
+        "y": 68
+      }
+    },
+    {
+      "id": "communications",
+      "title": "Коммуникации и медиа",
+      "color": "#51a985",
+      "status": "in_progress",
+      "readiness": 40,
+      "owner": "Дмитрий Коган / Евгения Сенина / Гузель / Миляуша",
+      "summary": "Сайт юбилейных мероприятий, визуальные материалы, фото/видео и внутренние сообщения.",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ],
+      "map": {
+        "x": 22,
+        "y": 34
+      }
+    },
+    {
+      "id": "management",
+      "title": "Управление и инфраструктура",
+      "color": "#8fac45",
+      "status": "action_needed",
+      "readiness": 25,
+      "owner": "Дмитрий Коган",
+      "summary": "Монитор, источники, доступы, будущий VPS, агент и база данных.",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ],
+      "map": {
+        "x": 50,
+        "y": 50
+      }
+    }
+  ],
+  "seriesFilters": [
+    {
+      "id": "all",
+      "title": "Все",
+      "summary": "Видны мероприятия и все доступные артефакты."
+    },
+    {
+      "id": "events",
+      "title": "Мероприятия",
+      "summary": "Видны ключевые события юбилейной серии."
+    },
+    {
+      "id": "artifacts",
+      "title": "Артефакты",
+      "summary": "Видны документы, материалы, решения и результаты."
+    },
+    {
+      "id": "employee-wellbeing",
+      "title": "Благополучие сотрудников",
+      "summary": "Точки вклада в будущую систему заботы о персонале."
+    },
+    {
+      "id": "organizer-wellbeing",
+      "title": "Благополучие организаторов",
+      "summary": "Апробация системы заботы на команде подготовки юбилея."
+    },
+    {
+      "id": "growth-roles",
+      "title": "Развитие / роли",
+      "summary": "Горизонтальное развитие, новые функции, роли и наставничество."
+    },
+    {
+      "id": "risks",
+      "title": "Риски",
+      "summary": "Точки напряжения и перегруза, требующие внимания."
+    },
+    {
+      "id": "decisions",
+      "title": "Требует решения",
+      "summary": "Артефакты и вопросы, где нужно управленческое решение."
+    }
+  ],
+  "anniversaryEvents": [
+    {
+      "id": "event-children-excursion",
+      "title": "Детская экскурсия",
+      "dateLabel": "24 июня",
+      "stageId": "seed",
+      "status": "done",
+      "summary": "Первое живое событие юбилейной серии и прототип семейной включенности.",
+      "trackIds": [
+        "children",
+        "wellbeing-system",
+        "communications"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "event-monitor-setup",
+      "title": "Сборка монитора и управляемости",
+      "dateLabel": "5-8 июля",
+      "stageId": "seed",
+      "status": "in_progress",
+      "summary": "Проект получает карту, входящие комментарии, будущую агентную обработку и прозрачные роли.",
+      "trackIds": [
+        "management",
+        "wellbeing-system",
+        "communications"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "event-recognition-package",
+      "title": "Признание и КОРАчки",
+      "dateLabel": "июль",
+      "stageId": "assembly",
+      "status": "action_needed",
+      "summary": "Собираются письма, истории, визуальные материалы и ритуалы признания вклада.",
+      "trackIds": [
+        "recognition",
+        "communications",
+        "wellbeing-system"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "event-youth-and-gcdt-prep",
+      "title": "Поездка на природу и подготовка ГЦДТ",
+      "dateLabel": "июль - август",
+      "stageId": "assembly",
+      "status": "action_needed",
+      "summary": "Формируется страница предстоящей поездки на природу, сценарий главного события и зона проб новых функций.",
+      "trackIds": [
+        "youth",
+        "gcdt",
+        "management",
+        "wellbeing-system"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "event-main-august-15",
+      "title": "Главное событие 15 августа",
+      "dateLabel": "15 августа",
+      "stageId": "legacy",
+      "status": "action_needed",
+      "summary": "Кульминация юбилея, где треки складываются в общий опыт признания, связи и заботы.",
+      "trackIds": [
+        "gcdt",
+        "recognition",
+        "communications",
+        "children",
+        "wellbeing-system"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "event-post-system",
+      "title": "Послесборка системы заботы",
+      "dateLabel": "после 15 августа",
+      "stageId": "legacy",
+      "status": "not_started",
+      "summary": "Из юбилейных артефактов выделяются регулярные практики заботы, развития и обратной связи.",
+      "trackIds": [
+        "wellbeing-system",
+        "management",
+        "communications"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    }
+  ],
+  "eventArtifacts": [
+    {
+      "id": "artifact-family-prototype",
+      "eventId": "event-children-excursion",
+      "title": "Прототип семейной включенности",
+      "kind": "prototype",
+      "status": "done",
+      "summary": "Экскурсия показала, как юбилей может становиться практикой заботы о семьях сотрудников.",
+      "trackIds": [
+        "children",
+        "wellbeing-system"
+      ],
+      "filterIds": [
+        "artifacts",
+        "employee-wellbeing"
+      ],
+      "wellbeingFunctionIds": [
+        "family-inclusion"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "artifact-excursion-role-shift",
+      "eventId": "event-children-excursion",
+      "title": "Новые функции в детском треке",
+      "kind": "role",
+      "status": "done",
+      "summary": "Организаторы примерили операционные и коммуникационные роли, которые можно описать как горизонтальное развитие.",
+      "trackIds": [
+        "children",
+        "management"
+      ],
+      "filterIds": [
+        "organizer-wellbeing",
+        "growth-roles",
+        "artifacts"
+      ],
+      "wellbeingFunctionIds": [
+        "employee-growth"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "artifact-monitor-nervous-system",
+      "eventId": "event-monitor-setup",
+      "title": "Монитор как нервная система проекта",
+      "kind": "tool",
+      "status": "in_progress",
+      "summary": "Веб-страница собирает карту, источники, комментарии и будущую агентную обработку в один управленческий контур.",
+      "trackIds": [
+        "management",
+        "communications",
+        "wellbeing-system"
+      ],
+      "filterIds": [
+        "organizer-wellbeing",
+        "artifacts",
+        "decisions"
+      ],
+      "wellbeingFunctionIds": [
+        "project-nervous-system",
+        "feedback"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "artifact-anniversary-site-cover",
+      "eventId": "event-monitor-setup",
+      "title": "Сайт юбилейных мероприятий",
+      "kind": "tool",
+      "status": "action_needed",
+      "summary": "Нужна обложка серии к 15 августа, первая страница детской экскурсии и вторая страница предстоящей поездки на природу.",
+      "trackIds": [
+        "communications",
+        "children",
+        "youth",
+        "gcdt"
+      ],
+      "filterIds": [
+        "artifacts",
+        "events",
+        "decisions"
+      ],
+      "wellbeingFunctionIds": [
+        "communication-memory",
+        "project-nervous-system"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "artifact-horizontal-growth",
+      "eventId": "event-monitor-setup",
+      "title": "Горизонтальное развитие через новые роли",
+      "kind": "role",
+      "status": "in_progress",
+      "summary": "Проект позволяет участникам предлагать новые функции и зоны ответственности не только внутри своего трека.",
+      "trackIds": [
+        "management",
+        "wellbeing-system",
+        "youth"
+      ],
+      "filterIds": [
+        "organizer-wellbeing",
+        "growth-roles",
+        "employee-wellbeing"
+      ],
+      "wellbeingFunctionIds": [
+        "employee-growth",
+        "feedback"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "artifact-recognition-ritual",
+      "eventId": "event-recognition-package",
+      "title": "Ритуал признания вклада",
+      "kind": "ritual",
+      "status": "action_needed",
+      "summary": "Письма, КОРАчки и истории сотрудников становятся частью постоянной культуры признания.",
+      "trackIds": [
+        "recognition",
+        "communications",
+        "wellbeing-system"
+      ],
+      "filterIds": [
+        "artifacts",
+        "employee-wellbeing",
+        "decisions"
+      ],
+      "wellbeingFunctionIds": [
+        "recognition",
+        "communication-memory"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "artifact-team-load-risk",
+      "eventId": "event-youth-and-gcdt-prep",
+      "title": "Перегруз команды подготовки",
+      "kind": "risk",
+      "status": "action_needed",
+      "summary": "Если роли и решения не прозрачны, подготовка юбилея сама становится зоной напряжения для организаторов.",
+      "trackIds": [
+        "management",
+        "gcdt",
+        "wellbeing-system"
+      ],
+      "filterIds": [
+        "organizer-wellbeing",
+        "risks",
+        "decisions"
+      ],
+      "wellbeingFunctionIds": [
+        "care-rituals",
+        "project-nervous-system"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "artifact-youth-role-trial",
+      "eventId": "event-youth-and-gcdt-prep",
+      "title": "Проба ролей молодежью",
+      "kind": "role",
+      "status": "not_started",
+      "summary": "Молодежный контур может стать местом безопасной пробы функций, ответственности и наставничества.",
+      "trackIds": [
+        "youth",
+        "wellbeing-system"
+      ],
+      "filterIds": [
+        "growth-roles",
+        "employee-wellbeing",
+        "organizer-wellbeing"
+      ],
+      "wellbeingFunctionIds": [
+        "employee-growth",
+        "continuity"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "artifact-main-event-synthesis",
+      "eventId": "event-main-august-15",
+      "title": "Синтез юбилейных треков",
+      "kind": "milestone",
+      "status": "action_needed",
+      "summary": "Главное событие должно показать не только праздник, но и образ будущей системы заботы.",
+      "trackIds": [
+        "gcdt",
+        "recognition",
+        "communications",
+        "children",
+        "wellbeing-system"
+      ],
+      "filterIds": [
+        "events",
+        "employee-wellbeing",
+        "artifacts"
+      ],
+      "wellbeingFunctionIds": [
+        "recognition",
+        "continuity",
+        "communication-memory"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "artifact-organizer-retro",
+      "eventId": "event-post-system",
+      "title": "Ретроспектива заботы об организаторах",
+      "kind": "reflection",
+      "status": "not_started",
+      "summary": "После юбилея нужно выделить, что поддержало команду, где был перегруз и какие практики стоит закрепить.",
+      "trackIds": [
+        "management",
+        "wellbeing-system"
+      ],
+      "filterIds": [
+        "organizer-wellbeing",
+        "employee-wellbeing",
+        "artifacts"
+      ],
+      "wellbeingFunctionIds": [
+        "feedback",
+        "care-rituals",
+        "employee-growth"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    }
+  ],
+  "subprojects": [
+    {
+      "id": "children-excursion-closeout",
+      "directionId": "children",
+      "title": "Закрытие детской экскурсии 24.06",
+      "status": "action_needed",
+      "summary": "Финансовые хвосты, чеки, акт автобуса, трудозатраты и перенос выводов в следующие контуры.",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-08",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "monitor-first-release",
+      "directionId": "management",
+      "title": "Первый релиз монитора проекта",
+      "status": "in_progress",
+      "summary": "Карта штаба, JSON-данные, безопасный демо-режим, входящие комментарии.",
+      "owner": "Дмитрий Коган / Codex",
+      "dueDate": "2026-07-07",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "anniversary-site-pages",
+      "directionId": "communications",
+      "title": "Сайт-странички юбилейных мероприятий",
+      "status": "action_needed",
+      "summary": "Главная обложка серии к 15 августа, первая страница детской экскурсии и вторая страница предстоящей поездки на природу.",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-12",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "track-curators",
+      "directionId": "management",
+      "title": "Закрепление кураторов треков",
+      "status": "action_needed",
+      "summary": "Подтвердить куратора детского трека и закрепить Гузель и Миляушу в коммуникационном треке.",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-08",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "budget-full-closeout",
+      "directionId": "management",
+      "title": "Доведение сметы до рабочего состояния",
+      "status": "action_needed",
+      "summary": "Доделать смету детской экскурсии и свести общую смету по всем аспектам проекта.",
+      "owner": "Дмитрий Коган / финансы",
+      "dueDate": "2026-07-12",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "team-document-and-access",
+      "directionId": "management",
+      "title": "Команда, сайт и доступы организаторов",
+      "status": "action_needed",
+      "summary": "Довести документ о команде, сайт и монитор проекта до состояния, пригодного для разных уровней доступа организаторов.",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-12",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "vps-selection",
+      "directionId": "management",
+      "title": "Выбор российского VPS",
+      "status": "not_started",
+      "summary": "Сравнить Selectel, Timeweb, Beget, FirstVDS, RuVDS по свежим ценам и условиям.",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-10",
+      "visibility": [
+        "owner",
+        "coordinator"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-close-canteen",
+      "directionId": "children",
+      "subprojectId": "children-excursion-closeout",
+      "title": "Закрыть доплату по столовой 1 054 руб. и приложить подтверждение",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-08",
+      "visibility": [
+        "owner",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-designer-find-excursion-photos",
+      "directionId": "communications",
+      "subprojectId": "anniversary-site-pages",
+      "title": "Найти фотографии детской экскурсии для публикации",
+      "status": "action_needed",
+      "owner": "Дизайнер / Евгения Сенина",
+      "dueDate": "2026-07-08",
+      "visibility": [
+        "owner",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "task-site-cover-aug15",
+      "directionId": "communications",
+      "subprojectId": "anniversary-site-pages",
+      "title": "Подготовить главную страницу-обложку юбилейных мероприятий к 15 августа",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-10",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "task-site-children-excursion-page",
+      "directionId": "communications",
+      "subprojectId": "anniversary-site-pages",
+      "title": "Подготовить первую страницу сайта про детскую экскурсию",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-10",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "task-site-nature-trip-page",
+      "directionId": "communications",
+      "subprojectId": "anniversary-site-pages",
+      "title": "Подготовить вторую страницу сайта про предстоящую поездку на природу",
+      "status": "not_started",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-12",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "task-appoint-children-track-curator",
+      "directionId": "children",
+      "subprojectId": "track-curators",
+      "title": "Назначить куратора детского трека: Тяна или другой подтвержденный кандидат",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-08",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-confirm-communications-curators",
+      "directionId": "communications",
+      "subprojectId": "track-curators",
+      "title": "Закрепить Гузель и Миляушу как кураторов трека коммуникаций",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган / Гузель / Миляуша",
+      "dueDate": "2026-07-08",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-finish-excursion-budget",
+      "directionId": "children",
+      "subprojectId": "budget-full-closeout",
+      "title": "Доделать смету детской экскурсии и закрыть финансовые уточнения",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган / финансы",
+      "dueDate": "2026-07-09",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-finish-full-budget",
+      "directionId": "management",
+      "subprojectId": "budget-full-closeout",
+      "title": "Довести общую смету проекта по всем аспектам",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган / финансы",
+      "dueDate": "2026-07-12",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-polish-team-document",
+      "directionId": "management",
+      "subprojectId": "team-document-and-access",
+      "title": "Довести до ума уже подготовленный документ о команде",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-10",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-build-site-monitor-access",
+      "directionId": "management",
+      "subprojectId": "team-document-and-access",
+      "title": "Довести сайт и монитор проекта для организаторов с разными уровнями доступа",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган / техконтур",
+      "dueDate": "2026-07-12",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-vps-prices",
+      "directionId": "management",
+      "subprojectId": "vps-selection",
+      "title": "Проверить свежие цены российских VPS перед оплатой",
+      "status": "not_started",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-10",
+      "visibility": [
+        "owner",
+        "coordinator"
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "id": "risk-source-staleness",
+      "directionId": "management",
+      "title": "Данные проекта устаревают без живого входящего потока",
+      "severity": "high",
+      "status": "action_needed",
+      "mitigation": "Сделать JSON-контракт и прототип входящих комментариев в первом релизе.",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "risk-vps-instability",
+      "directionId": "management",
+      "title": "Недорогой VPS может быть нестабилен",
+      "severity": "medium",
+      "status": "action_needed",
+      "mitigation": "Выбрать переносимую архитектуру, ежедневные бэкапы и проверить несколько провайдеров.",
+      "visibility": [
+        "owner",
+        "coordinator"
+      ]
+    }
+  ],
+  "budgetItems": [
+    {
+      "id": "budget-main-ceiling",
+      "title": "Основной потолок проекта",
+      "amount": 819700,
+      "kind": "planned",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "budget-max-options",
+      "title": "Максимум с опциями",
+      "amount": 962700,
+      "kind": "planned",
+      "visibility": [
+        "owner",
+        "customer"
+      ]
+    },
+    {
+      "id": "budget-children-fact",
+      "title": "Детская экскурсия: прямой подтвержденный факт",
+      "amount": 26950.59,
+      "kind": "actual",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    }
+  ],
+  "wellbeingFunctions": [
+    {
+      "id": "recognition",
+      "title": "Признание вклада",
+      "kind": "culture",
+      "formation": 42,
+      "summary": "Истории, письма, КОРАчки и видимое признание людей, которые создавали компанию.",
+      "directionIds": [
+        "recognition",
+        "communications"
+      ],
+      "artifactIds": [
+        "letters",
+        "korachki"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "family-inclusion",
+      "title": "Семьи и дети",
+      "kind": "community",
+      "formation": 58,
+      "summary": "Детская экскурсия уже дала первый живой артефакт семейной включенности.",
+      "directionIds": [
+        "children"
+      ],
+      "artifactIds": [
+        "children-excursion-closeout"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "continuity",
+      "title": "Преемственность",
+      "kind": "memory",
+      "formation": 34,
+      "summary": "Связь поколений складывается через ветеранов, молодых сотрудников и общие истории.",
+      "directionIds": [
+        "recognition",
+        "youth",
+        "gcdt"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "employee-growth",
+      "title": "Развитие сотрудника",
+      "kind": "growth",
+      "formation": 22,
+      "summary": "Нужно проявить вертикальную карьеру, горизонтальное расширение функций, наставничество и пробу новых ролей.",
+      "directionIds": [
+        "wellbeing-system",
+        "youth",
+        "management"
+      ],
+      "growthTypes": [
+        "vertical",
+        "horizontal",
+        "functional",
+        "mentoring",
+        "role_trial"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "feedback",
+      "title": "Обратная связь",
+      "kind": "participation",
+      "formation": 28,
+      "summary": "Комментарии участников уже предусмотрены в мониторе и должны превращаться в предложения и задачи.",
+      "directionIds": [
+        "management",
+        "communications"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "care-rituals",
+      "title": "Ритуалы заботы",
+      "kind": "care",
+      "formation": 18,
+      "summary": "Пока это целевой слой: регулярные практики поддержки должны быть выделены из юбилейных событий.",
+      "directionIds": [
+        "wellbeing-system",
+        "gcdt"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "communication-memory",
+      "title": "Коммуникации и память",
+      "kind": "memory",
+      "formation": 40,
+      "summary": "Сайт, медиа и материалы помогают сохранять корпоративную память и делать ее доступной.",
+      "directionIds": [
+        "communications",
+        "recognition"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant",
+        "public"
+      ]
+    },
+    {
+      "id": "project-nervous-system",
+      "title": "Нервная система проекта",
+      "kind": "infrastructure",
+      "formation": 30,
+      "summary": "Монитор, агент, источники, веб-формы и будущая база создают управляемость регулярной системы.",
+      "directionIds": [
+        "management",
+        "communications"
+      ],
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    }
+  ],
+  "people": [
+    {
+      "id": "dmitry-kogan",
+      "name": "Дмитрий Коган",
+      "role": "Архитектор и PM",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "niyaz",
+      "name": "Нияз Кашапов",
+      "role": "Ведущий / контент",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "nastya",
+      "name": "Настя Бурд",
+      "role": "HR / данные / объявления",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "kuzmich",
+      "name": "Дмитрий Кузьмич",
+      "role": "Операционный контур экскурсии",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "evgenia-senina",
+      "name": "Евгения Сенина",
+      "role": "Дизайн / фото / видео",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "tyana",
+      "name": "Тяна",
+      "role": "Кандидат в кураторы детского трека",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "guzel",
+      "name": "Гузель",
+      "role": "Куратор трека коммуникаций",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    },
+    {
+      "id": "milyausha",
+      "name": "Миляуша",
+      "role": "Куратор трека коммуникаций / КОРАчки",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator",
+        "participant"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "assembly",
+      "title": "00_СБОРКА_ПРОЕКТА.md",
+      "type": "file",
+      "locator": "../00_СБОРКА_ПРОЕКТА.md",
+      "lastChecked": "2026-07-06",
+      "freshness": "partial"
+    },
+    {
+      "id": "master-state",
+      "title": "KORA35_MASTER_STATE.md",
+      "type": "file",
+      "locator": "../02_ОПЕРАЦИОНКА/KORA35_MASTER_STATE.md",
+      "lastChecked": "2026-07-06",
+      "freshness": "partial"
+    },
+    {
+      "id": "design-spec",
+      "title": "ТЗ эволюционного монитора",
+      "type": "file",
+      "locator": "../docs/superpowers/specs/2026-07-05-kora35-project-monitor-design.md",
+      "lastChecked": "2026-07-05",
+      "freshness": "current"
+    }
+  ],
+  "updates": [
+    {
+      "id": "update-monitor-start",
+      "createdAt": "2026-07-05T17:00:00+03:00",
+      "author": "Дмитрий Коган",
+      "kind": "decision",
+      "text": "Первый релиз монитора делать как простую визуальную страницу с контрактом данных и ростом к VPS/API/агенту.",
+      "status": "accepted",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "update-2026-07-06-voice-task-capture",
+      "createdAt": "2026-07-06T00:00:00+03:00",
+      "author": "Дмитрий Коган",
+      "kind": "task_capture",
+      "text": "В монитор добавлены поручения: фото для публикации детской экскурсии, сайт юбилейных мероприятий, кураторы детского и коммуникационного треков, сметы, документ о команде и разные уровни доступа организаторов.",
+      "status": "accepted",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    }
+  ]
+}
