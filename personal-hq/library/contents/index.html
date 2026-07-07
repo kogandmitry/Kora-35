@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Содержание библиотеки · Личный штаб</title>
+  <meta name="description" content="Оглавление публично-безопасной библиотеки ИИ и полезных находок.">
+  <style>
+    :root {
+      --bg: #f6f8f1;
+      --surface: #ffffff;
+      --ink: #26382b;
+      --text: #33443a;
+      --muted: #6f786f;
+      --line: #dde5d7;
+      --green: #5f9e45;
+      --yellow: #ffd200;
+      --blue: #4d7fc7;
+      --teal: #2f9c91;
+      --coral: #cf705b;
+      --shadow: 0 18px 46px -34px rgba(38, 56, 43, .36);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .shell {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+    }
+    .top,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 28px);
+    }
+    .top { display: grid; gap: 14px; }
+    a { color: inherit; }
+    .back {
+      color: var(--ink);
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 {
+      margin: 0;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+    h1 {
+      max-width: 880px;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.02;
+    }
+    h2 { font-size: clamp(24px, 3vw, 34px); }
+    h3 { font-size: 18px; }
+    p { margin: 0; line-height: 1.5; }
+    .lead {
+      max-width: 940px;
+      color: #435448;
+      font-size: 18px;
+    }
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wide { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .stat,
+    .card,
+    .row {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcf8;
+      padding: 14px;
+    }
+    .stat {
+      display: grid;
+      gap: 6px;
+    }
+    .stat strong {
+      color: var(--ink);
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1;
+    }
+    .stat span,
+    .card p,
+    .row span {
+      color: var(--muted);
+    }
+    .card {
+      display: grid;
+      gap: 10px;
+      border-left: 5px solid var(--blue);
+    }
+    .card.p0 { border-left-color: var(--coral); }
+    .card.green { border-left-color: var(--green); }
+    .card.teal { border-left-color: var(--teal); }
+    .list {
+      display: grid;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) auto;
+      gap: 12px;
+      align-items: center;
+      border: 0;
+      border-radius: 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .row:last-child { border-bottom: 0; }
+    .pill {
+      justify-self: start;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #e8f3df;
+      color: #335f23;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .note {
+      border-left: 5px solid var(--yellow);
+      padding: 12px 14px;
+      background: #fff9d8;
+      color: #4d4320;
+      line-height: 1.45;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .button {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 12px;
+      color: var(--ink);
+      background: #fbfcf8;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    @media (max-width: 900px) {
+      .stats, .cards, .wide { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="top">
+      <a class="back" href="../">← Библиотека ИИ</a>
+      <div>
+        <p class="eyebrow">Оглавление</p>
+        <h1>Что сейчас лежит в библиотеке</h1>
+      </div>
+      <p class="lead">Это не полный сырой архив, а карта содержания: основные рубрики, смысловые группы, источники и практические блоки, куда стоит проваливаться при работе над улучшениями.</p>
+      <div class="grid stats">
+        <div class="stat"><strong>11 897</strong><span>карточек после дедупликации</span></div>
+        <div class="stat"><strong>8</strong><span>основных категорий</span></div>
+        <div class="stat"><strong>9</strong><span>смысловых групп</span></div>
+        <div class="stat"><strong>59</strong><span>Telegram-экспортов распознано</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Основные рубрики</p>
+      <h2>Категории библиотеки</h2>
+      <div class="list">
+        <div class="row"><strong>ИИ-система</strong><span>Codex, Claude, Hermes/Germes, память, архитектура, модели, регламенты.</span><span class="pill">4 456</span></div>
+        <div class="row"><strong>Агенты</strong><span>Оркестрация, MCP, workflow, роли, subagents, multi-agent подходы.</span><span class="pill">3 930</span></div>
+        <div class="row"><strong>Предупреждения</strong><span>Баны, лимиты, ошибки, риски, безопасность, ненадежные практики.</span><span class="pill">2 680</span></div>
+        <div class="row"><strong>Остальное / other</strong><span>Все полезное вне основных рубрик: семья, продуктивность, обучение, контент, исследования, КОРА.</span><span class="pill">2 486</span></div>
+        <div class="row"><strong>Инструменты</strong><span>n8n, API, webhook, GitHub, Docker, VPS, браузеры, Telegram-боты.</span><span class="pill">2 351</span></div>
+        <div class="row"><strong>Платежи и доступы</strong><span>Оплата сервисов, карты, подписки, альтернативные провайдеры. Только через проверку.</span><span class="pill">2 342</span></div>
+        <div class="row"><strong>Практики</strong><span>Промпты, чек-листы, шаблоны, инструкции, приемы работы.</span><span class="pill">2 278</span></div>
+        <div class="row"><strong>Монетизация</strong><span>Идеи услуг, упаковка автоматизаций, клиенты, воронки, прикладные кейсы.</span><span class="pill">1 333</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Other</p>
+      <h2>Смысловые группы прочих полезностей</h2>
+      <div class="grid wide">
+        <article class="card p0"><h3>productivity</h3><p>Фокус, задачи, планирование, календарь, привычки, напоминания. Один из главных источников улучшений личного штаба.</p><span class="pill">3 592</span></article>
+        <article class="card p0"><h3>health_family</h3><p>Сон, восстановление, семья, личный ресурс, режим, устойчивость. Важный слой, который нельзя терять.</p><span class="pill">3 146</span></article>
+        <article class="card green"><h3>research</h3><p>Обзоры, сравнения, методы анализа, источники, гипотезы, исследовательские подходы.</p><span class="pill">2 106</span></article>
+        <article class="card green"><h3>operations</h3><p>Процессы, регламенты, документы, отчеты, структура работы и управление задачами.</p><span class="pill">1 833</span></article>
+        <article class="card"><h3>content</h3><p>Видео, тексты, презентации, дизайн, публикации, сценарии и упаковка мыслей.</p><span class="pill">1 590</span></article>
+        <article class="card"><h3>education</h3><p>Курсы, школы, обучение, учебные планы, подростки, образовательные проекты.</p><span class="pill">1 082</span></article>
+        <article class="card teal"><h3>business</h3><p>Стратегия, рынок, упаковка предложений, бизнес-идеи и коммерческие гипотезы.</p><span class="pill">847</span></article>
+        <article class="card teal"><h3>kora_projects</h3><p>КОРА, юбилей, производственные материалы, проектные процессы и коммуникации.</p><span class="pill">322</span></article>
+        <article class="card"><h3>misc</h3><p>Пока неразобранное полезное. Следующая задача: укрупнять повторы и превращать их в новые группы.</p><span class="pill">3 875</span></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Что реально внутри</p>
+      <h2>Практические блоки содержания</h2>
+      <div class="grid cards">
+        <article class="card p0"><h3>1. Улучшение ИИ-системы</h3><p>Роли агентов, память, маршрутизация, Codex/Claude/Hermes, review-loop, правила подключения инструментов.</p></article>
+        <article class="card p0"><h3>2. Автоматизация штаба</h3><p>Workflow, n8n, API, Telegram, календарь, GitHub, регулярные проверки, сбор входящих.</p></article>
+        <article class="card green"><h3>3. Продуктивность и личный контур</h3><p>Планирование, напоминания, фокус, восстановление, семейные и личные ритмы.</p></article>
+        <article class="card green"><h3>4. Исследования и решения</h3><p>Методы анализа, сравнение моделей, Tree of Thoughts, ревизия гипотез, форматы экспертного review.</p></article>
+        <article class="card"><h3>5. Платежи и доступы</h3><p>Полезно как мониторинг, но всегда требует свежей проверки законности, ToS, риска бана и цены.</p></article>
+        <article class="card"><h3>6. Монетизация</h3><p>Дашборд как услуга, агентный разбор документов, автоматизации CRM/почты/календаря, обучение.</p></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Источники</p>
+      <h2>Самые насыщенные источники</h2>
+      <div class="list">
+        <div class="row"><strong>Вайбкодинг комьюнити</strong><span>Основной массив практик, обсуждений, инструментов и рабочих приемов.</span><span class="pill">4 851</span></div>
+        <div class="row"><strong>OpenClaw Lab Community</strong><span>Агентные системы, локальные браузеры, OpenClaw, прикладные обсуждения.</span><span class="pill">2 234</span></div>
+        <div class="row"><strong>Чат Дрессировщик Нейросетей</strong><span>Промпты, подходы к моделям, практики использования и критика результатов.</span><span class="pill">2 098</span></div>
+        <div class="row"><strong>HERMES CLAW</strong><span>Hermes/Germes, маршрутизация, архитектура персонального агента.</span><span class="pill">808</span></div>
+        <div class="row"><strong>AI Masters Me</strong><span>Инструменты, рынок, кейсы, предупреждения и рабочие находки.</span><span class="pill">709</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Как пользоваться</p>
+      <h2>Куда смотреть первым</h2>
+      <div class="grid cards">
+        <article class="card p0"><h3>Для улучшения нашей ИИ-системы</h3><p>Начинать с `ИИ-система`, `Агенты`, `Инструменты`, `Практики`, затем смотреть `Предупреждения`.</p></article>
+        <article class="card p0"><h3>Для личного штаба</h3><p>Смотреть `other`: productivity, health_family, operations. Там лежат идеи для напоминаний, ритмов и личной устойчивости.</p></article>
+        <article class="card green"><h3>Для КОРА и проектов</h3><p>Смотреть operations, kora_projects, content, research: там материалы для управления проектами, текстов и решений.</p></article>
+        <article class="card green"><h3>Для денег и возможностей</h3><p>Смотреть monetization и business, но применять только после отбора по фокусу и быстрой проверке прототипа.</p></article>
+      </div>
+      <p class="note">Полный машинный слой сейчас хранится локально в `telegram-knowledge-items.json`. Публичная страница показывает карту содержания и безопасные выжимки.</p>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Переходы</p>
+      <h2>Дальше</h2>
+      <div class="links">
+        <a class="button" href="../recommendations/">Рекомендуемые внедрения</a>
+        <a class="button" href="../">Библиотека ИИ</a>
+        <a class="button" href="../../implementation-plan/">План внедрения</a>
+        <a class="button" href="../../">Личный штаб</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

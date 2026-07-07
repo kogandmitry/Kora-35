@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Рекомендуемые внедрения · Личный штаб</title>
+  <meta name="description" content="Приоритетные решения, которые стоит внедрить на основе библиотеки ИИ.">
+  <style>
+    :root {
+      --bg: #f6f8f1;
+      --surface: #ffffff;
+      --ink: #26382b;
+      --text: #33443a;
+      --muted: #6f786f;
+      --line: #dde5d7;
+      --green: #5f9e45;
+      --yellow: #ffd200;
+      --blue: #4d7fc7;
+      --teal: #2f9c91;
+      --coral: #cf705b;
+      --shadow: 0 18px 46px -34px rgba(38, 56, 43, .36);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .shell {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+    }
+    .top,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 28px);
+    }
+    .top { display: grid; gap: 14px; }
+    a { color: inherit; }
+    .back {
+      color: var(--ink);
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 {
+      margin: 0;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+    h1 {
+      max-width: 900px;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.02;
+    }
+    h2 { font-size: clamp(24px, 3vw, 34px); }
+    h3 { font-size: 18px; }
+    p { margin: 0; line-height: 1.5; }
+    .lead {
+      max-width: 940px;
+      color: #435448;
+      font-size: 18px;
+    }
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat,
+    .card,
+    .decision {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcf8;
+      padding: 14px;
+    }
+    .stat {
+      display: grid;
+      gap: 6px;
+    }
+    .stat strong {
+      color: var(--ink);
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1;
+    }
+    .stat span,
+    .card p,
+    .decision p,
+    .decision li {
+      color: var(--muted);
+    }
+    .decision {
+      display: grid;
+      gap: 12px;
+      border-left: 6px solid var(--blue);
+    }
+    .decision.p0 { border-left-color: var(--coral); }
+    .decision.p1 { border-left-color: var(--blue); }
+    .decision.p2 { border-left-color: var(--teal); }
+    .decision header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .pill {
+      justify-self: start;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #e8f3df;
+      color: #335f23;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .pill.p0 { background: #fde8e0; color: #8a402d; }
+    .pill.p1 { background: #edf1fb; color: #315785; }
+    .pill.p2 { background: #e6f4f1; color: #22645d; }
+    .pill.review { background: #fff1df; color: #83522b; }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    li + li { margin-top: 5px; }
+    .card {
+      display: grid;
+      gap: 10px;
+      border-left: 5px solid var(--green);
+    }
+    .note {
+      border-left: 5px solid var(--yellow);
+      padding: 12px 14px;
+      background: #fff9d8;
+      color: #4d4320;
+      line-height: 1.45;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .button {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 12px;
+      color: var(--ink);
+      background: #fbfcf8;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    @media (max-width: 900px) {
+      .stats, .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="top">
+      <a class="back" href="../">← Библиотека ИИ</a>
+      <div>
+        <p class="eyebrow">Приоритеты</p>
+        <h1>Что я рекомендую внедрять из библиотеки первым</h1>
+      </div>
+      <p class="lead">Это практическая очередь решений. Приоритеты выставлены по пользе для твоих интересов, срочности, риску, простоте внедрения и способности улучшать всю систему дальше.</p>
+      <div class="grid stats">
+        <div class="stat"><strong>P0</strong><span>то, без чего система снова расползется</span></div>
+        <div class="stat"><strong>P1</strong><span>дает быстрый прирост качества и удобства</span></div>
+        <div class="stat"><strong>P2</strong><span>расширение, деньги, эксперименты</span></div>
+        <div class="stat"><strong>8</strong><span>решений в первой волне</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">P0</p>
+      <h2>Первая волна: фундамент</h2>
+      <div class="grid">
+        <article class="decision p0">
+          <header><h3>1. Недельный выпуск библиотеки</h3><span class="pill p0">P0 · рекомендую первым</span></header>
+          <p>Каждую неделю из новых и старых карточек собирать короткий выпуск: топ полезностей, риски, платежные заметки, идеи для КОРА/семьи/развития и задачи внедрения.</p>
+          <ul>
+            <li>Польза: библиотека становится живой, а не складом.</li>
+            <li>Следующий шаг: создать шаблон `WEEKLY_AI_LIBRARY_DIGEST` и автоматическое наполнение из JSON.</li>
+            <li>Источник: ai_system, practices, alerts, other/productivity.</li>
+          </ul>
+        </article>
+        <article class="decision p0">
+          <header><h3>2. Локальный поиск по полной библиотеке</h3><span class="pill p0">P0</span></header>
+          <p>Публичная витрина показывает карту, но нужна внутренняя страница с поиском по 11 897 карточкам, фильтрами по категориям и смысловым группам.</p>
+          <ul>
+            <li>Польза: ты можешь реально смотреть содержимое, а не только сводки.</li>
+            <li>Следующий шаг: сделать непубличный HTML/локальное приложение, читающее `telegram-knowledge-items.json`.</li>
+            <li>Источник: весь массив библиотеки.</li>
+          </ul>
+        </article>
+        <article class="decision p0">
+          <header><h3>3. Жесткий слой `needs_review`</h3><span class="pill review">P0 · защита</span></header>
+          <p>Все платежи, обходы, юзерботы, stealth, доступы, API-лимиты и предупреждения должны попадать в отдельную проверяемую очередь.</p>
+          <ul>
+            <li>Польза: не внедряем рискованные советы из чатов автоматически.</li>
+            <li>Следующий шаг: добавить отдельный публичный счетчик и локальный список `needs_review`.</li>
+            <li>Источник: payments, alerts, tools.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">P1</p>
+      <h2>Вторая волна: качество работы</h2>
+      <div class="grid cards">
+        <article class="decision p1">
+          <header><h3>4. Review-loop Claude + Codex + критик</h3><span class="pill p1">P1</span></header>
+          <p>Сложные решения проводить через цикл: стратегия, реализация, критика, исправление, запись в память.</p>
+          <ul>
+            <li>Польза: меньше самообмана и одноразовых решений.</li>
+            <li>Следующий шаг: оформить шаблон review-loop для задач штаба и КОРА.</li>
+          </ul>
+        </article>
+        <article class="decision p1">
+          <header><h3>5. Разбор workflow/ZIP-вложений</h3><span class="pill p1">P1</span></header>
+          <p>В экспортированных чатах есть готовые автоматизации и workflow. Их нужно вынести в отдельный каталог кандидатов.</p>
+          <ul>
+            <li>Польза: можно быстро найти готовые решения для штаба.</li>
+            <li>Следующий шаг: индекс вложений, топ-5 workflow-кандидатов, проверка безопасности.</li>
+          </ul>
+        </article>
+        <article class="decision p1">
+          <header><h3>6. Ревизия `other` и новые рубрики</h3><span class="pill p1">P1</span></header>
+          <p>`Other` уже содержит продуктивность, здоровье/семью, исследования, контент, образование, КОРА и операции. Нужно периодически выделять устойчивые новые рубрики.</p>
+          <ul>
+            <li>Польза: не теряем важные личные и проектные идеи.</li>
+            <li>Следующий шаг: сначала разобрать `misc`, затем поднять 3-5 новых категорий.</li>
+          </ul>
+        </article>
+        <article class="decision p1">
+          <header><h3>7. Карта ролей агентов в дашборде</h3><span class="pill p1">P1</span></header>
+          <p>Старые роли Архивариус/PM/Критик/Коуч/Оркестратор нужно превратить в видимые режимы работы, а не держать только в документах.</p>
+          <ul>
+            <li>Польза: понятнее, кого “звать” под задачу.</li>
+            <li>Следующий шаг: вкладка “Роли” с маршрутами и примерами запросов.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">P2</p>
+      <h2>Третья волна: расширение</h2>
+      <div class="grid cards">
+        <article class="decision p2">
+          <header><h3>8. Отбор монетизационных гипотез</h3><span class="pill p2">P2</span></header>
+          <p>Из монетизации брать не “все интересное”, а только то, что связано с твоими проектами и может быть проверено маленьким прототипом.</p>
+          <ul>
+            <li>Первые кандидаты: дашборд проекта как услуга, разбор документов, CRM/почта/календарь, Telegram-библиотека.</li>
+            <li>Следующий шаг: 3 гипотезы, 1 прототип, 1 потенциальный пользователь.</li>
+          </ul>
+        </article>
+        <article class="decision p2">
+          <header><h3>9. Личный контур восстановления и семьи</h3><span class="pill p2">P2</span></header>
+          <p>Из `health_family` и `productivity` собрать не “саморазвитие вообще”, а практичную систему напоминаний и ритмов.</p>
+          <ul>
+            <li>Польза: система работает во благо твоей жизни, а не только проектов.</li>
+            <li>Следующий шаг: 5 мягких регулярных напоминаний и один недельный обзор ресурса.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Мой выбор</p>
+      <h2>Что я бы сделал прямо следующим шагом</h2>
+      <div class="grid cards">
+        <article class="card"><h3>1. Локальный просмотрщик полной библиотеки</h3><p>Чтобы ты действительно мог проваливаться в карточки, фильтровать и видеть содержание, а не только публичную выжимку.</p></article>
+        <article class="card"><h3>2. Недельный выпуск</h3><p>Чтобы библиотека начала сама поднимать лучшие находки и превращать их в действия.</p></article>
+        <article class="card"><h3>3. needs_review</h3><p>Чтобы рискованные платежи, доступы и обходы не смешивались с безопасными практиками.</p></article>
+        <article class="card"><h3>4. Разбор workflow</h3><p>Потому что там могут быть готовые автоматизации, которые сразу усилят штаб.</p></article>
+      </div>
+      <p class="note">Главное: сначала дать тебе удобный просмотр полного содержания, затем уже углублять автоматизацию и внедрение.</p>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Переходы</p>
+      <h2>Дальше</h2>
+      <div class="links">
+        <a class="button" href="../contents/">Содержание библиотеки</a>
+        <a class="button" href="../">Библиотека ИИ</a>
+        <a class="button" href="../../implementation-plan/">План внедрения</a>
+        <a class="button" href="../../">Личный штаб</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
