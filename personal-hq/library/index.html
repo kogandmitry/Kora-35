@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Библиотека ИИ · Личный штаб</title>
+  <meta name="description" content="Публично-безопасная витрина библиотеки ИИ: источники, статусы, категории и правила отбора практик.">
+  <meta name="theme-color" content="#f6f8f1">
+  <style>
+    :root {
+      --bg: #f6f8f1;
+      --surface: #ffffff;
+      --ink: #26382b;
+      --text: #33443a;
+      --muted: #6f786f;
+      --line: #dde5d7;
+      --green: #5f9e45;
+      --yellow: #ffd200;
+      --blue: #4d7fc7;
+      --teal: #2f9c91;
+      --coral: #cf705b;
+      --shadow: 0 18px 46px -34px rgba(38, 56, 43, .36);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+    }
+    .top,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 28px);
+    }
+    .top {
+      display: grid;
+      gap: 14px;
+    }
+    .back {
+      color: var(--ink);
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+    h1 {
+      max-width: 820px;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.02;
+    }
+    h2 { font-size: clamp(24px, 3vw, 34px); }
+    h3 { font-size: 18px; }
+    p {
+      margin: 0;
+      line-height: 1.5;
+    }
+    .lead {
+      max-width: 880px;
+      color: #435448;
+      font-size: 18px;
+    }
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .status-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .stat,
+    .card,
+    .row {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcf8;
+      padding: 14px;
+    }
+    .stat {
+      display: grid;
+      gap: 6px;
+    }
+    .stat strong {
+      color: var(--ink);
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1;
+    }
+    .stat span,
+    .card p,
+    .row span {
+      color: var(--muted);
+    }
+    .card {
+      display: grid;
+      gap: 10px;
+      border-left: 5px solid var(--blue);
+    }
+    .card.foundation { border-left-color: var(--green); }
+    .card.watch { border-left-color: var(--coral); }
+    .card.future { border-left-color: var(--teal); }
+    .list {
+      display: grid;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+      gap: 12px;
+      align-items: center;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+    }
+    .row:last-child { border-bottom: 0; }
+    .pill {
+      justify-self: start;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #e8f3df;
+      color: #335f23;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .pill.review { background: #fff1df; color: #83522b; }
+    .pill.fresh { background: #edf1fb; color: #315785; }
+    .note {
+      border-left: 5px solid var(--yellow);
+      padding: 12px 14px;
+      background: #fff9d8;
+      color: #4d4320;
+      line-height: 1.45;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .button {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 12px;
+      color: var(--ink);
+      background: #fbfcf8;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    @media (max-width: 860px) {
+      .stats,
+      .cards,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="top">
+      <a class="back" href="../">← Личный штаб</a>
+      <div>
+        <p class="eyebrow">Система ИИ</p>
+        <h1>Библиотека знаний, практик и предупреждений</h1>
+      </div>
+      <p class="lead">Это публично-безопасная страница библиотеки. Полная база лежит в Яндекс.Диске, а здесь показан управленческий слой: что уже собрано, как классифицируется и какие правила защищают систему от хаоса.</p>
+      <div class="grid stats">
+        <div class="stat"><strong>1 974</strong><span>полезные карточки после дедупликации</span></div>
+        <div class="stat"><strong>59</strong><span>Telegram-экспортов распознано</span></div>
+        <div class="stat"><strong>8</strong><span>источников прежней базы импортировано</span></div>
+        <div class="stat"><strong>7</strong><span>категорий отбора практик</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Фундамент</p>
+      <h2>Два слоя библиотеки</h2>
+      <div class="grid cards">
+        <article class="card foundation">
+          <h3>legacy_base</h3>
+          <p>Прежняя KnowledgeBase, агентная модель, Claude-база КОРА, source map и системные промпты агентов. Это архитектурная основа: правила маршрутизации, безопасности, ролей и памяти.</p>
+        </article>
+        <article class="card">
+          <h3>fresh_signal</h3>
+          <p>Свежие Telegram-экспорты, workflow JSON, находки по инструментам, агентам, платежам, предупреждениям и монетизации. Это поток кандидатов, который требует отбора.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Категории</p>
+      <h2>Что извлекается</h2>
+      <div class="grid status-grid">
+        <div class="card"><h3>ИИ-система</h3><p>Архитектура, память, Codex/Claude/Hermes, навыки, агенты, регламенты.</p></div>
+        <div class="card"><h3>Практики</h3><p>Приемы работы, шаблоны, способы ускорения и улучшения качества решений.</p></div>
+        <div class="card"><h3>Инструменты</h3><p>MCP, workflow, n8n, плагины, локальные и облачные сервисы.</p></div>
+        <div class="card watch"><h3>Предупреждения</h3><p>Баны, ограничения, ошибки, уязвимости, риски автоматизации.</p></div>
+        <div class="card watch"><h3>Платежи и доступы</h3><p>Только как мониторинг. Перед применением нужна свежая проверка.</p></div>
+        <div class="card future"><h3>Монетизация</h3><p>Кейсы, которые можно превратить в прототип или услугу без распыления фокуса.</p></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Статусы</p>
+      <h2>Как карточка становится действием</h2>
+      <div class="list">
+        <div class="row"><strong>candidate</strong><span>полезность замечена, но еще не прошла оценку применимости</span><span class="pill fresh">отбор</span></div>
+        <div class="row"><strong>queued</strong><span>превращено в задачу внедрения с приоритетом</span><span class="pill">очередь</span></div>
+        <div class="row"><strong>adopted</strong><span>встроено в регламент, инструмент, монитор или рабочий процесс</span><span class="pill">принято</span></div>
+        <div class="row"><strong>needs_review</strong><span>платежи, обходы, безопасность, юзерботы и все, что может быстро устареть или навредить</span><span class="pill review">проверка</span></div>
+        <div class="row"><strong>archived</strong><span>сохранено как справка без внедрения</span><span class="pill fresh">архив</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Правила</p>
+      <h2>Что защищает библиотеку</h2>
+      <div class="grid cards">
+        <article class="card foundation"><h3>Дашборд не источник истины</h3><p>Он показывает состояние и ссылки. Полные данные живут в файлах штаба и KnowledgeBase.</p></article>
+        <article class="card watch"><h3>Секреты не попадают в витрину</h3><p>Пароли, backup-коды, токены, платежные данные и сырой приватный контент не публикуются.</p></article>
+        <article class="card"><h3>Не внедрять все подряд</h3><p>Любая практика должна отвечать на вопрос: зачем Дмитрию, где применяется, как проверить пользу.</p></article>
+        <article class="card future"><h3>Лучшие практики идут в план</h3><p>После отбора карточка попадает в очередь внедрения, а не остается красивой заметкой.</p></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Дальше</p>
+      <h2>Связанные страницы</h2>
+      <div class="links">
+        <a class="button" href="../implementation-plan/">План внедрения лучших практик</a>
+        <a class="button" href="../">Личный штаб</a>
+        <a class="button" href="../../">Публичный монитор КОРА 35</a>
+      </div>
+      <p class="note">Следующий слой развития: отдельная внутренняя, непубличная страница с поиском по карточкам и ссылками на локальные Markdown/JSON-файлы.</p>
+    </section>
+  </main>
+</body>
+</html>
