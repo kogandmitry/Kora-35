@@ -193,6 +193,10 @@
       gap: 16px;
       padding: clamp(18px, 3vw, 26px);
     }
+    .panel.focus {
+      border-color: #b9ccb0;
+      background: linear-gradient(135deg, #ffffff 0%, #f1f8eb 100%);
+    }
     .section-head {
       display: flex;
       flex-wrap: wrap;
@@ -348,13 +352,14 @@
       </div>
       <nav class="nav">
         <a href="#areas">Области <span>›</span></a>
+        <a href="#focus">Текущий фокус <span>›</span></a>
         <a href="#ai">Система ИИ <span>›</span></a>
         <a href="#tasks">Приоритеты <span>›</span></a>
         <a href="./library/">Библиотека <span>›</span></a>
         <a href="./implementation-plan/">План внедрения <span>›</span></a>
         <a href="#links">Ссылки <span>›</span></a>
       </nav>
-      <p class="meta">Обновлено: 7 июля 2026. Открытая страница не содержит сырья Telegram, секретов, семейных деталей и закрытых рабочих материалов.</p>
+      <p class="meta">Обновлено: 14 июля 2026. Открытая страница не содержит сырья Telegram, секретов, семейных деталей и закрытых рабочих материалов.</p>
     </aside>
 
     <section class="content">
@@ -364,14 +369,14 @@
             <p class="eyebrow">Единый монитор</p>
             <h1>Проекты, ИИ-система и входящие сигналы в одном месте</h1>
           </div>
-          <span class="badge">Рабочая витрина</span>
+          <span class="badge">Обновлено 14 июля</span>
         </div>
         <p class="lead">Здесь виден верхний уровень штаба: КОРА, система ИИ, библиотека полезностей и ближайшие задачи. Глубокие данные остаются в Яндекс.Диске и локальной базе, а эта ссылка нужна как быстрый вход с телефона.</p>
         <div class="quick-grid" aria-label="Быстрые показатели">
           <div class="stat"><strong>4</strong><span>основные области штаба</span></div>
-          <div class="stat"><strong>11 897</strong><span>дедуплицированные карточки из Telegram</span></div>
+          <div class="stat"><strong>33</strong><span>дня до выезда КОРА 35</span></div>
+          <div class="stat"><strong>11 905</strong><span>полезных карточек в библиотеке ИИ</span></div>
           <div class="stat"><strong>83</strong><span>JSON-файла проверено</span></div>
-          <div class="stat"><strong>8</strong><span>старых источников импортировано как основа</span></div>
         </div>
         <div class="link-grid">
           <a class="link-pill" href="./library/">Открыть библиотеку ИИ <span>›</span></a>
@@ -379,6 +384,28 @@
           <a class="link-pill" href="./library/recommendations/">Рекомендуемые внедрения <span>›</span></a>
           <a class="link-pill" href="./implementation-plan/">Открыть план внедрения <span>›</span></a>
         </div>
+      </section>
+
+      <section id="focus" class="panel focus">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Текущий операционный фокус</p>
+            <h2>КОРА 35 · выезд 16 августа</h2>
+          </div>
+          <span class="badge">База «Литейщик»</span>
+        </div>
+        <p class="lead">Формат пересобран как корпоративный отдых на природе, а не торжественный юбилей. Главная задача — создать для сотрудников и их семей пространство благодарности, внутреннего спокойствия, взаимной поддержки, живого общения и восстановления энергии.</p>
+        <div class="stats-grid" aria-label="Показатели текущего фокуса">
+          <div class="stat"><strong>300</strong><span>участников: 250 сотрудников и 50 детей</span></div>
+          <div class="stat"><strong>16.08</strong><span>воскресенье, основной выезд</span></div>
+          <div class="stat"><strong>≈955 тыс.</strong><span>текущая пользовательская оценка сметы</span></div>
+          <div class="stat"><strong>≈45 тыс.</strong><span>запас относительно лимита 1 млн ₽</span></div>
+        </div>
+        <div class="link-grid">
+          <a class="link-pill" href="../">Открыть подробный монитор КОРА 35 <span>›</span></a>
+          <a class="link-pill" href="#tasks">Перейти к ближайшим приоритетам <span>›</span></a>
+        </div>
+        <div class="note">Сейчас критично письменно закрепить площадку и быстро получить сопоставимые предложения по автобусам, питанию, клинингу, детской программе, ведущим и видеосъёмке. Точные строки сметы нужно перенести из ручной таблицы; пока в штабе зафиксирован согласованный общий итог.</div>
       </section>
 
       <section id="areas" class="panel">
@@ -392,7 +419,7 @@
           <article class="tile">
             <span class="accent"></span>
             <h3>КОРА / проекты</h3>
-            <p>Проекты КОРА подключены как отдельная область, включая публичный монитор юбилея КОРА 35.</p>
+            <p>Главный текущий проект — подготовка корпоративного отдыха КОРА 35 на базе «Литейщик» 16 августа.</p>
             <span class="status">in progress</span>
           </article>
           <article class="tile ai">
@@ -425,7 +452,7 @@
           <span class="badge">legacy base + fresh signal</span>
         </div>
         <div class="stats-grid">
-          <div class="stat"><strong>59</strong><span>Telegram-экспортов распознано</span></div>
+          <div class="stat"><strong>60</strong><span>Telegram-экспортов распознано</span></div>
           <div class="stat"><strong>16</strong><span>дубликатов найдено</span></div>
           <div class="stat"><strong>2 486</strong><span>карточек в категории other</span></div>
           <div class="stat"><strong>9</strong><span>смысловых групп для прочих полезностей</span></div>
@@ -468,16 +495,16 @@
         </div>
         <div class="task-grid">
           <article class="task p0">
-            <header><h3>Слить старую и новую библиотеку</h3><span class="priority">P0</span></header>
-            <p>Прежние регламенты и роли уже стали фундаментом; свежие Telegram-карточки добавляются как входящий поток.</p>
+            <header><h3>Закрепить инфраструктуру выезда</h3><span class="priority">P0</span></header>
+            <p>Письменно подтвердить «Литейщик», автобусы, кейтеринг, клининг, четыре аниматора и дождевой сценарий.</p>
           </article>
           <article class="task p0">
-            <header><h3>Защитить рисковые находки</h3><span class="priority">P0</span></header>
-            <p>Платежи, обходы, юзерботы и безопасность должны проходить через `needs_review` перед применением.</p>
+            <header><h3>Зафиксировать рабочую смету</h3><span class="priority">P0</span></header>
+            <p>Перенести точные строки из ручного расчёта ≈955 тыс. ₽ и сохранить резерв внутри лимита 1 млн ₽.</p>
           </article>
-          <article class="task p1">
-            <header><h3>Разобрать workflow и ZIP</h3><span class="priority">P1</span></header>
-            <p>В экспортированных чатах есть готовые автоматизации, которые нужно проверить отдельно и выбрать кандидатов.</p>
+          <article class="task p0">
+            <header><h3>Назначить кураторов и buddy</h3><span class="priority">P0</span></header>
+            <p>У каждой зоны выезда должен быть один ответственный и помощник: люди, сроки, результат и запасной сценарий.</p>
           </article>
           <article class="task p1">
             <header><h3>Сделать еженедельную витрину</h3><span class="priority">P1</span></header>
@@ -503,6 +530,7 @@
         </div>
         <div class="source-list">
           <div class="source-row"><strong>Прежняя KnowledgeBase</strong><span>регламент, карта интересов, глобальный контекст</span><span class="status">legacy</span></div>
+          <div class="source-row"><strong>Монитор КОРА 35</strong><span>выезд 16 августа, «Литейщик», текущая смета и операционные задачи</span><span class="status watch">active</span></div>
           <div class="source-row"><strong>Claude-база КОРА</strong><span>архитектура проекта, агентная модель, source map</span><span class="status">legacy</span></div>
           <div class="source-row"><strong>Telegram Desktop</strong><span>первичный разбор JSON-экспортов и дедупликация</span><span class="status watch">fresh</span></div>
           <div class="source-row"><strong>TG_AI_EXPORTS / 00_INBOX</strong><span>новый синхронизируемый вход через Яндекс.Диск</span><span class="status watch">active</span></div>

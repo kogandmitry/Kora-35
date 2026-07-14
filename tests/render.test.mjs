@@ -17,10 +17,12 @@ test('escapes html text', () => {
 });
 
 test('renders health panel with key metrics', () => {
-  const html = renderHealthPanel({ daysLeft: 41, averageReadiness: 45, openActions: 7, directionCount: 6, lastUpdated: '2026-07-05' });
-  assert.match(html, /41/);
+  const html = renderHealthPanel({ daysLeft: 33, eventDateLabel: '16 августа', averageReadiness: 45, openActions: 7, directionCount: 6, lastUpdated: '2026-07-14', budgetEstimate: 955000, budgetLimit: 1000000, budgetHeadroom: 45000 });
+  assert.match(html, /33/);
   assert.match(html, /45%/);
   assert.match(html, /7/);
+  assert.match(html, /955 000 ₽|955 000 ₽/);
+  assert.match(html, /16 августа/);
 });
 
 test('renders direction card with drilldown button', () => {
@@ -105,8 +107,8 @@ test('renders anniversary series with filter controls and artifacts', () => {
     stages: [
       {
         id: 'seed',
-        title: '1. Зарождение',
-        summary: 'Первые прототипы заботы.',
+        title: '1. Уже сделано',
+        summary: 'Первые прототипы человеческой включенности.',
         events: [
           {
             id: 'event-1',
@@ -129,8 +131,8 @@ test('renders anniversary series with filter controls and artifacts', () => {
           }
         ]
       },
-      { id: 'assembly', title: '2. Сборка', summary: 'Связи треков.', events: [] },
-      { id: 'legacy', title: '3. Закрепление', summary: 'Система после юбилея.', events: [] }
+      { id: 'assembly', title: '2. Сборка выезда', summary: 'Связи треков.', events: [] },
+      { id: 'legacy', title: '3. Выезд и продолжение', summary: 'Следующие волны инициатив.', events: [] }
     ],
     events: [
       {
@@ -160,7 +162,7 @@ test('renders anniversary series with filter controls and artifacts', () => {
   assert.match(html, /Горизонтальная роль координатора/);
   assert.match(html, /wellbeing-system-sketch/);
   assert.match(html, /track-flow-line/);
-  assert.match(html, /1\. Зарождение/);
-  assert.match(html, /3\. Закрепление/);
+  assert.match(html, /1\. Уже сделано/);
+  assert.match(html, /3\. Выезд и продолжение/);
   assert.ok(html.indexOf('event-stage-grid') < html.indexOf('track-legend'));
 });

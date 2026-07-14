@@ -16,13 +16,29 @@ export function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+function formatRub(value) {
+  return `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(Number(value || 0))} ₽`;
+}
+
 export function renderHealthPanel(health) {
+  const budgetCards = Number.isFinite(health.budgetEstimate) && Number.isFinite(health.budgetLimit)
+    ? `
+      <article class="metric metric-hero">
+        <span class="metric-value small">≈ ${formatRub(health.budgetEstimate)}</span>
+        <span class="metric-label">текущая пользовательская оценка</span>
+      </article>
+      <article class="metric">
+        <span class="metric-value small">${formatRub(Math.abs(health.budgetHeadroom))}</span>
+        <span class="metric-label">${health.budgetHeadroom >= 0 ? 'остаток до лимита 1 млн' : 'превышение лимита 1 млн'}</span>
+      </article>`
+    : '';
   return `
     <section class="health-grid" aria-label="Сводка проекта">
       <article class="metric metric-hero">
         <span class="metric-value">${health.daysLeft}</span>
-        <span class="metric-label">дней до 15 августа</span>
+        <span class="metric-label">дней до ${escapeHtml(health.eventDateLabel || 'главного события')}</span>
       </article>
+      ${budgetCards}
       <article class="metric">
         <span class="metric-value">${health.averageReadiness}%</span>
         <span class="metric-label">средняя готовность</span>
@@ -56,10 +72,10 @@ export function renderAnniversarySeries(series) {
   const filters = series.filters || [];
   const stages = series.stages?.length
     ? series.stages
-    : [{ id: 'events', title: 'Мероприятия', summary: 'Серия юбилейных событий.', events: series.events || [] }];
+    : [{ id: 'events', title: 'Этапы', summary: 'Подготовка, выезд и продолжение.', events: series.events || [] }];
   const activeId = series.activeFilter?.id || 'all';
   return `
-    <div class="series-map" aria-label="Серия юбилейных мероприятий">
+    <div class="series-map" aria-label="Подготовка, выезд и продолжение проекта КОРА 35">
       <div class="series-controls" aria-label="Фильтры ленты мероприятий">
         ${filters.map((filter) => `
           <button
@@ -73,8 +89,8 @@ export function renderAnniversarySeries(series) {
 
       <div class="wellbeing-system-sketch">
         <div class="system-sketch-label">
-          <strong>Зарождающаяся система заботы</strong>
-          <span>мероприятия, треки и артефакты складываются в постоянную практику</span>
+          <strong>Выезд как часть живой системы отношений</strong>
+          <span>35-летие — повод собраться; человечность, благодарность и продолжение — смысл</span>
         </div>
         <div class="track-flow-lines" aria-label="Цветные линии треков проекта">
           ${(series.trackLegend || []).map((track, index) => `

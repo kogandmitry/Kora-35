@@ -15,18 +15,18 @@ const DEFAULT_SERIES_FILTERS = [
 const DEFAULT_SERIES_STAGES = [
   {
     id: 'seed',
-    title: '1. Зарождение',
-    summary: 'Первые события и прототипы заботы.'
+    title: '1. Уже сделано',
+    summary: 'Первые события, решения и прототипы человеческой включенности.'
   },
   {
     id: 'assembly',
-    title: '2. Сборка',
-    summary: 'Связывание треков, ролей, материалов и управленческих решений.'
+    title: '2. Сборка выезда',
+    summary: 'Подрядчики, владельцы, материалы, сообщения и безопасные сценарии.'
   },
   {
     id: 'legacy',
-    title: '3. Закрепление',
-    summary: 'Главное событие и перенос результатов в постоянную систему заботы.'
+    title: '3. Выезд и продолжение',
+    summary: 'Корпоративный отдых 16 августа и следующие волны инициатив.'
   }
 ];
 
@@ -62,18 +62,27 @@ export function getOpenActionCount(data, roleId) {
 
 export function buildHealthSummary(data, roleId, now = new Date()) {
   const visibleDirections = filterVisible(data.directions, roleId);
+  const visibleBudgetItems = filterVisible(data.budgetItems, roleId);
   const readiness = visibleDirections.map((item) => Number(item.readiness || 0));
   const averageReadiness = readiness.length
     ? Math.round(readiness.reduce((sum, value) => sum + value, 0) / readiness.length)
     : 0;
 
+  const budgetLimit = Number(visibleBudgetItems.find((item) => item.id === 'budget-project-limit')?.amount);
+  const budgetEstimate = Number(visibleBudgetItems.find((item) => item.id === 'budget-current-estimate')?.amount);
+  const hasCurrentBudget = Number.isFinite(budgetLimit) && Number.isFinite(budgetEstimate);
+
   return {
     daysLeft: daysUntil(data.project.eventDate, now),
+    eventDateLabel: data.project.eventDateLabel || data.project.eventDate,
     status: data.project.status,
     lastUpdated: data.project.lastUpdated,
     averageReadiness,
     openActions: getOpenActionCount(data, roleId),
-    directionCount: visibleDirections.length
+    directionCount: visibleDirections.length,
+    budgetEstimate: hasCurrentBudget ? budgetEstimate : null,
+    budgetLimit: hasCurrentBudget ? budgetLimit : null,
+    budgetHeadroom: hasCurrentBudget ? budgetLimit - budgetEstimate : null
   };
 }
 

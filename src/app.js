@@ -138,4 +138,3 @@ els.incomingForm.addEventListener('submit', (event) => {
 init().catch((error) => {
   document.body.innerHTML = `<main class="panel"><h1>Монитор не загрузился</h1><pre>${error.message}</pre></main>`;
 });
-
