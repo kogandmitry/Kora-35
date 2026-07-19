@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -22,8 +22,9 @@ const types = {
 function resolveRequest(url) {
   const rawPath = decodeURIComponent(new URL(url, `http://localhost:${port}`).pathname);
   const filePath = rawPath === '/' ? '/index.html' : rawPath;
-  const resolved = normalize(join(root, filePath));
+  let resolved = normalize(join(root, filePath));
   if (!resolved.startsWith(root)) return null;
+  if (existsSync(resolved) && statSync(resolved).isDirectory()) resolved = join(resolved, 'index.html');
   return resolved;
 }
 

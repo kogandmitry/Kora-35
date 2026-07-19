@@ -5,7 +5,7 @@
     "subtitle": "Летний корпоративный выезд как пространство человечности, благодарности и живой жизни",
     "eventDate": "2026-08-16",
     "eventDateLabel": "16 августа",
-    "lastUpdated": "2026-07-14",
+    "lastUpdated": "2026-07-19",
     "status": "action_needed",
     "confidence": "partial",
     "summary": "35-летие остается поводом собраться, но формат главного дня — не торжественный юбилей, а корпоративный отдых на природе на базе «Литейщик»."
@@ -519,10 +519,10 @@
       "id": "task-finish-full-budget",
       "directionId": "management",
       "subprojectId": "budget-full-closeout",
-      "title": "Перенести точные пользовательские строки сметы, текущий ориентир — около 955 000 ₽",
-      "status": "in_progress",
+      "title": "Перенести точные строки сметы и сверить четыре бюджетных сценария",
+      "status": "done",
       "owner": "Дмитрий Коган / финансы",
-      "dueDate": "2026-07-16",
+      "dueDate": "2026-07-19",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
@@ -539,10 +539,10 @@
       "id": "task-build-site-monitor-access",
       "directionId": "management",
       "subprojectId": "team-document-and-access",
-      "title": "Довести сайт и монитор проекта для организаторов с разными уровнями доступа",
-      "status": "action_needed",
+      "title": "Разделить монитор на постоянную рабочую версию орггруппы и управленческую версию заказчиков",
+      "status": "in_progress",
       "owner": "Дмитрий Коган / техконтур",
-      "dueDate": "2026-07-12",
+      "dueDate": "2026-07-20",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
@@ -774,16 +774,36 @@
       "owner": "Дмитрий Коган / кураторы треков",
       "dueDate": "2026-07-25",
       "visibility": ["owner", "customer", "coordinator", "participant"]
+    },
+    {
+      "id": "task-publish-split-monitors",
+      "directionId": "management",
+      "subprojectId": "monitor-first-release",
+      "title": "Опубликовать две версии монитора на постоянных GitHub Pages-адресах после выдачи права записи",
+      "status": "blocked",
+      "owner": "Дмитрий Коган / Codex",
+      "dueDate": "2026-07-20",
+      "visibility": ["owner", "customer", "coordinator"]
+    },
+    {
+      "id": "task-monitor-dual-sync-rule",
+      "directionId": "management",
+      "subprojectId": "monitor-first-release",
+      "title": "При каждом подтверждённом изменении задач, решений, рисков, бюджета или информации для получателей сразу обновлять соответствующую версию монитора",
+      "status": "done",
+      "owner": "Codex / все агенты проекта",
+      "dueDate": "2026-07-19",
+      "visibility": ["owner", "customer", "coordinator"]
     }
   ],
   "risks": [
     {
       "id": "risk-source-staleness",
       "directionId": "management",
-      "title": "Данные проекта устаревают без живого входящего потока",
+      "title": "Данные двух версий монитора могут разойтись с файлами проекта",
       "severity": "high",
-      "status": "action_needed",
-      "mitigation": "Сделать JSON-контракт и прототип входящих комментариев в первом релизе.",
+      "status": "in_progress",
+      "mitigation": "Обязательное правило: изменение профильного файла и обновление соответствующей версии монитора выполняются в одном рабочем цикле; расхождение с опубликованной ссылкой отмечается явно.",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
@@ -834,10 +854,10 @@
     {
       "id": "risk-budget-detail-gap",
       "directionId": "management",
-      "title": "Из пользовательской корректировки доступен итог около 955 000 ₽, но не точные значения всех строк",
+      "title": "Построчный бюджет не был перенесён в проектный монитор",
       "severity": "medium",
-      "status": "action_needed",
-      "mitigation": "Перенести точные строки из пользовательской версии и по мере получения КП разделять оценку, обязательство и фактическую оплату.",
+      "status": "done",
+      "mitigation": "19 июля перенесены 60 строк, четыре сценария, статусы цен, владельцы и неоценённые расходы; дальше суммы уточняются по КП.",
       "visibility": ["owner", "customer", "coordinator"]
     }
   ],
@@ -847,26 +867,26 @@
       "title": "Общий бюджетный лимит",
       "amount": 1000000,
       "kind": "limit",
-      "sourceId": "user-budget-955",
+      "sourceId": "budget-monitor-2026-07-19",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
       "id": "budget-current-estimate",
-      "title": "Текущая пользовательская оценка",
-      "amount": 955000,
+      "title": "Рабочее ядро детализированной сметы",
+      "amount": 992500,
       "kind": "estimate",
-      "asOf": "2026-07-14",
-      "confidence": "approximate_total_only",
-      "sourceId": "user-budget-955",
+      "asOf": "2026-07-19",
+      "confidence": "working_limits_pending_quotes",
+      "sourceId": "budget-monitor-2026-07-19",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
       "id": "budget-current-headroom",
       "title": "Остаток до лимита",
-      "amount": 45000,
+      "amount": 7500,
       "kind": "derived",
-      "asOf": "2026-07-14",
-      "sourceId": "user-budget-955",
+      "asOf": "2026-07-19",
+      "sourceId": "budget-monitor-2026-07-19",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
@@ -1040,6 +1060,23 @@
       "locator": "текущая задача Codex, 14.07.2026",
       "lastChecked": "2026-07-14",
       "freshness": "current"
+    },
+    {
+      "id": "budget-monitor-2026-07-19",
+      "title": "Детализированный монитор бюджета: 60 строк и четыре сценария",
+      "type": "dashboard_extract",
+      "locator": "data/kora35-budget.json",
+      "lastChecked": "2026-07-19",
+      "freshness": "current_working_model",
+      "caveat": "Рабочие лимиты не равны подтверждённым коммерческим предложениям."
+    },
+    {
+      "id": "dual-monitor-policy-2026-07-19",
+      "title": "Правило синхронизации версий орггруппы и заказчиков",
+      "type": "operating_rule",
+      "locator": "MONITOR_SYNC_POLICY.md",
+      "lastChecked": "2026-07-19",
+      "freshness": "current"
     }
   ],
   "updates": [
@@ -1103,6 +1140,24 @@
       "author": "Дмитрий Коган",
       "kind": "task_capture",
       "text": "В текущий контур включены клининг, автобусы, кейтеринг, сильный дождь, четыре аниматора, параллельная детская программа, значки, универсальные КОРАчки, фотоистория, пять интервью, ведущие, мастер-классы сотрудников, благотворительный уголок и волны продолжения.",
+      "status": "accepted",
+      "visibility": ["owner", "customer", "coordinator"]
+    },
+    {
+      "id": "update-2026-07-19-budget-detail",
+      "createdAt": "2026-07-19T23:45:00+03:00",
+      "author": "Дмитрий Коган / Codex",
+      "kind": "budget_update",
+      "text": "За рабочий сценарий принят детализированный бюджет 992 500 ₽ при потолке 1 000 000 ₽ и защищённом резерве 30 000 ₽. Отдельно сохранены сценарии 945 000 ₽, 1 064 500 ₽ и 1 318 300 ₽.",
+      "status": "accepted",
+      "visibility": ["owner", "customer", "coordinator"]
+    },
+    {
+      "id": "update-2026-07-19-dual-monitor-policy",
+      "createdAt": "2026-07-19T23:55:00+03:00",
+      "author": "Дмитрий Коган",
+      "kind": "decision",
+      "text": "Монитор КОРА 35 разделяется на две постоянные версии: рабочую для орггруппы и управленческую для заказчиков. Любое подтверждённое изменение проектных задач, решений, рисков, бюджета или информации для получателей сразу отражается в соответствующей версии монитора.",
       "status": "accepted",
       "visibility": ["owner", "customer", "coordinator"]
     }

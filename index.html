@@ -3,115 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>КОРА 35 · Монитор проекта</title>
-  <meta name="description" content="Визуальный монитор проекта КОРА 35">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23eaf5dc'/%3E%3Ccircle cx='44' cy='20' r='10' fill='%23ffd200'/%3E%3Cpath d='M12 46h40v8H12zM12 30h28v8H12zM12 14h18v8H12z' fill='%236fb24a'/%3E%3C/svg%3E">
+  <title>КОРА 35 · Выбор монитора</title>
+  <meta name="description" content="Две постоянно действующие версии монитора проекта КОРА 35">
   <link rel="stylesheet" href="./src/styles.css">
 </head>
-<body>
-  <header class="hero" id="top">
-    <video class="hero-media" autoplay muted loop playsinline aria-hidden="true"></video>
-    <div class="hero-fallback" aria-hidden="true"></div>
-    <div class="hero-content">
-      <p class="eyebrow">КОРА 35 · монитор проекта · обновлено 14 июля</p>
-      <h1>Корпоративный отдых на природе — без юбилейного пафоса</h1>
-      <p>16 августа на базе «Литейщик»: короткий общий сбор и благодарности, затем свободные маршруты отдыха, общения, движения и творчества. В непростое время КОРА выбирает человечность, внутреннее спокойствие и живую жизнь.</p>
-      <a class="primary-link" href="#monitor">Открыть карту штаба</a>
-    </div>
-  </header>
-
-  <main id="monitor" class="shell">
-    <aside class="sidebar" aria-label="Режимы и навигация">
-      <div class="brand-mark">КОРА 35</div>
-      <label class="field">
-        <span>Режим видимости</span>
-        <select id="roleSelect">
-          <option value="owner">Дмитрий</option>
-          <option value="customer">Заказчики</option>
-          <option value="coordinator">Координаторы</option>
-          <option value="participant">Участники</option>
-          <option value="public" selected>Публичный обзор</option>
-        </select>
-      </label>
-      <nav class="nav-list">
-        <a href="#map">Подготовка и выезд</a>
-        <a href="#wellbeing">Ценности и продолжение</a>
-        <a href="#directions">Треки</a>
-        <a href="#incoming">Комментарии</a>
-        <a href="#sources">Источники</a>
-      </nav>
-    </aside>
-
-    <section class="content">
-      <section id="map" class="panel">
-        <div class="section-head">
-          <p class="eyebrow">Уровень 1</p>
-          <h2>Подготовка, выезд 16 августа и продолжение</h2>
-        </div>
-        <div id="eventSeries"></div>
-        <div class="subsection-head">
-          <p class="eyebrow">Схема связей</p>
-          <h3>Как треки держат общий контур</h3>
-        </div>
-        <div id="projectMap"></div>
-        <div id="healthPanel"></div>
-      </section>
-
-      <section id="wellbeing" class="panel">
-        <div class="section-head">
-          <p class="eyebrow">Постоянная система</p>
-          <h2>Человечность, благодарность и живая жизнь</h2>
-        </div>
-        <div id="wellbeingMap"></div>
-      </section>
-
-      <section id="directions" class="panel">
-        <div class="section-head">
-          <p class="eyebrow">Уровень 2</p>
-          <h2>Треки проекта</h2>
-        </div>
-        <div id="directionGrid" class="direction-grid"></div>
-      </section>
-
-      <section id="detail" class="panel detail-panel" hidden>
-        <div id="detailContent"></div>
-      </section>
-
-      <section id="incoming" class="panel">
-        <div class="section-head">
-          <p class="eyebrow">Входящий поток</p>
-          <h2>Комментарии и предложения</h2>
-        </div>
-        <form id="incomingForm" class="incoming-form">
-          <label class="field">
-            <span>Тип</span>
-            <select name="kind">
-              <option value="comment">Комментарий</option>
-              <option value="idea">Идея</option>
-              <option value="risk">Риск</option>
-              <option value="role">Новая зона ответственности</option>
-              <option value="growth">Развитие сотрудника</option>
-            </select>
-          </label>
-          <label class="field field-wide">
-            <span>Текст</span>
-            <textarea name="text" rows="4" placeholder="Напишите идею, замечание или предложение"></textarea>
-          </label>
-          <button class="primary-button" type="submit">Добавить в очередь</button>
-        </form>
-        <div id="incomingQueue" class="incoming-queue"></div>
-      </section>
-
-      <section id="sources" class="panel">
-        <div class="section-head">
-          <p class="eyebrow">Свежесть</p>
-          <h2>Источники данных</h2>
-        </div>
-        <div id="sourceList" class="source-list"></div>
-      </section>
+<body class="portal-landing">
+  <main class="portal-shell">
+    <header class="portal-head">
+      <span class="brand-mark">КОРА 35</span>
+      <h1>Два рабочих контура одного проекта</h1>
+      <p>Информация обновляется из единого проектного состояния, но показывается в объёме, подходящем конкретной аудитории.</p>
+    </header>
+    <section class="portal-grid" aria-label="Версии монитора">
+      <a class="portal-card portal-card-org" href="./org/">
+        <span class="audience-tag">Орггруппа</span>
+        <h2>Рабочий монитор</h2>
+        <p>Задачи, владельцы, сроки, риски, следующие шаги и построчный бюджет.</p>
+        <strong>Открыть рабочую версию</strong>
+      </a>
+      <a class="portal-card portal-card-customer" href="./customer/">
+        <span class="audience-tag">Заказчики</span>
+        <h2>Управленческий монитор</h2>
+        <p>Статус проекта, решения, контрольные точки, риски и агрегированный бюджет.</p>
+        <strong>Открыть версию заказчиков</strong>
+      </a>
     </section>
+    <p class="portal-note">Обновлено 19 июля 2026 года · событие 16 августа · база «Литейщик»</p>
   </main>
-
-  <script type="module" src="./src/app.js"></script>
 </body>
 </html>

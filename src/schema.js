@@ -144,3 +144,31 @@ export function validateMonitorData(data) {
 
   return { ok: errors.length === 0, errors };
 }
+
+export function validateBudgetData(data) {
+  const errors = [];
+  if (!data || typeof data !== 'object') return { ok: false, errors: ['budget data must be an object'] };
+  if (!data.meta || typeof data.meta !== 'object') errors.push('budget.meta must be an object');
+  if (!hasText(data.meta?.workingScenario)) errors.push('budget.meta.workingScenario is required');
+  if (!Number.isFinite(Number(data.meta?.ceiling))) errors.push('budget.meta.ceiling must be a number');
+  const scenarios = requireArray(errors, data, 'scenarios');
+  const lines = requireArray(errors, data, 'lines');
+  const scenarioIds = validateIdSet(errors, scenarios, 'budget scenarios');
+  validateIdSet(errors, lines, 'budget lines');
+  if (data.meta?.workingScenario && !scenarioIds.has(data.meta.workingScenario)) {
+    errors.push(`budget working scenario is missing: ${data.meta.workingScenario}`);
+  }
+  for (const scenario of scenarios) {
+    if (!Number.isFinite(Number(scenario.total))) errors.push(`budget scenario ${scenario.id} total must be a number`);
+  }
+  for (const line of lines) {
+    if (!hasText(line.item)) errors.push(`budget line ${line.id || '(missing id)'} is missing item`);
+    if (!hasText(line.block)) errors.push(`budget line ${line.id || '(missing id)'} is missing block`);
+    for (const scenario of scenarios) {
+      if (!Number.isFinite(Number(line.amounts?.[scenario.id]))) {
+        errors.push(`budget line ${line.id} has no numeric amount for ${scenario.id}`);
+      }
+    }
+  }
+  return { ok: errors.length === 0, errors };
+}

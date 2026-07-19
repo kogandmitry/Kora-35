@@ -2,7 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   escapeHtml,
+  renderActionBoard,
   renderAnniversarySeries,
+  renderBudgetBoard,
+  renderDecisionBoard,
   renderDirectionCard,
   renderDirectionDetail,
   renderHealthPanel,
@@ -165,4 +168,27 @@ test('renders anniversary series with filter controls and artifacts', () => {
   assert.match(html, /1\. Уже сделано/);
   assert.match(html, /3\. Выезд и продолжение/);
   assert.ok(html.indexOf('event-stage-grid') < html.indexOf('track-legend'));
+});
+
+test('renders action board with owner and due date', () => {
+  const html = renderActionBoard({ tasks: [{ title: 'Получить КП', owner: 'Нияз', dueDate: '2026-07-20', status: 'action_needed' }], overdueCount: 0, blockedCount: 0, ownerUnknownCount: 0 });
+  assert.match(html, /Получить КП/);
+  assert.match(html, /Нияз/);
+});
+
+test('renders decision board and risk mitigation', () => {
+  const html = renderDecisionBoard({ decisions: [{ createdAt: '2026-07-19', text: 'Разделить монитор' }], risks: [{ title: 'Права GitHub', severity: 'high', mitigation: 'Выдать доступ' }] });
+  assert.match(html, /Разделить монитор/);
+  assert.match(html, /Выдать доступ/);
+});
+
+test('renders customer budget without operational table', () => {
+  const html = renderBudgetBoard({
+    scenario: { id: 'Рабочее ядро' }, scenarios: [{ id: 'Рабочее ядро', total: 992500 }], total: 992500, ceiling: 1000000,
+    headroom: 7500, participants: 300, perPerson: 3308.33, reserve: 30000, options: 0, unestimatedCount: 15,
+    blocks: [{ title: 'Питание', amount: 176500 }], lines: [], sourceVersion: 'Смета', asOf: '2026-07-19'
+  }, 'customer');
+  assert.match(html, /992 500 ₽|992 500 ₽/);
+  assert.match(html, /Версия заказчиков/);
+  assert.doesNotMatch(html, /budget-table/);
 });

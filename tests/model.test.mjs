@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  buildActionBoard,
   buildAnniversarySeries,
+  buildBudgetView,
+  buildDecisionBoard,
   buildProjectMap,
   buildWellbeingSummary,
   buildHealthSummary,
@@ -158,4 +161,37 @@ test('builds wellbeing formation summary with employee growth dimension', () => 
   const participantSummary = buildWellbeingSummary(sample, 'participant');
   assert.deepEqual(participantSummary.functions.map((item) => item.id), ['care']);
   assert.equal(participantSummary.averageFormation, 60);
+});
+
+test('builds audience action board and marks overdue tasks', () => {
+  const board = buildActionBoard(sample, 'owner', new Date('2026-07-06T12:00:00+03:00'));
+  assert.equal(board.tasks.length, 2);
+  assert.equal(board.overdueCount, 0);
+});
+
+test('builds decisions and risks for a role', () => {
+  const data = {
+    ...sample,
+    updates: [{ id: 'u1', kind: 'decision', createdAt: '2026-07-19', text: 'Решение', visibility: ['owner'] }]
+  };
+  const board = buildDecisionBoard(data, 'owner');
+  assert.equal(board.decisions.length, 1);
+  assert.equal(board.risks.length, 1);
+});
+
+test('builds detailed and customer budget views', () => {
+  const budget = {
+    meta: { workingScenario: 'Рабочее ядро', ceiling: 1000000, sourceVersion: 'test', asOf: '2026-07-19' },
+    scenarios: [{ id: 'Рабочее ядро', total: 130, participants: 10 }],
+    lines: [
+      { id: 'a', block: 'A', item: 'Ядро', type: 'ядро', priceStatus: 'лимит', amounts: { 'Рабочее ядро': 100 }, quantities: { 'Рабочее ядро': '1' } },
+      { id: 'r', block: 'Резерв', item: 'Резерв', type: 'резерв', priceStatus: 'решение', amounts: { 'Рабочее ядро': 30 }, quantities: { 'Рабочее ядро': '1' } }
+    ]
+  };
+  const org = buildBudgetView(budget, 'org', 'Рабочее ядро');
+  const customer = buildBudgetView(budget, 'customer', 'Рабочее ядро');
+  assert.equal(org.total, 130);
+  assert.equal(org.reserve, 30);
+  assert.equal(org.lines.length, 2);
+  assert.equal(customer.lines.length, 0);
 });

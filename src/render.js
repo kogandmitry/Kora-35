@@ -304,3 +304,109 @@ export function renderSourceList(sources) {
     </article>
   `).join('');
 }
+
+function formatDate(value) {
+  if (!value) return 'срок уточняется';
+  const [year, month, day] = String(value).slice(0, 10).split('-');
+  return day && month && year ? `${day}.${month}.${year}` : String(value);
+}
+
+export function renderActionBoard(board) {
+  const tasks = board.tasks || [];
+  return `
+    <div class="action-summary">
+      <article><strong>${tasks.length}</strong><span>открытых задач</span></article>
+      <article class="${board.overdueCount ? 'attention' : ''}"><strong>${board.overdueCount}</strong><span>с просроченной датой</span></article>
+      <article><strong>${board.blockedCount}</strong><span>блокеров</span></article>
+      <article><strong>${board.ownerUnknownCount}</strong><span>владельцев нужно назначить</span></article>
+    </div>
+    <div class="action-list">
+      ${tasks.length ? tasks.map((task) => `
+        <article class="action-row status-${escapeHtml(task.status)} ${task.overdue ? 'is-overdue' : ''}">
+          <span class="action-status">${escapeHtml(STATUS_LABELS[task.status] || task.status)}</span>
+          <div><strong>${escapeHtml(task.title)}</strong><small>${escapeHtml(task.owner || 'владелец уточняется')}</small></div>
+          <time datetime="${escapeHtml(task.dueDate || '')}">${task.overdue ? 'просрочено · ' : ''}${escapeHtml(formatDate(task.dueDate))}</time>
+        </article>
+      `).join('') : '<p class="empty">Нет открытых задач для этой аудитории.</p>'}
+    </div>
+  `;
+}
+
+export function renderDecisionBoard(board) {
+  return `
+    <div class="decision-grid">
+      <section>
+        <h3>Зафиксированные решения</h3>
+        <div class="decision-list">
+          ${(board.decisions || []).length ? board.decisions.map((item) => `
+            <article class="decision-item">
+              <time>${escapeHtml(formatDate(item.createdAt))}</time>
+              <p>${escapeHtml(item.text)}</p>
+            </article>
+          `).join('') : '<p class="empty">Нет новых решений.</p>'}
+        </div>
+      </section>
+      <section>
+        <h3>Ключевые риски</h3>
+        <div class="decision-list">
+          ${(board.risks || []).length ? board.risks.map((risk) => `
+            <article class="risk-item severity-${escapeHtml(risk.severity || 'medium')}">
+              <strong>${escapeHtml(risk.title)}</strong>
+              <p>${escapeHtml(risk.mitigation || 'План снижения риска уточняется.')}</p>
+            </article>
+          `).join('') : '<p class="empty">Нет открытых рисков.</p>'}
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+export function renderBudgetBoard(view, audience) {
+  if (!view) return '<p class="empty">Бюджетные данные не загрузились.</p>';
+  const maxBlock = Math.max(1, ...view.blocks.map((item) => item.amount));
+  const headroomLabel = view.headroom >= 0 ? 'свободно до потолка' : 'превышение потолка';
+  return `
+    <div class="budget-scenarios" aria-label="Сценарии бюджета">
+      ${view.scenarios.map((scenario) => `
+        <button type="button" class="budget-scenario ${scenario.id === view.scenario.id ? 'active' : ''}" data-budget-scenario="${escapeHtml(scenario.id)}" aria-pressed="${scenario.id === view.scenario.id}">
+          <span>${escapeHtml(scenario.id)}</span><strong>${formatRub(scenario.total)}</strong>
+        </button>
+      `).join('')}
+    </div>
+    <div class="budget-metrics">
+      <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>выбранный сценарий</span></article>
+      <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>потолок</span></article>
+      <article class="budget-metric ${view.headroom < 0 ? 'danger' : ''}"><strong>${formatRub(Math.abs(view.headroom))}</strong><span>${headroomLabel}</span></article>
+      <article class="budget-metric"><strong>${formatRub(view.reserve)}</strong><span>резерв</span></article>
+      <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>на участника</span></article>
+    </div>
+    <div class="budget-layout">
+      <section class="budget-blocks">
+        <h3>Бюджет по блокам</h3>
+        ${view.blocks.map((block) => `
+          <div class="budget-bar"><span>${escapeHtml(block.title)}</span><i><b style="width:${Math.max(1, block.amount / maxBlock * 100).toFixed(1)}%"></b></i><strong>${formatRub(block.amount)}</strong></div>
+        `).join('')}
+      </section>
+      <aside class="budget-note">
+        <strong>${view.unestimatedCount} неоценённых расходов</strong>
+        <p>Они сохранены в реестре, но не увеличивают сумму сценария до появления оценки.</p>
+        <small>${escapeHtml(view.sourceVersion)} · актуальность ${escapeHtml(formatDate(view.asOf))}</small>
+      </aside>
+    </div>
+    ${audience === 'org' ? `
+      <details class="budget-details" open>
+        <summary>Построчные расходы · ${view.lines.length} строк</summary>
+        <div class="budget-table-wrap">
+          <table class="budget-table">
+            <thead><tr><th>Блок</th><th>Статья</th><th>Количество</th><th>Сумма</th><th>Статус цены</th><th>Ответственный</th><th>Следующий шаг</th></tr></thead>
+            <tbody>${view.lines.map((line) => `
+              <tr class="${line.amount === 0 ? 'zero-line' : ''}">
+                <td>${escapeHtml(line.block)}</td><td><strong>${escapeHtml(line.item)}</strong>${line.parentItem ? `<small>${escapeHtml(line.parentItem)}</small>` : ''}</td><td>${escapeHtml(line.quantity)}</td><td>${line.amount ? formatRub(line.amount) : '—'}</td><td>${escapeHtml(line.priceStatus)}</td><td>${escapeHtml(line.owner)}</td><td>${escapeHtml(line.nextStep)}</td>
+              </tr>
+            `).join('')}</tbody>
+          </table>
+        </div>
+      </details>
+    ` : '<p class="customer-boundary">Версия заказчиков показывает сценарии и блоки. Построчные действия, рабочие владельцы и закупочные комментарии остаются в версии орггруппы.</p>'}
+  `;
+}

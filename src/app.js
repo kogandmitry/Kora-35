@@ -1,6 +1,9 @@
 import { validateMonitorData } from './schema.js';
 import {
+  buildActionBoard,
   buildAnniversarySeries,
+  buildBudgetView,
+  buildDecisionBoard,
   buildHealthSummary,
   buildProjectMap,
   buildWellbeingSummary,
@@ -8,7 +11,10 @@ import {
   getDirectionDetail
 } from './model.js';
 import {
+  renderActionBoard,
   renderAnniversarySeries,
+  renderBudgetBoard,
+  renderDecisionBoard,
   renderDirectionDetail,
   renderDirectionGrid,
   renderHealthPanel,
@@ -18,27 +24,28 @@ import {
   renderSourceList
 } from './render.js';
 
-const STORE_KEY = 'kora35-monitor-incoming-v1';
+const config = {
+  role: document.body.dataset.role || 'public',
+  audience: document.body.dataset.audience || 'public',
+  dataUrl: document.body.dataset.dataUrl || './data/kora35-monitor.json',
+  budgetUrl: document.body.dataset.budgetUrl || './data/kora35-budget.json'
+};
+const STORE_KEY = `kora35-monitor-incoming-v2-${config.role}`;
 const state = {
   data: null,
-  role: 'public',
+  budget: null,
+  role: config.role,
+  audience: config.audience,
+  budgetScenario: 'Рабочее ядро',
   seriesFilter: 'all',
   incoming: loadIncoming()
 };
 
-const els = {
-  roleSelect: document.querySelector('#roleSelect'),
-  healthPanel: document.querySelector('#healthPanel'),
-  eventSeries: document.querySelector('#eventSeries'),
-  projectMap: document.querySelector('#projectMap'),
-  wellbeingMap: document.querySelector('#wellbeingMap'),
-  directionGrid: document.querySelector('#directionGrid'),
-  detail: document.querySelector('#detail'),
-  detailContent: document.querySelector('#detailContent'),
-  incomingForm: document.querySelector('#incomingForm'),
-  incomingQueue: document.querySelector('#incomingQueue'),
-  sourceList: document.querySelector('#sourceList')
-};
+const els = Object.fromEntries([
+  'healthPanel', 'eventSeries', 'projectMap', 'wellbeingMap', 'directionGrid',
+  'detail', 'detailContent', 'incomingForm', 'incomingQueue', 'sourceList',
+  'actionBoard', 'decisionBoard', 'budgetBoard'
+].map((id) => [id, document.querySelector(`#${id}`)]));
 
 function loadIncoming() {
   try {
@@ -64,60 +71,68 @@ function classifyKind(kind) {
 
 function render() {
   const data = state.data;
-  const health = buildHealthSummary(data, state.role);
-  els.healthPanel.innerHTML = renderHealthPanel(health);
-  els.eventSeries.innerHTML = renderAnniversarySeries(buildAnniversarySeries(data, state.role, state.seriesFilter));
-  els.projectMap.innerHTML = renderProjectMap(buildProjectMap(data, state.role));
-  els.wellbeingMap.innerHTML = renderWellbeingMap(buildWellbeingSummary(data, state.role));
-  els.directionGrid.innerHTML = renderDirectionGrid(filterVisible(data.directions, state.role));
-  els.incomingQueue.innerHTML = renderIncomingQueue(state.incoming);
-  els.sourceList.innerHTML = renderSourceList(data.sources || []);
+  if (els.healthPanel) els.healthPanel.innerHTML = renderHealthPanel(buildHealthSummary(data, state.role));
+  if (els.eventSeries) els.eventSeries.innerHTML = renderAnniversarySeries(buildAnniversarySeries(data, state.role, state.seriesFilter));
+  if (els.projectMap) els.projectMap.innerHTML = renderProjectMap(buildProjectMap(data, state.role));
+  if (els.wellbeingMap) els.wellbeingMap.innerHTML = renderWellbeingMap(buildWellbeingSummary(data, state.role));
+  if (els.directionGrid) els.directionGrid.innerHTML = renderDirectionGrid(filterVisible(data.directions, state.role));
+  if (els.incomingQueue) els.incomingQueue.innerHTML = renderIncomingQueue(state.incoming);
+  if (els.sourceList) els.sourceList.innerHTML = renderSourceList(data.sources || []);
+  if (els.actionBoard) els.actionBoard.innerHTML = renderActionBoard(buildActionBoard(data, state.role));
+  if (els.decisionBoard) els.decisionBoard.innerHTML = renderDecisionBoard(buildDecisionBoard(data, state.role));
+  if (els.budgetBoard) els.budgetBoard.innerHTML = renderBudgetBoard(buildBudgetView(state.budget, state.audience, state.budgetScenario), state.audience);
 }
 
 function openDirection(directionId) {
+  if (!els.detail || !els.detailContent) return;
   const detail = getDirectionDetail(state.data, directionId, state.role);
   els.detail.hidden = false;
   els.detailContent.innerHTML = renderDirectionDetail(detail);
   els.detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${url}: ${response.status}`);
+  return response.json();
+}
+
 async function init() {
-  const response = await fetch('./data/kora35-monitor.json');
-  state.data = await response.json();
+  [state.data, state.budget] = await Promise.all([
+    fetchJson(config.dataUrl),
+    fetchJson(config.budgetUrl)
+  ]);
   const validation = validateMonitorData(state.data);
-  if (!validation.ok) {
-    throw new Error(validation.errors.join('\n'));
-  }
+  if (!validation.ok) throw new Error(validation.errors.join('\n'));
+  state.budgetScenario = state.budget.meta?.workingScenario || state.budgetScenario;
   render();
 }
 
-els.roleSelect.addEventListener('change', (event) => {
-  state.role = event.target.value;
-  els.detail.hidden = true;
-  state.seriesFilter = 'all';
+els.directionGrid?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-direction-id]');
+  if (button) openDirection(button.dataset.directionId);
+});
+
+els.projectMap?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-direction-id]');
+  if (button) openDirection(button.dataset.directionId);
+});
+
+els.eventSeries?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-series-filter]');
+  if (!button) return;
+  state.seriesFilter = button.dataset.seriesFilter;
   render();
 });
 
-els.directionGrid.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-direction-id]');
+els.budgetBoard?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-budget-scenario]');
   if (!button) return;
-  openDirection(button.dataset.directionId);
-});
-
-els.projectMap.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-direction-id]');
-  if (!button) return;
-  openDirection(button.dataset.directionId);
-});
-
-els.eventSeries.addEventListener('click', (event) => {
-  const filterButton = event.target.closest('[data-series-filter]');
-  if (!filterButton) return;
-  state.seriesFilter = filterButton.dataset.seriesFilter;
+  state.budgetScenario = button.dataset.budgetScenario;
   render();
 });
 
-els.incomingForm.addEventListener('submit', (event) => {
+els.incomingForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
   const text = String(form.get('text') || '').trim();

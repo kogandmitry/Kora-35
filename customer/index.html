@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>КОРА 35 · Монитор для заказчиков</title>
+  <meta name="description" content="Управленческий монитор проекта КОРА 35 для заказчиков">
+  <link rel="stylesheet" href="../src/styles.css">
+</head>
+<body data-role="customer" data-audience="customer" data-data-url="../data/kora35-monitor.json" data-budget-url="../data/kora35-budget.json">
+  <header class="hero hero-compact hero-customer" id="top">
+    <div class="hero-fallback" aria-hidden="true"></div>
+    <div class="hero-content">
+      <span class="audience-tag">Управленческая версия · заказчики</span>
+      <h1>КОРА 35 — статус и решения</h1>
+      <p>Ключевые контрольные точки, бюджет, риски и решения по выезду 16 августа.</p>
+      <a class="primary-link" href="#decisions">К решениям</a>
+    </div>
+  </header>
+  <main class="shell">
+    <aside class="sidebar" aria-label="Навигация версии заказчиков">
+      <div class="brand-mark">КОРА 35 · заказчики</div>
+      <p class="sidebar-caption">Управленческий контур без внутренней рабочей очереди орггруппы.</p>
+      <nav class="nav-list">
+        <a href="#decisions">Решения и риски</a>
+        <a href="#budget">Бюджет</a>
+        <a href="#map">Контрольные точки</a>
+        <a href="#directions">Треки</a>
+        <a href="#sources">Источники</a>
+      </nav>
+      <a class="switch-version" href="../org/">Рабочая версия ОГ</a>
+    </aside>
+    <section class="content">
+      <section id="decisions" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Управленческий фокус</p><h2>Решения и ключевые риски</h2></div></div>
+        <div id="decisionBoard"></div>
+      </section>
+      <section id="budget" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Финансовая рамка</p><h2>Бюджет по сценариям</h2></div></div>
+        <div id="budgetBoard"></div>
+      </section>
+      <section id="map" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Контрольные точки</p><h2>Подготовка, выезд и продолжение</h2></div></div>
+        <div id="eventSeries"></div>
+        <div id="healthPanel"></div>
+      </section>
+      <section id="directions" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Структура</p><h2>Треки проекта</h2></div></div>
+        <div id="directionGrid" class="direction-grid"></div>
+      </section>
+      <section id="detail" class="panel detail-panel" hidden><div id="detailContent"></div></section>
+      <section id="sources" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Свежесть</p><h2>Использованные источники</h2></div></div>
+        <div id="sourceList" class="source-list"></div>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="../src/app.js"></script>
+</body>
+</html>

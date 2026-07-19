@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>КОРА 35 · Рабочий монитор орггруппы</title>
+  <meta name="description" content="Рабочий монитор орггруппы проекта КОРА 35">
+  <link rel="stylesheet" href="../src/styles.css">
+</head>
+<body data-role="coordinator" data-audience="org" data-data-url="../data/kora35-monitor.json" data-budget-url="../data/kora35-budget.json">
+  <header class="hero hero-compact" id="top">
+    <div class="hero-fallback" aria-hidden="true"></div>
+    <div class="hero-content">
+      <span class="audience-tag">Рабочая версия · орггруппа</span>
+      <h1>КОРА 35 — штаб подготовки</h1>
+      <p>Задачи, владельцы, бюджет и риски выезда 16 августа на базе «Литейщик».</p>
+      <a class="primary-link" href="#actions">К задачам орггруппы</a>
+    </div>
+  </header>
+  <main class="shell">
+    <aside class="sidebar" aria-label="Навигация рабочей версии">
+      <div class="brand-mark">КОРА 35 · ОГ</div>
+      <p class="sidebar-caption">Оперативный контур: сроки, владельцы, КП и следующие действия.</p>
+      <nav class="nav-list">
+        <a href="#actions">Задачи</a>
+        <a href="#budget">Бюджет</a>
+        <a href="#map">Подготовка и выезд</a>
+        <a href="#directions">Треки</a>
+        <a href="#incoming">Новые сигналы</a>
+        <a href="#sources">Источники</a>
+      </nav>
+      <a class="switch-version" href="../customer/">Версия заказчиков</a>
+    </aside>
+    <section class="content">
+      <section id="actions" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Фокус орггруппы</p><h2>Действия и сроки</h2></div></div>
+        <div id="actionBoard"></div>
+      </section>
+      <section id="budget" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Рабочая смета</p><h2>Бюджет и строки расходов</h2></div></div>
+        <div id="budgetBoard"></div>
+      </section>
+      <section id="map" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Общий контур</p><h2>Подготовка, выезд и продолжение</h2></div></div>
+        <div id="eventSeries"></div>
+        <div class="subsection-head"><div><p class="eyebrow">Связи</p><h3>Как треки держат проект</h3></div></div>
+        <div id="projectMap"></div>
+        <div id="healthPanel"></div>
+      </section>
+      <section id="directions" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Детализация</p><h2>Треки проекта</h2></div></div>
+        <div id="directionGrid" class="direction-grid"></div>
+      </section>
+      <section id="detail" class="panel detail-panel" hidden><div id="detailContent"></div></section>
+      <section id="incoming" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Входящий поток</p><h2>Новые задачи, идеи и риски</h2></div></div>
+        <p class="local-warning">Запись из формы хранится только в этом браузере. После согласования Дмитрий формулирует изменение, а Codex переносит его в проектные файлы и обе версии монитора.</p>
+        <form id="incomingForm" class="incoming-form">
+          <label class="field"><span>Тип</span><select name="kind"><option value="comment">Комментарий</option><option value="idea">Идея</option><option value="risk">Риск</option><option value="role">Зона ответственности</option><option value="growth">Развитие сотрудника</option></select></label>
+          <label class="field field-wide"><span>Текст</span><textarea name="text" rows="4" placeholder="Новая задача, решение, риск или уточнение"></textarea></label>
+          <button class="primary-button" type="submit">Добавить в очередь</button>
+        </form>
+        <div id="incomingQueue" class="incoming-queue"></div>
+      </section>
+      <section id="sources" class="panel">
+        <div class="section-head"><div><p class="eyebrow">Свежесть</p><h2>Источники данных</h2></div></div>
+        <div id="sourceList" class="source-list"></div>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="../src/app.js"></script>
+</body>
+</html>

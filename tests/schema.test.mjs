@@ -5,6 +5,7 @@ import {
   ROLE_IDS,
   STATUS_IDS,
   normalizeStatus,
+  validateBudgetData,
   validateMonitorData
 } from '../src/schema.js';
 
@@ -119,4 +120,11 @@ test('rejects anniversary artifacts with missing event references', () => {
   });
   assert.equal(result.ok, false);
   assert.match(result.errors.join('\n'), /eventArtifact artifact-1 references missing event missing/);
+});
+
+test('validates detailed budget data', async () => {
+  const budget = JSON.parse(await readFile(new URL('../data/kora35-budget.json', import.meta.url), 'utf8'));
+  const result = validateBudgetData(budget);
+  assert.equal(result.ok, true, result.errors.join('\n'));
+  assert.equal(budget.lines.length, 60);
 });

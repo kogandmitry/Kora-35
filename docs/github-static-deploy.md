@@ -1,12 +1,16 @@
 # GitHub/static deployment notes
 
-This deployment is for the safe first-release prototype only.
+This deployment contains two public-safe audience views of the same project
+state. GitHub Pages does not provide access control.
 
 ## Publishable
 
 - `index.html`
+- `org/index.html`
+- `customer/index.html`
 - `src/`
 - `data/kora35-monitor.json` after removing sensitive fields
+- `data/kora35-budget.json` with public-safe planning values only
 - `assets/hero/` poster/video assets approved for public/demo use
 
 ## Not publishable
@@ -23,10 +27,23 @@ This deployment is for the safe first-release prototype only.
 1. Run `npm test`.
 2. Run `npm run validate`.
 3. Open the app locally with `npm run serve`.
-4. Switch roles: owner, customer, coordinator, participant, public.
-5. Confirm public/customer modes do not expose hidden sensitive details.
-6. Confirm the hero works without video by temporarily renaming the MP4 file.
-7. Confirm mobile layout below 390px width.
+4. Open `/org/` and `/customer/` directly.
+5. Confirm the organizer page shows detailed budget rows and the customer page
+   shows only aggregates, decisions and material risks.
+6. Confirm neither page exposes hidden sensitive details.
+7. Switch all four budget scenarios and verify totals.
+8. Confirm the hero works without video by temporarily renaming the MP4 file.
+9. Confirm mobile layout below 390px width.
+
+## Permanent paths
+
+- chooser: `https://eliseyyauezhik.github.io/Kora-35/`
+- organizer monitor: `https://eliseyyauezhik.github.io/Kora-35/org/`
+- customer monitor: `https://eliseyyauezhik.github.io/Kora-35/customer/`
+
+Do not mark the monitors current until the published commit and all three URLs
+have been checked. If GitHub write access is missing, record the publication
+gap explicitly.
 
 ## Target production path
 

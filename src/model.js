@@ -230,3 +230,72 @@ export function getDirectionDetail(data, directionId, roleId) {
     budgetItems: filterVisible(data.budgetItems, roleId).filter((item) => item.directionId === directionId || !item.directionId)
   };
 }
+
+export function buildActionBoard(data, roleId, now = new Date()) {
+  const today = now.toISOString().slice(0, 10);
+  const statusOrder = { blocked: 0, action_needed: 1, in_progress: 2, not_started: 3, done: 4, archived: 5 };
+  const tasks = filterVisible(data.tasks, roleId)
+    .filter((task) => OPEN_STATUSES.has(task.status))
+    .map((task) => ({
+      ...task,
+      overdue: Boolean(task.dueDate && task.dueDate < today)
+    }))
+    .sort((left, right) => {
+      if (left.overdue !== right.overdue) return left.overdue ? -1 : 1;
+      const statusDelta = (statusOrder[left.status] ?? 9) - (statusOrder[right.status] ?? 9);
+      if (statusDelta) return statusDelta;
+      return String(left.dueDate || '9999-12-31').localeCompare(String(right.dueDate || '9999-12-31'));
+    });
+  return {
+    tasks,
+    overdueCount: tasks.filter((task) => task.overdue).length,
+    blockedCount: tasks.filter((task) => task.status === 'blocked').length,
+    ownerUnknownCount: tasks.filter((task) => !task.owner || task.owner.includes('назначить')).length
+  };
+}
+
+export function buildDecisionBoard(data, roleId) {
+  const decisions = filterVisible(data.updates || [], roleId)
+    .filter((update) => ['decision', 'budget_update'].includes(update.kind))
+    .sort((left, right) => String(right.createdAt || '').localeCompare(String(left.createdAt || '')))
+    .slice(0, 8);
+  const risks = filterVisible(data.risks || [], roleId)
+    .filter((risk) => OPEN_STATUSES.has(risk.status))
+    .sort((left, right) => ({ high: 0, medium: 1, low: 2 }[left.severity] ?? 3) - ({ high: 0, medium: 1, low: 2 }[right.severity] ?? 3))
+    .slice(0, 8);
+  return { decisions, risks };
+}
+
+export function buildBudgetView(budget, audience, scenarioId) {
+  if (!budget) return null;
+  const scenario = budget.scenarios.find((item) => item.id === scenarioId)
+    || budget.scenarios.find((item) => item.id === budget.meta.workingScenario)
+    || budget.scenarios[0];
+  const lines = (budget.lines || []).map((line) => ({
+    ...line,
+    amount: Number(line.amounts?.[scenario.id]) || 0,
+    quantity: line.quantities?.[scenario.id] || '—'
+  }));
+  const blocks = new Map();
+  for (const line of lines) {
+    if (line.amount > 0) blocks.set(line.block, (blocks.get(line.block) || 0) + line.amount);
+  }
+  const total = lines.reduce((sum, line) => sum + line.amount, 0);
+  const ceiling = Number(budget.meta.ceiling) || 0;
+  return {
+    scenario,
+    scenarios: budget.scenarios,
+    total,
+    ceiling,
+    headroom: ceiling - total,
+    participants: Number(scenario.participants) || 1,
+    perPerson: total / (Number(scenario.participants) || 1),
+    reserve: lines.filter((line) => line.type === 'резерв').reduce((sum, line) => sum + line.amount, 0),
+    options: lines.filter((line) => line.type === 'опция').reduce((sum, line) => sum + line.amount, 0),
+    unestimatedCount: lines.filter((line) => line.type === 'неоценено' || line.priceStatus === 'не оценено').length,
+    blocks: [...blocks].map(([title, amount]) => ({ title, amount })).sort((a, b) => b.amount - a.amount),
+    lines: audience === 'org' ? lines : [],
+    sourceVersion: budget.meta.sourceVersion,
+    asOf: budget.meta.asOf
+  };
+}
