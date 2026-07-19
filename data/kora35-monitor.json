@@ -798,6 +798,16 @@
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
+      "id": "task-reconcile-user-budget-overrun",
+      "directionId": "management",
+      "subprojectId": "budget-full-closeout",
+      "title": "Согласовать сокращения или новый лимит после пользовательской редакции бюджета",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган / заказчики / финансы",
+      "dueDate": "2026-07-21",
+      "visibility": ["owner", "customer", "coordinator"]
+    },
+    {
       "id": "task-monitor-dual-sync-rule",
       "directionId": "management",
       "subprojectId": "monitor-first-release",
@@ -880,6 +890,15 @@
       "status": "done",
       "mitigation": "19 июля перенесены 60 строк, четыре сценария, статусы цен, владельцы и неоценённые расходы; дальше суммы уточняются по КП.",
       "visibility": ["owner", "customer", "coordinator"]
+    },
+    {
+      "id": "risk-budget-overrun-2026-07-20",
+      "directionId": "management",
+      "title": "Рабочий сценарий превышает бюджетный потолок на 118 300 ₽",
+      "severity": "high",
+      "status": "action_needed",
+      "mitigation": "Зафиксировать, какие новые суммы обязательны, и согласовать сокращения не менее чем на 118 300 ₽ либо повышение лимита до принятия новых обязательств.",
+      "visibility": ["owner", "customer", "coordinator"]
     }
   ],
   "budgetItems": [
@@ -888,26 +907,26 @@
       "title": "Общий бюджетный лимит",
       "amount": 1000000,
       "kind": "limit",
-      "sourceId": "budget-monitor-2026-07-19",
+      "sourceId": "user-budget-export-2026-07-20",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
       "id": "budget-current-estimate",
       "title": "Рабочее ядро детализированной сметы",
-      "amount": 992500,
+      "amount": 1118300,
       "kind": "estimate",
-      "asOf": "2026-07-19",
-      "confidence": "working_limits_pending_quotes",
-      "sourceId": "budget-monitor-2026-07-19",
+      "asOf": "2026-07-20",
+      "confidence": "user_corrected_working_limits_pending_quotes",
+      "sourceId": "user-budget-export-2026-07-20",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
       "id": "budget-current-headroom",
-      "title": "Остаток до лимита",
-      "amount": 7500,
+      "title": "Превышение лимита",
+      "amount": 118300,
       "kind": "derived",
-      "asOf": "2026-07-19",
-      "sourceId": "budget-monitor-2026-07-19",
+      "asOf": "2026-07-20",
+      "sourceId": "user-budget-export-2026-07-20",
       "visibility": ["owner", "customer", "coordinator"]
     },
     {
@@ -1092,6 +1111,15 @@
       "caveat": "Рабочие лимиты не равны подтверждённым коммерческим предложениям."
     },
     {
+      "id": "user-budget-export-2026-07-20",
+      "title": "Пользовательская редакция бюджета: 61 строка и четыре сценария",
+      "type": "user_approved_update",
+      "locator": "05_ВСТРЕЧИ_ОГ/КОРА35_БЮДЖЕТ_ПРАВКИ_ПОЛЬЗОВАТЕЛЯ_2026-07-20.json",
+      "lastChecked": "2026-07-20",
+      "freshness": "current_working_model",
+      "caveat": "Рабочий сценарий 1 118 300 ₽ превышает лимит на 118 300 ₽; оценки поставщиков требуют подтверждения."
+    },
+    {
       "id": "dual-monitor-policy-2026-07-19",
       "title": "Правило синхронизации версий орггруппы и заказчиков",
       "type": "operating_rule",
@@ -1199,6 +1227,15 @@
       "text": "Предложение режиссёру: представить документальный фильм о КОРА как одну из творческих работ сотрудников. Рабочая конструкция — около 3 минут документального пролога в начале церемонии и около 4 минут авторского финала Дмитрия в конце церемонии награждения.",
       "status": "proposed",
       "visibility": ["owner", "customer", "coordinator", "participant"]
+    },
+    {
+      "id": "update-2026-07-20-user-budget-corrections",
+      "createdAt": "2026-07-20T02:30:00+03:00",
+      "author": "Дмитрий Коган",
+      "kind": "budget_update",
+      "text": "Импортирована пользовательская редакция бюджета: изменены 9 существующих строк и добавлена строка LED-экрана 50 000 ₽. Рабочий сценарий — 1 118 300 ₽, превышение лимита 1 000 000 ₽ — 118 300 ₽; остальные три сценария оставлены без изменений.",
+      "status": "accepted",
+      "visibility": ["owner", "customer", "coordinator"]
     }
   ]
 }

@@ -13,52 +13,83 @@ if (!input) {
 }
 
 const artifact = JSON.parse(await readFile(resolve(input), 'utf8'));
-const rows = artifact?.snapshot?.datasets?.budget_scenario_items;
-if (!Array.isArray(rows) || !rows.length) {
-  console.error('budget_scenario_items dataset is missing');
-  process.exit(1);
-}
-
-const scenarioOrder = ['250 всего', 'Рабочее ядро', 'Риски площадки', 'Все опции'];
-const participants = {
+const defaultScenarioOrder = ['250 всего', 'Рабочее ядро', 'Риски площадки', 'Все опции'];
+const defaultParticipants = {
   '250 всего': 250,
   'Рабочее ядро': 300,
   'Риски площадки': 300,
   'Все опции': 300
 };
+const isEditableBackup = artifact?.version === 1 && Array.isArray(artifact.items);
+const scenarioOrder = isEditableBackup && Array.isArray(artifact.scenarios)
+  ? artifact.scenarios
+  : defaultScenarioOrder;
+const participants = isEditableBackup
+  ? { ...defaultParticipants, ...artifact.participants }
+  : defaultParticipants;
 const items = new Map();
 
-for (const row of rows) {
-  if (!items.has(row.id)) {
+if (isEditableBackup) {
+  for (const row of artifact.items) {
+    const amounts = Object.fromEntries(scenarioOrder.map((scenario) => [scenario, Number(row.amounts?.[scenario]) || 0]));
+    let priceStatus = row.price_status || 'не оценено';
+    if (priceStatus === 'не оценено' && Object.values(amounts).some((amount) => amount > 0)) {
+      priceStatus = 'задано пользователем';
+    }
     items.set(row.id, {
       id: row.id,
-      order: items.size + 1,
-      block: row.block,
-      item: String(row.item || '').replace(/^↳\s*/, ''),
-      parentItem: row.parent_item === '—' ? '' : row.parent_item,
-      type: row.type,
-      priceStatus: row.price_status,
-      owner: row.owner,
-      nextStep: row.next_step,
-      basis: row.basis,
-      sourceRef: row.source_ref,
-      amounts: Object.fromEntries(scenarioOrder.map((scenario) => [scenario, 0])),
-      quantities: Object.fromEntries(scenarioOrder.map((scenario) => [scenario, '—']))
+      order: Number(row.order) || items.size + 1,
+      block: row.block || 'Прочее',
+      item: String(row.item || '').replace(/^↳\s*/, '').trim(),
+      parentItem: row.parent_item === '—' ? '' : (row.parent_item || ''),
+      type: row.type || 'неоценено',
+      priceStatus,
+      owner: row.owner || 'не назначен',
+      nextStep: row.next_step || 'Оценить и назначить ответственного',
+      basis: row.basis || 'Пользовательская корректировка',
+      sourceRef: row.source_ref || 'Редактор КОРА 35',
+      amounts,
+      quantities: Object.fromEntries(scenarioOrder.map((scenario) => [scenario, row.quantities?.[scenario] || '—']))
     });
   }
-  const item = items.get(row.id);
-  item.amounts[row.scenario] = Number(row.amount_rub) || 0;
-  item.quantities[row.scenario] = row.quantity_label || '—';
-  if (row.scenario === 'Рабочее ядро') {
-    item.block = row.block;
-    item.item = String(row.item || '').replace(/^↳\s*/, '');
-    item.parentItem = row.parent_item === '—' ? '' : row.parent_item;
-    item.type = row.type;
-    item.priceStatus = row.price_status;
-    item.owner = row.owner;
-    item.nextStep = row.next_step;
-    item.basis = row.basis;
-    item.sourceRef = row.source_ref;
+} else {
+  const rows = artifact?.snapshot?.datasets?.budget_scenario_items;
+  if (!Array.isArray(rows) || !rows.length) {
+    console.error('budget_scenario_items dataset is missing');
+    process.exit(1);
+  }
+  for (const row of rows) {
+    if (!items.has(row.id)) {
+      items.set(row.id, {
+        id: row.id,
+        order: items.size + 1,
+        block: row.block,
+        item: String(row.item || '').replace(/^↳\s*/, ''),
+        parentItem: row.parent_item === '—' ? '' : row.parent_item,
+        type: row.type,
+        priceStatus: row.price_status,
+        owner: row.owner,
+        nextStep: row.next_step,
+        basis: row.basis,
+        sourceRef: row.source_ref,
+        amounts: Object.fromEntries(scenarioOrder.map((scenario) => [scenario, 0])),
+        quantities: Object.fromEntries(scenarioOrder.map((scenario) => [scenario, '—']))
+      });
+    }
+    const item = items.get(row.id);
+    item.amounts[row.scenario] = Number(row.amount_rub) || 0;
+    item.quantities[row.scenario] = row.quantity_label || '—';
+    if (row.scenario === 'Рабочее ядро') {
+      item.block = row.block;
+      item.item = String(row.item || '').replace(/^↳\s*/, '');
+      item.parentItem = row.parent_item === '—' ? '' : row.parent_item;
+      item.type = row.type;
+      item.priceStatus = row.price_status;
+      item.owner = row.owner;
+      item.nextStep = row.next_step;
+      item.basis = row.basis;
+      item.sourceRef = row.source_ref;
+    }
   }
 }
 
@@ -76,10 +107,12 @@ for (const line of lines) {
 const output = {
   meta: {
     title: 'КОРА 35 — бюджет выезда на базу «Литейщик»',
-    asOf: '2026-07-19',
-    sourceVersion: 'Смета 14.07.2026 + детализация монитора 19.07.2026',
-    workingScenario: 'Рабочее ядро',
-    ceiling: 1000000,
+    asOf: isEditableBackup ? '2026-07-20' : '2026-07-19',
+    sourceVersion: isEditableBackup
+      ? 'Пользовательский экспорт редактируемого бюджета 20.07.2026'
+      : 'Смета 14.07.2026 + детализация монитора 19.07.2026',
+    workingScenario: isEditableBackup ? (artifact.activeScenario || 'Рабочее ядро') : 'Рабочее ядро',
+    ceiling: isEditableBackup ? (Number(artifact.ceiling) || 1000000) : 1000000,
     participants
   },
   scenarios: scenarioOrder.map((id) => ({ id, total: totals[id], participants: participants[id] })),
