@@ -256,7 +256,7 @@ export function buildActionBoard(data, roleId, now = new Date()) {
 
 export function buildDecisionBoard(data, roleId) {
   const decisions = filterVisible(data.updates || [], roleId)
-    .filter((update) => ['decision', 'budget_update'].includes(update.kind))
+    .filter((update) => ['decision', 'budget_update', 'proposal'].includes(update.kind))
     .sort((left, right) => String(right.createdAt || '').localeCompare(String(left.createdAt || '')))
     .slice(0, 8);
   const risks = filterVisible(data.risks || [], roleId)

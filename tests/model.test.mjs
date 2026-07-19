@@ -172,10 +172,14 @@ test('builds audience action board and marks overdue tasks', () => {
 test('builds decisions and risks for a role', () => {
   const data = {
     ...sample,
-    updates: [{ id: 'u1', kind: 'decision', createdAt: '2026-07-19', text: 'Решение', visibility: ['owner'] }]
+    updates: [
+      { id: 'u1', kind: 'decision', createdAt: '2026-07-19', text: 'Решение', visibility: ['owner'] },
+      { id: 'u2', kind: 'proposal', createdAt: '2026-07-20', text: 'Предложение', visibility: ['owner'] }
+    ]
   };
   const board = buildDecisionBoard(data, 'owner');
-  assert.equal(board.decisions.length, 1);
+  assert.equal(board.decisions.length, 2);
+  assert.equal(board.decisions[0].kind, 'proposal');
   assert.equal(board.risks.length, 1);
 });
 

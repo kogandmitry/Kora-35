@@ -178,6 +178,7 @@ test('renders action board with owner and due date', () => {
 
 test('renders decision board and risk mitigation', () => {
   const html = renderDecisionBoard({ decisions: [{ createdAt: '2026-07-19', text: 'Разделить монитор' }], risks: [{ title: 'Права GitHub', severity: 'high', mitigation: 'Выдать доступ' }] });
+  assert.match(html, /Решения и предложения/);
   assert.match(html, /Разделить монитор/);
   assert.match(html, /Выдать доступ/);
 });

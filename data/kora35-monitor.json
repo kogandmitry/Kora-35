@@ -5,7 +5,7 @@
     "subtitle": "Летний корпоративный выезд как пространство человечности, благодарности и живой жизни",
     "eventDate": "2026-08-16",
     "eventDateLabel": "16 августа",
-    "lastUpdated": "2026-07-19",
+    "lastUpdated": "2026-07-20",
     "status": "action_needed",
     "confidence": "partial",
     "summary": "35-летие остается поводом собраться, но формат главного дня — не торжественный юбилей, а корпоративный отдых на природе на базе «Литейщик»."
@@ -288,6 +288,18 @@
       "filterIds": ["events", "employee-wellbeing", "artifacts"],
       "wellbeingFunctionIds": ["recognition", "continuity", "communication-memory"],
       "visibility": ["owner", "customer", "coordinator", "participant", "public"]
+    },
+    {
+      "id": "artifact-film-as-employee-work",
+      "eventId": "event-main-august-16",
+      "title": "Фильм о КОРА как творческая работа сотрудников",
+      "kind": "creative_work",
+      "status": "action_needed",
+      "summary": "Предложение режиссёру: показать фильм как один из праздничных артефактов сотрудников — около 3 минут документального пролога в начале церемонии и около 4 минут авторского финала Дмитрия после награждения.",
+      "trackIds": ["communications", "recognition", "wellbeing-system"],
+      "filterIds": ["artifacts", "events", "decisions"],
+      "wellbeingFunctionIds": ["recognition", "communication-memory", "continuity"],
+      "visibility": ["owner", "customer", "coordinator", "participant"]
     },
     {
       "id": "artifact-organizer-retro",
@@ -794,6 +806,15 @@
       "owner": "Codex / все агенты проекта",
       "dueDate": "2026-07-19",
       "visibility": ["owner", "customer", "coordinator"]
+    },
+    {
+      "id": "task-film-as-employee-artifact",
+      "directionId": "communications",
+      "title": "Согласовать с режиссёром фильм как творческий артефакт сотрудников и двухчастный показ 3 + 4 минуты",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган / режиссёр фильма / медиакуратор",
+      "summary": "Получить короткий тритмент: связь пролога и финала, материалы, авторский состав, права и дата чернового монтажа.",
+      "visibility": ["owner", "customer", "coordinator"]
     }
   ],
   "risks": [
@@ -1077,6 +1098,15 @@
       "locator": "MONITOR_SYNC_POLICY.md",
       "lastChecked": "2026-07-19",
       "freshness": "current"
+    },
+    {
+      "id": "director-film-proposal-2026-07-20",
+      "title": "Предложение режиссёру: фильм о КОРА как творческая работа сотрудников",
+      "type": "file",
+      "locator": "../07_КОНТЕНТ/ПРЕДЛОЖЕНИЕ_РЕЖИССЕРУ_ФИЛЬМА_О_КОРА.md",
+      "lastChecked": "2026-07-20",
+      "freshness": "current_proposal",
+      "caveat": "Структура 3 + 4 минуты требует ответа режиссёра и не меняет бюджет автоматически."
     }
   ],
   "updates": [
@@ -1160,6 +1190,15 @@
       "text": "Монитор КОРА 35 разделяется на две постоянные версии: рабочую для орггруппы и управленческую для заказчиков. Любое подтверждённое изменение проектных задач, решений, рисков, бюджета или информации для получателей сразу отражается в соответствующей версии монитора.",
       "status": "accepted",
       "visibility": ["owner", "customer", "coordinator"]
+    },
+    {
+      "id": "update-2026-07-20-film-employee-artifact",
+      "createdAt": "2026-07-20T02:15:00+03:00",
+      "author": "Дмитрий Коган",
+      "kind": "proposal",
+      "text": "Предложение режиссёру: представить документальный фильм о КОРА как одну из творческих работ сотрудников. Рабочая конструкция — около 3 минут документального пролога в начале церемонии и около 4 минут авторского финала Дмитрия в конце церемонии награждения.",
+      "status": "proposed",
+      "visibility": ["owner", "customer", "coordinator", "participant"]
     }
   ]
 }

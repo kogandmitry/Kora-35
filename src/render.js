@@ -336,7 +336,7 @@ export function renderDecisionBoard(board) {
   return `
     <div class="decision-grid">
       <section>
-        <h3>Зафиксированные решения</h3>
+        <h3>Решения и предложения</h3>
         <div class="decision-list">
           ${(board.decisions || []).length ? board.decisions.map((item) => `
             <article class="decision-item">
