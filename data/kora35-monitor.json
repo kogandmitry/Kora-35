@@ -1574,13 +1574,12 @@
       "id": "task-accounting-liteyshchik-deposit",
       "directionId": "management",
       "subprojectId": "liteyshchik-operations",
-      "title": "Получить в бухгалтерии 5 000 ₽ на задаток базе «Литейщик»",
+      "title": "Позвонить бухгалтеру базы «Литейщик»: уточнить итоговую сумму, размер и порядок передачи задатка",
       "status": "action_needed",
-      "owner": "Дмитрий Коган / бухгалтерия",
-      "dueDate": "2026-07-20",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-22",
       "visibility": [
         "owner",
-        "customer",
         "coordinator"
       ]
     },
@@ -1722,6 +1721,31 @@
         "owner",
         "customer",
         "coordinator"
+      ]
+    },
+    {
+      "id": "task-dmitry-korachki-letter-2026-07-22",
+      "directionId": "recognition",
+      "subprojectId": "recognition-production",
+      "title": "Подготовить и согласовать текст письма-вкладыша для КОРАчек",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-22",
+      "visibility": [
+        "owner",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-dmitry-gift-evgenia-senina-2026-07-22",
+      "directionId": "management",
+      "subprojectId": "track-curators",
+      "title": "Подготовить подарок для Евгении Сениной: доступ к нейросети, микрообучение и занавеска от солнца для кабинета",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-22",
+      "visibility": [
+        "owner"
       ]
     }
   ],
@@ -2573,6 +2597,17 @@
       "visibility": [
         "owner",
         "coordinator"
+      ]
+    },
+    {
+      "id": "update-dmitry-tasks-2026-07-22",
+      "createdAt": "2026-07-21T18:00:00+03:00",
+      "author": "Дмитрий Коган",
+      "kind": "task_capture",
+      "text": "На 22 июля добавлены задачи Дмитрия Когана: звонок бухгалтеру базы «Литейщик» по сумме и задатку, письмо-вкладыш для КОРАчек и личное поручение по подарку Евгении Сениной.",
+      "status": "accepted",
+      "visibility": [
+        "owner"
       ]
     }
   ],

@@ -35,6 +35,18 @@ test('validates seeded monitor data', async () => {
   assert.equal(data.teamFunctions.find((item) => item.id === 'igor')?.eventFunctions.includes('ремонт ноутбука'), false);
   assert.equal(data.tasks.some((item) => item.id === 'task-igor-laptop'), false);
   assert.equal(data.tasks.find((item) => item.id === 'task-igor-event-site-control')?.owner, 'Игорь Коган / Дмитрий Коган');
+  assert.deepEqual(
+    [
+      'task-accounting-liteyshchik-deposit',
+      'task-dmitry-korachki-letter-2026-07-22',
+      'task-dmitry-gift-evgenia-senina-2026-07-22'
+    ].map((id) => data.tasks.find((item) => item.id === id)?.dueDate),
+    ['2026-07-22', '2026-07-22', '2026-07-22']
+  );
+  assert.deepEqual(
+    data.tasks.find((item) => item.id === 'task-dmitry-gift-evgenia-senina-2026-07-22')?.visibility,
+    ['owner']
+  );
   assert.equal(data.budgetItems.find((item) => item.id === 'budget-current-estimate')?.amount, 933400);
   assert.equal(data.budgetItems.find((item) => item.id === 'budget-with-additional')?.amount, 1003400);
 });
