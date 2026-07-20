@@ -311,8 +311,31 @@ function formatDate(value) {
   return day && month && year ? `${day}.${month}.${year}` : String(value);
 }
 
-export function renderActionBoard(board) {
+function formatTaskCount(value) {
+  const count = Number(value) || 0;
+  const mod100 = count % 100;
+  const mod10 = count % 10;
+  const noun = mod100 >= 11 && mod100 <= 14 ? 'задач' : mod10 === 1 ? 'задача' : mod10 >= 2 && mod10 <= 4 ? 'задачи' : 'задач';
+  return `${count} ${noun}`;
+}
+
+export function renderActionBoard(board, grouping = 'track') {
   const tasks = board.tasks || [];
+  const activeGrouping = grouping === 'owner' ? 'owner' : 'track';
+  const groups = board.groups?.[activeGrouping] || (tasks.length ? [{ id: 'all', title: 'Все задачи', tasks }] : []);
+  const renderTask = (task) => `
+    <article class="action-row status-${escapeHtml(task.status)} ${task.overdue ? 'is-overdue' : ''}">
+      <span class="action-status">${escapeHtml(STATUS_LABELS[task.status] || task.status)}</span>
+      <div class="action-task-main">
+        <strong>${escapeHtml(task.title)}</strong>
+        <div class="action-meta">
+          <small><b>Трек:</b> ${escapeHtml(task.directionTitle || 'Без трека')}</small>
+          <small><b>Ответственные:</b> ${escapeHtml(task.owner || 'владелец уточняется')}</small>
+        </div>
+      </div>
+      <time datetime="${escapeHtml(task.dueDate || '')}">${task.overdue ? 'просрочено · ' : ''}${escapeHtml(formatDate(task.dueDate))}</time>
+    </article>
+  `;
   return `
     <div class="action-summary">
       <article><strong>${tasks.length}</strong><span>открытых задач</span></article>
@@ -320,13 +343,17 @@ export function renderActionBoard(board) {
       <article><strong>${board.blockedCount}</strong><span>блокеров</span></article>
       <article><strong>${board.ownerUnknownCount}</strong><span>владельцев нужно назначить</span></article>
     </div>
-    <div class="action-list">
-      ${tasks.length ? tasks.map((task) => `
-        <article class="action-row status-${escapeHtml(task.status)} ${task.overdue ? 'is-overdue' : ''}">
-          <span class="action-status">${escapeHtml(STATUS_LABELS[task.status] || task.status)}</span>
-          <div><strong>${escapeHtml(task.title)}</strong><small>${escapeHtml(task.owner || 'владелец уточняется')}</small></div>
-          <time datetime="${escapeHtml(task.dueDate || '')}">${task.overdue ? 'просрочено · ' : ''}${escapeHtml(formatDate(task.dueDate))}</time>
-        </article>
+    <div class="action-group-controls" role="group" aria-label="Группировка задач">
+      <span>Показать задачи:</span>
+      <button type="button" class="action-group-button" data-action-group="track" aria-pressed="${activeGrouping === 'track'}">По трекам</button>
+      <button type="button" class="action-group-button" data-action-group="owner" aria-pressed="${activeGrouping === 'owner'}">По ответственным</button>
+    </div>
+    <div class="action-groups" data-action-group-view="${activeGrouping}">
+      ${groups.length ? groups.map((group) => `
+        <details class="action-group" open style="--action-group-color:${escapeHtml(group.color || '#8fac45')}">
+          <summary><strong>${escapeHtml(group.title)}</strong><span>${formatTaskCount(group.tasks.length)}</span></summary>
+          <div class="action-list">${group.tasks.map(renderTask).join('')}</div>
+        </details>
       `).join('') : '<p class="empty">Нет открытых задач для этой аудитории.</p>'}
     </div>
   `;

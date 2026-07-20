@@ -234,20 +234,51 @@ export function getDirectionDetail(data, directionId, roleId) {
 export function buildActionBoard(data, roleId, now = new Date()) {
   const today = now.toISOString().slice(0, 10);
   const statusOrder = { blocked: 0, action_needed: 1, in_progress: 2, not_started: 3, done: 4, archived: 5 };
+  const visibleDirections = filterVisible(data.directions, roleId);
+  const directionById = new Map(visibleDirections.map((direction, index) => [direction.id, { ...direction, sortOrder: index }]));
+  const primaryOwner = (owner) => String(owner || '').split('/').map((part) => part.trim()).find(Boolean) || 'Не назначен';
   const tasks = filterVisible(data.tasks, roleId)
     .filter((task) => OPEN_STATUSES.has(task.status))
-    .map((task) => ({
-      ...task,
-      overdue: Boolean(task.dueDate && task.dueDate < today)
-    }))
+    .map((task) => {
+      const direction = directionById.get(task.directionId);
+      return {
+        ...task,
+        directionTitle: direction?.title || 'Без трека',
+        directionColor: direction?.color || '#8fac45',
+        directionSortOrder: direction?.sortOrder ?? 999,
+        ownerGroup: primaryOwner(task.owner),
+        overdue: Boolean(task.dueDate && task.dueDate < today)
+      };
+    })
     .sort((left, right) => {
       if (left.overdue !== right.overdue) return left.overdue ? -1 : 1;
       const statusDelta = (statusOrder[left.status] ?? 9) - (statusOrder[right.status] ?? 9);
       if (statusDelta) return statusDelta;
       return String(left.dueDate || '9999-12-31').localeCompare(String(right.dueDate || '9999-12-31'));
     });
+
+  const groupTasks = (items, keyFor, titleFor) => {
+    const groups = new Map();
+    for (const task of items) {
+      const key = keyFor(task);
+      if (!groups.has(key)) groups.set(key, { id: key, title: titleFor(task), tasks: [] });
+      groups.get(key).tasks.push(task);
+    }
+    return [...groups.values()];
+  };
+  const trackGroups = groupTasks(tasks, (task) => task.directionId || 'without-track', (task) => task.directionTitle)
+    .map((group) => ({
+      ...group,
+      color: group.tasks[0]?.directionColor || '#8fac45',
+      sortOrder: group.tasks[0]?.directionSortOrder ?? 999
+    }))
+    .sort((left, right) => left.sortOrder - right.sortOrder || left.title.localeCompare(right.title, 'ru'));
+  const ownerGroups = groupTasks(tasks, (task) => task.ownerGroup, (task) => task.ownerGroup)
+    .sort((left, right) => right.tasks.length - left.tasks.length || left.title.localeCompare(right.title, 'ru'));
+
   return {
     tasks,
+    groups: { track: trackGroups, owner: ownerGroups },
     overdueCount: tasks.filter((task) => task.overdue).length,
     blockedCount: tasks.filter((task) => task.status === 'blocked').length,
     ownerUnknownCount: tasks.filter((task) => !task.owner || task.owner.includes('назначить')).length

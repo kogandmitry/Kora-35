@@ -171,9 +171,24 @@ test('renders anniversary series with filter controls and artifacts', () => {
 });
 
 test('renders action board with owner and due date', () => {
-  const html = renderActionBoard({ tasks: [{ title: 'Получить КП', owner: 'Нияз', dueDate: '2026-07-20', status: 'action_needed' }], overdueCount: 0, blockedCount: 0, ownerUnknownCount: 0 });
+  const task = { title: 'Получить КП', owner: 'Нияз', directionTitle: 'Программа', dueDate: '2026-07-20', status: 'action_needed' };
+  const board = {
+    tasks: [task],
+    groups: {
+      track: [{ id: 'program', title: 'Программа', color: '#6fb24a', tasks: [task] }],
+      owner: [{ id: 'Нияз', title: 'Нияз', tasks: [task] }]
+    },
+    overdueCount: 0,
+    blockedCount: 0,
+    ownerUnknownCount: 0
+  };
+  const html = renderActionBoard(board, 'track');
   assert.match(html, /Получить КП/);
   assert.match(html, /Нияз/);
+  assert.match(html, /По трекам/);
+  assert.match(html, /1 задача/);
+  assert.match(html, /data-action-group-view="track"/);
+  assert.match(renderActionBoard(board, 'owner'), /data-action-group-view="owner"/);
 });
 
 test('renders decision board and risk mitigation', () => {

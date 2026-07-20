@@ -879,6 +879,64 @@ textarea {
 .action-summary article.attention { background: #fff0e7; }
 .action-summary strong { color: var(--ink); font-size: 30px; }
 .action-summary span { color: var(--muted); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+.action-group-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+.action-group-controls > span {
+  margin-right: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.action-group-button {
+  min-height: 38px;
+  border: 1px solid #cbdabc;
+  border-radius: 6px;
+  padding: 0 12px;
+  color: var(--ink);
+  background: var(--white);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.action-group-button[aria-pressed="true"] {
+  border-color: #9bbb43;
+  background: #fff4b7;
+}
+.action-groups { display: grid; gap: 12px; }
+.action-group {
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--action-group-color, var(--green));
+  border-radius: 8px;
+  background: #f8fbf4;
+}
+.action-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 14px;
+  color: var(--ink);
+  cursor: pointer;
+  list-style-position: inside;
+}
+.action-group > summary strong { font-size: 17px; }
+.action-group > summary span {
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: var(--muted);
+  background: var(--white);
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.action-group > .action-list { padding: 0 10px 10px; }
 .action-list { display: grid; gap: 8px; }
 .action-row {
   display: grid;
@@ -896,7 +954,10 @@ textarea {
 .action-row.is-overdue { border-left-color: var(--danger); }
 .action-status { color: var(--muted); font-size: 11px; font-weight: 900; text-transform: uppercase; }
 .action-row strong { display: block; color: var(--ink); line-height: 1.35; }
-.action-row small { display: block; margin-top: 4px; color: var(--muted); }
+.action-task-main { min-width: 0; }
+.action-meta { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 5px; }
+.action-row small { color: var(--muted); }
+.action-row small b { color: #597152; }
 .action-row time { color: var(--muted); font-size: 12px; font-weight: 800; text-align: right; }
 .action-row.is-overdue time { color: var(--danger); }
 

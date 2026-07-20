@@ -37,6 +37,7 @@ const state = {
   role: config.role,
   audience: config.audience,
   budgetScenario: 'Рабочее ядро',
+  actionGrouping: 'track',
   seriesFilter: 'all',
   incoming: loadIncoming()
 };
@@ -78,7 +79,7 @@ function render() {
   if (els.directionGrid) els.directionGrid.innerHTML = renderDirectionGrid(filterVisible(data.directions, state.role));
   if (els.incomingQueue) els.incomingQueue.innerHTML = renderIncomingQueue(state.incoming);
   if (els.sourceList) els.sourceList.innerHTML = renderSourceList(data.sources || []);
-  if (els.actionBoard) els.actionBoard.innerHTML = renderActionBoard(buildActionBoard(data, state.role));
+  if (els.actionBoard) els.actionBoard.innerHTML = renderActionBoard(buildActionBoard(data, state.role), state.actionGrouping);
   if (els.decisionBoard) els.decisionBoard.innerHTML = renderDecisionBoard(buildDecisionBoard(data, state.role));
   if (els.budgetBoard) els.budgetBoard.innerHTML = renderBudgetBoard(buildBudgetView(state.budget, state.audience, state.budgetScenario), state.audience);
 }
@@ -129,6 +130,13 @@ els.budgetBoard?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-budget-scenario]');
   if (!button) return;
   state.budgetScenario = button.dataset.budgetScenario;
+  render();
+});
+
+els.actionBoard?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-action-group]');
+  if (!button) return;
+  state.actionGrouping = button.dataset.actionGroup;
   render();
 });
 

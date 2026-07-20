@@ -26,8 +26,8 @@ const sample = {
     { id: 's1', directionId: 'a', title: 'S1', status: 'action_needed', visibility: ['owner', 'participant'] }
   ],
   tasks: [
-    { id: 't1', directionId: 'a', status: 'action_needed', visibility: ['owner', 'participant'] },
-    { id: 't2', directionId: 'b', status: 'blocked', visibility: ['owner'] }
+    { id: 't1', directionId: 'a', owner: 'Нияз / программа', status: 'action_needed', visibility: ['owner', 'participant'] },
+    { id: 't2', directionId: 'b', owner: 'Дмитрий Коган', status: 'blocked', visibility: ['owner'] }
   ],
   risks: [{ id: 'r1', directionId: 'b', status: 'action_needed', visibility: ['owner'] }],
   budgetItems: [
@@ -167,6 +167,9 @@ test('builds audience action board and marks overdue tasks', () => {
   const board = buildActionBoard(sample, 'owner', new Date('2026-07-06T12:00:00+03:00'));
   assert.equal(board.tasks.length, 2);
   assert.equal(board.overdueCount, 0);
+  assert.deepEqual(board.groups.track.map((group) => group.title), ['A', 'B']);
+  assert.deepEqual(board.groups.owner.map((group) => group.title), ['Дмитрий Коган', 'Нияз']);
+  assert.equal(board.tasks[0].directionTitle, 'B');
 });
 
 test('builds decisions and risks for a role', () => {
