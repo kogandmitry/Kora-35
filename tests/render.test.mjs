@@ -12,6 +12,7 @@ import {
   renderHealthPanel,
   renderIncomingQueue,
   renderProjectMap,
+  renderTeamFunctionsBoard,
   renderWellbeingMap,
   renderSourceList,
   renderTrackProgress
@@ -177,7 +178,7 @@ test('renders anniversary series with filter controls and artifacts', () => {
 });
 
 test('renders action board with owner and due date', () => {
-  const task = { title: 'Получить КП', owner: 'Нияз', directionTitle: 'Программа', dueDate: '2026-07-20', status: 'action_needed' };
+  const task = { id: 'task-quote', title: 'Получить КП', owner: 'Нияз', directionTitle: 'Программа', dueDate: '2026-07-20', status: 'action_needed' };
   const board = {
     tasks: [task],
     groups: {
@@ -197,12 +198,47 @@ test('renders action board with owner and due date', () => {
   assert.match(html, /По трекам/);
   assert.match(html, /1 задача/);
   assert.match(html, /data-action-group-view="track"/);
+  assert.match(html, /data-task-status="done"/);
+  assert.match(html, /✓ Выполнена/);
+  assert.match(html, /data-task-status="archived"/);
   const ownerHtml = renderActionBoard(board, 'owner');
   assert.match(ownerHtml, /data-action-group-view="owner"/);
   assert.match(ownerHtml, /Нияз Кашапов/);
   assert.match(ownerHtml, /координация активностей на базе/);
   assert.match(ownerHtml, /Игорь Коган/);
   assert.match(ownerHtml, /Открытых задач сейчас нет/);
+});
+
+test('renders locally closed tasks with restore control', () => {
+  const html = renderActionBoard({
+    tasks: [],
+    groups: { owner: [], track: [] },
+    overdueCount: 0,
+    blockedCount: 0,
+    ownerUnknownCount: 0
+  }, 'owner', [], [{ id: 'task-done', title: 'Готовая задача', status: 'done' }]);
+  assert.match(html, /Закрыто в этом браузере · 1/);
+  assert.match(html, /Готовая задача/);
+  assert.match(html, /data-task-status="restore"/);
+});
+
+test('hides the surname placeholder in organizer headings', () => {
+  const boardHtml = renderActionBoard({
+    tasks: [],
+    groups: { owner: [{ id: 'guzel', title: 'Гузель (фамилия уточняется)', currentRole: 'Коммуникации', tasks: [] }], track: [] },
+    overdueCount: 0,
+    blockedCount: 0,
+    ownerUnknownCount: 0
+  }, 'owner');
+  const teamHtml = renderTeamFunctionsBoard({
+    items: [{ name: 'Гузель (фамилия уточняется)', currentRole: 'Коммуникации', eventFunctions: [], futureFunctions: [], status: 'active' }],
+    activeCount: 1,
+    confirmationCount: 0,
+    futureFunctionCount: 0
+  });
+  assert.match(boardHtml, />Гузель</);
+  assert.match(teamHtml, />Гузель</);
+  assert.doesNotMatch(`${boardHtml}${teamHtml}`, /фамилия уточняется/);
 });
 
 test('renders compact track progress with direct values', () => {

@@ -16,6 +16,10 @@ export function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+function displayPersonName(value) {
+  return String(value || '').replace(/\s*\(фамилия уточняется\)\s*/giu, '').trim();
+}
+
 function formatRub(value) {
   return `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(Number(value || 0))} ₽`;
 }
@@ -375,7 +379,7 @@ export function renderChildrenJourney(journey) {
   `;
 }
 
-export function renderActionBoard(board, grouping = 'owner', taskComments = []) {
+export function renderActionBoard(board, grouping = 'owner', taskComments = [], locallyClosedTasks = []) {
   const tasks = board.tasks || [];
   const activeGrouping = grouping === 'owner' ? 'owner' : 'track';
   const groups = board.groups?.[activeGrouping] || (tasks.length ? [{ id: 'all', title: 'Все задачи', tasks }] : []);
@@ -397,19 +401,25 @@ export function renderActionBoard(board, grouping = 'owner', taskComments = []) 
         </div>
         <time datetime="${escapeHtml(task.dueDate || '')}">${task.overdue ? 'просрочено · ' : ''}${escapeHtml(formatDate(task.dueDate))}</time>
       </div>
-      <details class="task-comments">
-        <summary>＋ Прокомментировать${commentsByTask.get(task.id)?.length ? ` · ${commentsByTask.get(task.id).length}` : ''}</summary>
-        <form class="task-comment-form" data-task-comment-form data-task-id="${escapeHtml(task.id)}">
-          <label><span>Имя</span><input name="author" autocomplete="name" placeholder="Участник орггруппы"></label>
-          <label><span>Комментарий</span><textarea name="comment" rows="2" required placeholder="Идея, уточнение или предложение по этой задаче"></textarea></label>
-          <button type="submit">Добавить комментарий</button>
-        </form>
-        <div class="task-comment-list">
-          ${(commentsByTask.get(task.id) || []).map((comment) => `
-            <article><strong>${escapeHtml(comment.author || 'Орггруппа')}</strong><p>${escapeHtml(comment.text)}</p><small>${escapeHtml(comment.createdAt)}</small></article>
-          `).join('')}
+      <div class="task-action-tools">
+        <details class="task-comments">
+          <summary>＋ Прокомментировать${commentsByTask.get(task.id)?.length ? ` · ${commentsByTask.get(task.id).length}` : ''}</summary>
+          <form class="task-comment-form" data-task-comment-form data-task-id="${escapeHtml(task.id)}">
+            <label><span>Имя</span><input name="author" autocomplete="name" placeholder="Участник орггруппы"></label>
+            <label><span>Комментарий</span><textarea name="comment" rows="2" required placeholder="Идея, уточнение или предложение по этой задаче"></textarea></label>
+            <button type="submit">Добавить комментарий</button>
+          </form>
+          <div class="task-comment-list">
+            ${(commentsByTask.get(task.id) || []).map((comment) => `
+              <article><strong>${escapeHtml(comment.author || 'Орггруппа')}</strong><p>${escapeHtml(comment.text)}</p><small>${escapeHtml(comment.createdAt)}</small></article>
+            `).join('')}
+          </div>
+        </details>
+        <div class="task-status-controls" role="group" aria-label="Изменить статус задачи">
+          <button type="button" class="task-status-button is-done" data-task-status="done" data-task-id="${escapeHtml(task.id)}">✓ Выполнена</button>
+          <button type="button" class="task-status-button is-archive" data-task-status="archived" data-task-id="${escapeHtml(task.id)}">В архив</button>
         </div>
-      </details>
+      </div>
     </article>
   `;
   return `
@@ -419,7 +429,7 @@ export function renderActionBoard(board, grouping = 'owner', taskComments = []) 
       <article><strong>${board.blockedCount}</strong><span>блокеров</span></article>
       <article><strong>${board.ownerUnknownCount}</strong><span>владельцев нужно назначить</span></article>
     </div>
-    <p class="task-comment-warning">Комментарии сохраняются только в этом браузере. После согласования они переносятся в канонические задачи проекта и обе версии монитора.</p>
+    <p class="task-comment-warning">Комментарии и изменения статусов сохраняются только в этом браузере. После согласования они переносятся в канонические задачи проекта и соответствующую версию монитора.</p>
     <div class="action-group-controls" role="group" aria-label="Группировка задач">
       <span>Сгруппировать:</span>
       <button type="button" class="action-group-button" data-action-group="owner" aria-pressed="${activeGrouping === 'owner'}">По ответственным</button>
@@ -430,7 +440,7 @@ export function renderActionBoard(board, grouping = 'owner', taskComments = []) 
         <details class="action-group ${activeGrouping === 'owner' ? 'owner-action-card' : ''}" style="--action-group-color:${escapeHtml(group.color || '#8fac45')}">
           <summary>
             <div class="action-owner-summary">
-              <strong>${escapeHtml(group.title)}</strong>
+              <strong>${escapeHtml(displayPersonName(group.title))}</strong>
               ${activeGrouping === 'owner' ? `<small>${escapeHtml(group.currentRole || 'Функциональная роль уточняется')}</small>${group.functions?.length ? `<em>${group.functions.slice(0, 4).map(escapeHtml).join(' · ')}</em>` : ''}${group.statusLabel ? `<em class="owner-status-label">${escapeHtml(group.statusLabel)}</em>` : ''}` : ''}
             </div>
             <span>${formatTaskCount(group.tasks.length)}</span>
@@ -439,6 +449,19 @@ export function renderActionBoard(board, grouping = 'owner', taskComments = []) 
         </details>
       `).join('') : '<p class="empty">Нет открытых задач для этой аудитории.</p>'}
     </div>
+    ${locallyClosedTasks.length ? `
+      <details class="locally-closed-tasks">
+        <summary>Закрыто в этом браузере · ${locallyClosedTasks.length}</summary>
+        <div>
+          ${locallyClosedTasks.map((task) => `
+            <article>
+              <div><span>${escapeHtml(STATUS_LABELS[task.status] || task.status)}</span><strong>${escapeHtml(task.title)}</strong></div>
+              <button type="button" data-task-status="restore" data-task-id="${escapeHtml(task.id)}">Вернуть в работу</button>
+            </article>
+          `).join('')}
+        </div>
+      </details>
+    ` : ''}
   `;
 }
 
@@ -454,7 +477,7 @@ export function renderTeamFunctionsBoard(view) {
     <div class="team-function-grid">
       ${items.map((item) => `
         <article class="team-function-card status-${escapeHtml(item.status || 'potential')}">
-          <div class="team-function-head"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.currentRole)}</span></div><em>${escapeHtml(item.statusLabel || item.status)}</em></div>
+          <div class="team-function-head"><div><strong>${escapeHtml(displayPersonName(item.name))}</strong><span>${escapeHtml(item.currentRole)}</span></div><em>${escapeHtml(item.statusLabel || item.status)}</em></div>
           <section><h3>На выезде</h3><ul>${(item.eventFunctions || []).map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul></section>
           <section class="future-functions"><h3>После мероприятия</h3><ul>${(item.futureFunctions || []).map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul></section>
           <p><b>Подтверждение:</b> ${escapeHtml(item.confirmation || 'требуется')}</p>

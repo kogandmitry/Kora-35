@@ -75,6 +75,15 @@ test('keeps the customer monitor focused on track readiness and aggregate budget
   assert.doesNotMatch(html, /childrenJourneyBoard/);
 });
 
+test('keeps the org monitor headings concise', async () => {
+  const html = await readFile(new URL('../org/index.html', import.meta.url), 'utf8');
+  assert.match(html, /<h1>КОРА 35<br>штаб подготовки<\/h1>/);
+  assert.match(html, /<h2>Состояние проекта<\/h2>/);
+  assert.match(html, /<h2>Команда проекта<\/h2>/);
+  assert.doesNotMatch(html, /Степень реализации по трекам/);
+  assert.doesNotMatch(html, /Люди и продолжение/);
+});
+
 test('rejects missing project title', () => {
   const result = validateMonitorData({ project: {}, directions: [], subprojects: [], tasks: [], risks: [], updates: [] });
   assert.equal(result.ok, false);
