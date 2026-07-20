@@ -35,6 +35,11 @@ test('validates seeded monitor data', async () => {
   assert.equal(data.teamFunctions.find((item) => item.id === 'igor')?.eventFunctions.includes('ремонт ноутбука'), false);
   assert.equal(data.tasks.some((item) => item.id === 'task-igor-laptop'), false);
   assert.equal(data.tasks.find((item) => item.id === 'task-igor-event-site-control')?.owner, 'Игорь Коган / Дмитрий Коган');
+  const seninaLetterTask = data.tasks.find((item) => item.id === 'task-senina-thank-you-letter-layout');
+  assert.equal(seninaLetterTask?.owner, 'Евгения Сенина / Дмитрий Коган');
+  assert.match(seninaLetterTask?.title || '', /фотографию коллектива с 30-летия КОРА, снятую квадрокоптером/);
+  assert.match(seninaLetterTask?.title || '', /от имени коллектива, а не директоров/);
+  assert.equal(data.teamFunctions.find((item) => item.id === 'evgenia-senina')?.eventFunctions.includes('макет благодарственного письма'), true);
   assert.deepEqual(
     [
       'task-accounting-liteyshchik-deposit',
