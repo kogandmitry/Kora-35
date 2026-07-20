@@ -26,7 +26,7 @@ const DEFAULT_SERIES_STAGES = [
   {
     id: 'legacy',
     title: '3. Выезд и продолжение',
-    summary: 'Отдых коллектива 16 августа и следующие волны инициатив.'
+    summary: 'Отдых коллектива 15 августа и следующие волны инициатив.'
   }
 ];
 
@@ -79,6 +79,8 @@ export function buildHealthSummary(data, roleId, now = new Date()) {
   return {
     daysLeft: daysUntil(data.project.eventDate, now),
     eventDateLabel: data.project.eventDateLabel || data.project.eventDate,
+    eventTimeStaff: data.project.eventTimeStaff || '',
+    eventTimeOrganizers: data.project.eventTimeOrganizers || '',
     status: data.project.status,
     lastUpdated: data.project.lastUpdated,
     averageReadiness,

@@ -38,6 +38,10 @@ export function renderHealthPanel(health) {
         <span class="metric-value">${health.daysLeft}</span>
         <span class="metric-label">дней до ${escapeHtml(health.eventDateLabel || 'главного события')}</span>
       </article>
+      <article class="metric metric-wide event-schedule">
+        <span class="metric-value small">${escapeHtml(health.eventTimeStaff || '10:00–15:00')}</span>
+        <span class="metric-label">сотрудники · организаторы ${escapeHtml(health.eventTimeOrganizers || 'с 08:30')}</span>
+      </article>
       ${budgetCards}
       <article class="metric">
         <span class="metric-value">${health.averageReadiness}%</span>

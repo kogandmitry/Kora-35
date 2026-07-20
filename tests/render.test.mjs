@@ -22,12 +22,14 @@ test('escapes html text', () => {
 });
 
 test('renders health panel with key metrics', () => {
-  const html = renderHealthPanel({ daysLeft: 33, eventDateLabel: '16 августа', averageReadiness: 45, openActions: 7, directionCount: 6, lastUpdated: '2026-07-14', budgetEstimate: 955000, budgetLimit: 1000000, budgetHeadroom: 45000 });
-  assert.match(html, /33/);
+  const html = renderHealthPanel({ daysLeft: 32, eventDateLabel: '15 августа', eventTimeStaff: '10:00–15:00', eventTimeOrganizers: 'с 08:30', averageReadiness: 45, openActions: 7, directionCount: 6, lastUpdated: '2026-07-14', budgetEstimate: 955000, budgetLimit: 1000000, budgetHeadroom: 45000 });
+  assert.match(html, /32/);
   assert.match(html, /45%/);
   assert.match(html, /7/);
   assert.match(html, /955 000 ₽|955 000 ₽/);
-  assert.match(html, /16 августа/);
+  assert.match(html, /15 августа/);
+  assert.match(html, /10:00–15:00/);
+  assert.match(html, /с 08:30/);
 });
 
 test('renders direction card with drilldown button', () => {
@@ -206,7 +208,7 @@ test('renders children journey with three stations and contest first', () => {
     stations: [
       { id: 'excursion', title: 'Экскурсия', dateLabel: '24 июня', status: 'done' },
       { id: 'contest', title: 'Конкурс', dateLabel: 'сейчас', status: 'in_progress' },
-      { id: 'nature', title: 'Выезд', dateLabel: '16 августа', status: 'action_needed' }
+      { id: 'nature', title: 'Выезд', dateLabel: '15 августа', status: 'action_needed' }
     ],
     futureLabel: 'Другие активности',
     announcements: [

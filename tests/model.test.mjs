@@ -17,7 +17,7 @@ import {
 } from '../src/model.js';
 
 const sample = {
-  project: { eventDate: '2026-08-16', status: 'action_needed', lastUpdated: '2026-07-05' },
+  project: { eventDate: '2026-08-15', eventDateLabel: '15 августа', eventTimeStaff: '10:00–15:00', eventTimeOrganizers: 'с 08:30', status: 'action_needed', lastUpdated: '2026-07-05' },
   roles: [{ id: 'owner', depth: 4 }, { id: 'participant', depth: 2 }],
   directions: [
     { id: 'a', title: 'A', readiness: 50, status: 'in_progress', visibility: ['owner', 'participant'] },
@@ -88,7 +88,7 @@ const sample = {
 };
 
 test('daysUntil uses date-only UTC-safe math', () => {
-  assert.equal(daysUntil('2026-08-16', new Date('2026-07-05T12:00:00+03:00')), 42);
+  assert.equal(daysUntil('2026-08-15', new Date('2026-07-05T12:00:00+03:00')), 41);
 });
 
 test('builds anniversary event series with visible track colors', () => {
@@ -131,7 +131,7 @@ test('counts open actions for visible items', () => {
 
 test('builds health summary', () => {
   const health = buildHealthSummary(sample, 'owner', new Date('2026-07-05T12:00:00+03:00'));
-  assert.equal(health.daysLeft, 42);
+  assert.equal(health.daysLeft, 41);
   assert.equal(health.openActions, 4);
   assert.equal(health.averageReadiness, 30);
   assert.equal(health.budgetEstimate, 955000);

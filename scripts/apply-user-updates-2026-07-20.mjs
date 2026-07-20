@@ -30,11 +30,15 @@ updateLine('helpers', {
 });
 
 updateLine('snacks', {
+  id: 'cake',
   order: 9.5,
   block: 'Питание',
+  item: 'Торт в конце мероприятия',
+  parentItem: 'Финальная подача перед завершением программы и посадкой в автобусы',
+  type: 'ядро',
   owner: 'Кузьмич / питание',
-  cutCandidate: true,
-  cutReason: 'Дополнительный перекус после обеда; можно сократить при сохранении воды и основного питания'
+  nextStep: 'Уточнить вес, порционность, оформление, доставку, хранение, нарезку и время подачи около 14:20',
+  basis: 'Заменяет снеки без увеличения текущего сценария: рабочий лимит 15 000 ₽'
 });
 
 for (const id of ['sports', 'boardgames', 'quiz_other']) {
@@ -65,14 +69,19 @@ updateLine('prep', {
   basis: 'Рабочий фонд 5 000 ₽; состав не подтверждён и требует расшифровки'
 });
 
-updateLine('custom_1784502249652', {
-  block: 'Техника и инфраструктура',
-  item: 'LED-экран',
-  type: 'опция',
+updateLine('sound', {
+  block: 'Медиа и цифровой контур',
+  item: 'LED-экран и музыкальное оборудование',
+  parentItem: 'Единый технический пакет для показа видео, музыки и работы ведущих',
+  type: 'ядро',
+  priceStatus: 'сумма задана пользователем',
   owner: 'Нияз / технический контур',
-  cutCandidate: true,
-  cutReason: 'Крупная техническая опция; проверить необходимость при наличии экранов и проекторов площадки'
+  nextStep: 'Подтвердить состав пакета: LED-экран, музыкальное оборудование, микрофоны, подключение и резервный носитель',
+  basis: 'Единая сумма 85 000 ₽; отдельная строка экрана исключена во избежание двойного счёта',
+  amounts: Object.fromEntries(scenarioIds.map((scenario) => [scenario, 85000])),
+  quantities: Object.fromEntries(scenarioIds.map((scenario) => [scenario, '1 пакет']))
 });
+budget.lines = budget.lines.filter((line) => !['custom_1784502249652', 'candidate_cake'].includes(line.id));
 
 const interviewLine = budget.lines.find((line) => /5 больших интервью/i.test(line.item));
 if (interviewLine) {
@@ -160,7 +169,7 @@ upsertTask({
 
 const newTasks = [
   ['task-guzel-site-draft', 'communications', 'anniversary-site-pages', 'Передать Гузель ссылку на готовый черновик сайта юбилея и получить замечания', 'Дмитрий Коган / Гузель'],
-  ['task-guzel-announcement-trip', 'communications', 'track-curators', 'Согласовать с Гузель объявление о выезде 16 августа', 'Гузель / Дмитрий Коган'],
+  ['task-guzel-announcement-trip', 'communications', 'track-curators', 'Согласовать с Гузель объявление о выезде 15 августа: сотрудники 10:00–15:00, организаторы с 08:30', 'Гузель / Дмитрий Коган'],
   ['task-guzel-archive-call', 'communications', 'track-curators', 'Согласовать объявление о сборе архивных фото и видео сотрудников', 'Гузель / Евгения Сенина'],
   ['task-guzel-masterclasses-help', 'communications', 'track-curators', 'Согласовать приглашение провести мастер-классы и помочь орггруппе, включая детский трек', 'Гузель / кураторы треков'],
   ['task-accounting-liteyshchik-deposit', 'management', 'liteyshchik-operations', 'Получить в бухгалтерии 5 000 ₽ на задаток базе «Литейщик»', 'Дмитрий Коган / бухгалтерия'],

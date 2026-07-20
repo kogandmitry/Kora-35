@@ -147,15 +147,18 @@ test('validates detailed budget data', async () => {
   const budget = JSON.parse(await readFile(new URL('../data/kora35-budget.json', import.meta.url), 'utf8'));
   const result = validateBudgetData(budget);
   assert.equal(result.ok, true, result.errors.join('\n'));
-  assert.equal(budget.lines.length, 52);
-  assert.equal(budget.scenarios.find((scenario) => scenario.id === 'Рабочее ядро')?.total, 998400);
-  assert.equal(budget.lines.find((line) => line.id === 'custom_1784502249652')?.amounts['Рабочее ядро'], 20000);
-  assert.equal(budget.lines.find((line) => line.id === 'custom_1784502249652')?.block, 'Медиа и цифровой контур');
+  assert.equal(budget.lines.length, 51);
+  assert.equal(budget.scenarios.find((scenario) => scenario.id === 'Рабочее ядро')?.total, 1050400);
+  assert.equal(budget.lines.find((line) => line.id === 'sound')?.amounts['Рабочее ядро'], 85000);
+  assert.equal(budget.lines.find((line) => line.id === 'sound')?.block, 'Медиа и цифровой контур');
+  assert.equal(budget.lines.some((line) => line.id === 'custom_1784502249652'), false);
+  assert.equal(budget.lines.find((line) => line.id === 'management-ai-infrastructure')?.amounts['Рабочее ядро'], 12000);
   assert.equal(budget.lines.find((line) => line.id === 'candidate_daily_documentary_week')?.candidateAmount, 0);
   assert.equal(budget.lines.find((line) => line.id === 'candidate_daily_documentary_week')?.owner, 'Евгения Сенина');
   assert.equal(budget.lines.find((line) => line.id === 'photo_video_event')?.amounts['Рабочее ядро'], 20000);
   assert.equal(budget.lines.find((line) => line.id === 'goldberg')?.activationStatus, 'not_activated');
-  assert.equal(budget.lines.find((line) => line.id === 'candidate_cake')?.priceStatus, 'не оценено');
+  assert.equal(budget.lines.find((line) => line.id === 'cake')?.amounts['Рабочее ядро'], 15000);
+  assert.equal(budget.lines.some((line) => line.id === 'snacks' || line.id === 'candidate_cake'), false);
   assert.equal(budget.lines.find((line) => line.id === 'candidate_3d_glasses_rental')?.priceStatus, 'не оценено');
   for (const removedId of ['unestimated_7', 'unestimated_9', 'unestimated_10', 'unestimated_11', 'unestimated_12', 'unestimated_13', 'waste', 'rain', 'generator', 'state_awards', 'extended_video', 'reserve_extra', 'candidate_org_team_functional_compensation']) {
     assert.equal(budget.lines.some((line) => line.id === removedId), false, `${removedId} must stay deleted`);
