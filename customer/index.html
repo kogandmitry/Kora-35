@@ -33,8 +33,13 @@
     </aside>
     <section class="content">
       <section id="decisions" class="panel">
-        <div class="section-head"><div><p class="eyebrow">Управленческий фокус</p><h2>Решения и ключевые риски</h2></div></div>
-        <div id="decisionBoard"></div>
+        <details class="decision-underhood">
+          <summary class="section-head decision-underhood-summary">
+            <div><p class="eyebrow">Управленческий фокус</p><h2>Решения и ключевые риски</h2></div>
+            <span class="underhood-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="decision-underhood-body"><div id="decisionBoard"></div></div>
+        </details>
       </section>
       <section id="budget" class="panel">
         <div class="section-head"><div><p class="eyebrow">Финансовая рамка</p><h2>Бюджет по сценариям</h2></div></div>

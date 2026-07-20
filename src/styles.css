@@ -1236,6 +1236,37 @@ textarea {
 .project-links-details > #projectMap { margin: 14px; }
 .project-links-details > #healthPanel { margin: 0 14px 14px; }
 
+/* Customer decisions stay readable at a glance and expand only on demand. */
+.decision-underhood > summary {
+  list-style: none;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+.decision-underhood > summary::-webkit-details-marker { display: none; }
+.decision-underhood-summary { align-items: center; }
+.underhood-chevron {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid #b9cab0;
+  border-radius: 50%;
+  color: var(--ink);
+  background: #edf4e8;
+  font-size: 25px;
+  font-weight: 900;
+  line-height: 1;
+  transition: transform .18s ease, background .18s ease;
+}
+.decision-underhood > summary:hover .underhood-chevron { background: #dcebd2; }
+.decision-underhood[open] .underhood-chevron { transform: rotate(180deg); }
+.decision-underhood-body {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
 /* Always-available entry point for ideas and comments. */
 .floating-idea-button {
   position: fixed;
