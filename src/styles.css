@@ -975,28 +975,8 @@ textarea {
 .risk-item p { margin: 6px 0 0; line-height: 1.42; }
 .risk-item strong { color: var(--ink); }
 
-.budget-scenarios {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 9px;
-  margin-bottom: 12px;
-}
-.budget-scenario {
-  display: grid;
-  gap: 6px;
-  min-height: 72px;
-  padding: 11px 13px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  background: #fff;
-  color: var(--text);
-  text-align: left;
-  cursor: pointer;
-}
-.budget-scenario.active { border: 2px solid var(--green); padding: 10px 12px; background: var(--green-soft); }
-.budget-scenario span { color: var(--muted); font-size: 12px; }
-.budget-scenario strong { color: var(--ink); font-size: 19px; }
-.budget-scenario small { color: #5f705b; font-size: 10px; line-height: 1.35; }
+.budget-model-note { margin: 0 0 12px; padding: 11px 13px; border-left: 5px solid var(--green); border-radius: 0 7px 7px 0; background: var(--green-soft); color: #43553f; font-size: 13px; line-height: 1.45; }
+.budget-model-note strong { color: var(--ink); }
 .manager-budget-note { margin: -2px 0 12px; padding: 9px 11px; border-left: 4px solid var(--green); background: #eef6e8; color: #43553f; font-size: 12px; font-weight: 800; }
 .budget-metrics {
   display: grid;
@@ -1197,8 +1177,7 @@ textarea {
   .team-function-summary { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 720px) {
-  .portal-grid,
-  .budget-scenarios { grid-template-columns: 1fr; }
+  .portal-grid { grid-template-columns: 1fr; }
   .portal-card { min-height: 250px; }
   .action-summary,
   .budget-metrics { grid-template-columns: 1fr 1fr; }

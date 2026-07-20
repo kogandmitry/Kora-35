@@ -32,8 +32,8 @@ export function renderHealthPanel(health, { showBudget = true } = {}) {
         <span class="metric-label">утверждённые статьи расходов</span>
       </article>
       <article class="metric">
-        <span class="metric-value small">${formatRub(Math.abs(health.budgetHeadroom))}</span>
-        <span class="metric-label">${health.budgetHeadroom >= 0 ? 'остаток до лимита 1 млн' : 'превышение лимита 1 млн'}</span>
+        <span class="metric-value small">${formatRub(health.budgetMaximum ?? health.budgetEstimate)}</span>
+        <span class="metric-label">максимум всех оценённых статей</span>
       </article>`
     : '';
   return `
@@ -534,32 +534,17 @@ function renderBudgetTable(lines = []) {
 export function renderBudgetBoard(view, audience) {
   if (!view) return '<p class="empty">Бюджетные данные не загрузились.</p>';
   const maxBlock = Math.max(1, ...view.blocks.map((item) => item.amount));
-  const headroomLabel = view.headroom >= 0 ? 'свободно до потолка' : 'превышение потолка';
   const totalWithAdditional = Number(view.totalWithAdditional ?? (Number(view.total || 0) + Number(view.potentialTotal || 0)));
+  const potentialCount = Number(view.potentialCount ?? view.potentialLines?.length ?? 0);
   return `
-    ${audience === 'org' ? `<div class="budget-scenarios" aria-label="Сценарии бюджета">
-      ${view.scenarios.map((scenario) => `
-        <button type="button" class="budget-scenario ${scenario.id === view.scenario.id ? 'active' : ''}" data-budget-scenario="${escapeHtml(scenario.id)}" aria-pressed="${scenario.id === view.scenario.id}">
-          <span>${escapeHtml(scenario.id)}</span><strong>${formatRub(scenario.total)}</strong>
-          ${scenario.note ? `<small>${escapeHtml(scenario.note)}</small>` : ''}
-        </button>
-      `).join('')}
-    </div>` : ''}
+    <p class="budget-model-note"><strong>Единая смета.</strong> Утверждённые строки формируют текущую сумму, а неутверждённые строки с известной оценкой — максимальную. Неоценённые позиции показаны отдельно и в максимум не входят.</p>
     ${view.managerView ? '<p class="manager-budget-note">Локальная версия руководителя проекта · включает закрытый блок «Управление и после».</p>' : ''}
     <div class="budget-metrics">
-      ${audience === 'customer' ? `
-        <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>утверждённые статьи расходов</span></article>
-        <article class="budget-metric ${totalWithAdditional > view.ceiling ? 'danger' : ''}"><strong>${formatRub(totalWithAdditional)}</strong><span>с дополнительными неутверждёнными статьями</span></article>
-        <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>лимит</span></article>
-        <article class="budget-metric"><strong>${formatRub(view.reserve)}</strong><span>резерв</span></article>
-        <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>на участника по утверждённым статьям</span></article>
-      ` : `
-        <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>выбранный сценарий</span></article>
-        <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>потолок</span></article>
-        <article class="budget-metric ${view.headroom < 0 ? 'danger' : ''}"><strong>${formatRub(Math.abs(view.headroom))}</strong><span>${headroomLabel}</span></article>
-        <article class="budget-metric"><strong>${formatRub(view.reserve)}</strong><span>резерв</span></article>
-        <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>на участника</span></article>
-      `}
+      <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>сумма утверждённых статей</span></article>
+      <article class="budget-metric ${totalWithAdditional > view.ceiling ? 'danger' : ''}"><strong>${formatRub(totalWithAdditional)}</strong><span>максимальная сумма всех оценённых статей</span></article>
+      <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>лимит</span></article>
+      <article class="budget-metric"><strong>${formatRub(view.reserve)}</strong><span>резерв</span></article>
+      <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>на участника по утверждённым статьям</span></article>
     </div>
     <div class="budget-layout">
       <section class="budget-blocks">
@@ -570,13 +555,13 @@ export function renderBudgetBoard(view, audience) {
       </section>
       <aside class="budget-note">
         <strong>${view.unestimatedCount} неоценённых расходов</strong>
-        <p>Они доступны в раскрывающемся разделе и не увеличивают сумму сценария до появления оценки.</p>
+        <p>Они доступны в раскрывающемся разделе и не увеличивают максимальную сумму до появления оценки.</p>
         <small>${escapeHtml(view.sourceVersion)} · актуальность ${escapeHtml(formatDate(view.asOf))}</small>
       </aside>
     </div>
     ${audience === 'org' ? `
       <details class="budget-details" open>
-        <summary>Построчные расходы выбранного сценария · ${view.lines.length} строк</summary>
+        <summary>Утверждённые статьи единой сметы · ${view.lines.length} строк</summary>
         ${renderBudgetTable(view.lines)}
       </details>
       <details class="budget-underhood budget-unestimated">
@@ -585,7 +570,7 @@ export function renderBudgetBoard(view, audience) {
         ${renderBudgetTable(view.unestimatedLines)}
       </details>
       <details class="budget-underhood budget-potential">
-        <summary><span>Потенциальные статьи для активации</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
+        <summary><span>Неутверждённые статьи с известной оценкой · ${potentialCount} поз.</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
         <div class="budget-candidate-list">
           ${view.potentialLines.length ? view.potentialLines.map((line) => `
             <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p><small>${escapeHtml(line.nextStep || '')}</small></div><aside><span>${escapeHtml(line.block)} · ${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>
@@ -598,9 +583,9 @@ export function renderBudgetBoard(view, audience) {
         <div class="budget-candidate-list cut-list">
           ${view.cutCandidates.length ? view.cutCandidates.map((line) => `
             <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.cutReason || 'Требуется решение о ценности и альтернативе.')}</p></div><aside><span>${escapeHtml(line.block)}</span><b>${formatRub(line.amount)}</b></aside></article>
-          `).join('') : '<p class="empty">В выбранном сценарии нет активных кандидатов на сокращение.</p>'}
+          `).join('') : '<p class="empty">В единой смете нет активных кандидатов на сокращение.</p>'}
         </div>
       </section>
-    ` : '<p class="customer-boundary">Сумма с дополнительными статьями включает известные оценки неутверждённых позиций. Неоценённые расходы в неё не входят. Построчные действия, рабочие владельцы и закупочные комментарии остаются в версии орггруппы.</p>'}
+    ` : '<p class="customer-boundary">Максимальная сумма включает утверждённые статьи и известные оценки неутверждённых позиций. Неоценённые расходы в неё не входят. Построчные действия, рабочие владельцы и закупочные комментарии остаются в версии орггруппы.</p>'}
   `;
 }

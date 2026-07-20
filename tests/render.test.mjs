@@ -23,12 +23,14 @@ test('escapes html text', () => {
 });
 
 test('renders health panel with key metrics', () => {
-  const health = { daysLeft: 32, eventDateLabel: '15 августа', eventTimeStaff: '10:00–15:00', eventTimeOrganizers: 'с 08:30', averageReadiness: 45, openActions: 7, directionCount: 6, lastUpdated: '2026-07-14', budgetEstimate: 955000, budgetLimit: 1000000, budgetHeadroom: 45000 };
+  const health = { daysLeft: 32, eventDateLabel: '15 августа', eventTimeStaff: '10:00–15:00', eventTimeOrganizers: 'с 08:30', averageReadiness: 45, openActions: 7, directionCount: 6, lastUpdated: '2026-07-14', budgetEstimate: 955000, budgetMaximum: 1010000, budgetLimit: 1000000 };
   const html = renderHealthPanel(health);
   assert.match(html, /32/);
   assert.match(html, /45%/);
   assert.match(html, /7/);
   assert.match(html, /955 000 ₽|955 000 ₽/);
+  assert.match(html, /1 010 000 ₽|1 010 000 ₽/);
+  assert.match(html, /максимум всех оценённых статей/);
   assert.match(html, /15 августа/);
   assert.match(html, /10:00–15:00/);
   assert.match(html, /с 08:30/);
@@ -274,7 +276,7 @@ test('renders decision board and risk mitigation', () => {
   assert.match(html, /Выдать доступ/);
 });
 
-test('renders customer budget without operational table', () => {
+test('renders customer budget as one unified estimate without operational table', () => {
   const html = renderBudgetBoard({
     scenario: { id: 'Рабочее ядро' }, scenarios: [{ id: 'Рабочее ядро', total: 992500 }], total: 992500, ceiling: 1000000,
     headroom: 7500, participants: 300, perPerson: 3308.33, reserve: 30000, options: 0, unestimatedCount: 15, potentialTotal: 70000, totalWithAdditional: 1062500,
@@ -282,10 +284,11 @@ test('renders customer budget without operational table', () => {
   }, 'customer');
   assert.match(html, /992 500 ₽|992 500 ₽/);
   assert.match(html, /1 062 500 ₽|1 062 500 ₽/);
-  assert.match(html, /утверждённые статьи расходов/);
-  assert.match(html, /с дополнительными неутверждёнными статьями/);
-  assert.match(html, /Неоценённые расходы в неё не входят/);
+  assert.match(html, /сумма утверждённых статей/);
+  assert.match(html, /максимальная сумма всех оценённых статей/);
+  assert.match(html, /Максимальная сумма включает утверждённые статьи/);
   assert.doesNotMatch(html, /budget-scenarios/);
+  assert.doesNotMatch(html, /data-budget-scenario/);
   assert.doesNotMatch(html, /budget-table/);
 });
 
@@ -295,10 +298,13 @@ test('renders unestimated and potential budget lines under closed details', () =
   const html = renderBudgetBoard({
     scenario: { id: 'Рабочее ядро' }, scenarios: [{ id: 'Рабочее ядро', total: 100 }], total: 100, ceiling: 1000,
     headroom: 900, participants: 10, perPerson: 10, reserve: 0, options: 0, unestimatedCount: 1,
-    blocks: [{ title: 'Питание', amount: 100 }], lines: [], unestimatedLines: [line], potentialLines: [candidate], potentialTotal: 5000,
+    blocks: [{ title: 'Питание', amount: 100 }], lines: [], unestimatedLines: [line], potentialLines: [candidate], potentialCount: 1, potentialTotal: 5000,
     cutCandidates: [], cutCandidateTotal: 0, sourceVersion: 'Смета', asOf: '2026-07-20'
   }, 'org');
   assert.match(html, /Неоценённые расходы/);
+  assert.match(html, /Единая смета/);
+  assert.match(html, /Неутверждённые статьи с известной оценкой · 1 поз\./);
+  assert.doesNotMatch(html, /budget-scenarios/);
   assert.doesNotMatch(html, /под\s+капот/i);
   assert.match(html, /Торт/);
   assert.match(html, /Дополнительно \(пересмотреть\) · не активировано/);

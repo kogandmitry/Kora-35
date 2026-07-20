@@ -74,6 +74,7 @@ export function buildHealthSummary(data, roleId, now = new Date()) {
 
   const budgetLimit = Number(visibleBudgetItems.find((item) => item.id === 'budget-project-limit')?.amount);
   const budgetEstimate = Number(visibleBudgetItems.find((item) => item.id === 'budget-current-estimate')?.amount);
+  const budgetMaximum = Number(visibleBudgetItems.find((item) => item.id === 'budget-with-additional')?.amount);
   const hasCurrentBudget = Number.isFinite(budgetLimit) && Number.isFinite(budgetEstimate);
 
   return {
@@ -87,8 +88,8 @@ export function buildHealthSummary(data, roleId, now = new Date()) {
     openActions: getOpenActionCount(data, roleId),
     directionCount: visibleDirections.length,
     budgetEstimate: hasCurrentBudget ? budgetEstimate : null,
-    budgetLimit: hasCurrentBudget ? budgetLimit : null,
-    budgetHeadroom: hasCurrentBudget ? budgetLimit - budgetEstimate : null
+    budgetMaximum: Number.isFinite(budgetMaximum) ? budgetMaximum : null,
+    budgetLimit: hasCurrentBudget ? budgetLimit : null
   };
 }
 
@@ -387,16 +388,17 @@ export function buildTeamFunctionsView(data, roleId) {
   };
 }
 
-export function buildBudgetView(budget, audience, scenarioId, roleId = audience === 'org' ? 'coordinator' : 'customer') {
+export function buildBudgetView(budget, audience, _scenarioId, roleId = audience === 'org' ? 'coordinator' : 'customer') {
   if (!budget) return null;
   const sourceLines = (budget.lines || []).filter((line) => line.block !== 'Управление и после' || roleId === 'owner');
-  const scenarios = (budget.scenarios || []).map((item) => ({
-    ...item,
-    total: sourceLines.reduce((sum, line) => sum + (Number(line.amounts?.[item.id]) || 0), 0)
-  }));
-  const scenario = scenarios.find((item) => item.id === scenarioId)
-    || scenarios.find((item) => item.id === budget.meta.workingScenario)
-    || scenarios[0];
+  const sourceScenario = (budget.scenarios || []).find((item) => item.id === budget.meta.workingScenario)
+    || budget.scenarios?.[0];
+  if (!sourceScenario) return null;
+  const scenario = {
+    ...sourceScenario,
+    label: 'Единая смета',
+    total: sourceLines.reduce((sum, line) => sum + (Number(line.amounts?.[sourceScenario.id]) || 0), 0)
+  };
   const lines = sourceLines
     .map((line) => ({
       ...line,
@@ -415,7 +417,6 @@ export function buildBudgetView(budget, audience, scenarioId, roleId = audience 
   const potentialTotal = lines.filter(isPotential).reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0);
   return {
     scenario,
-    scenarios,
     total,
     ceiling,
     headroom: ceiling - total,
@@ -428,6 +429,7 @@ export function buildBudgetView(budget, audience, scenarioId, roleId = audience 
     lines: audience === 'org' ? lines.filter((line) => !isUnestimated(line) && !isPotential(line)) : [],
     unestimatedLines: audience === 'org' ? lines.filter(isUnestimated) : [],
     potentialLines: audience === 'org' ? lines.filter(isPotential) : [],
+    potentialCount: lines.filter(isPotential).length,
     potentialTotal,
     totalWithAdditional: total + potentialTotal,
     cutCandidates: audience === 'org' ? lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount) : [],

@@ -49,6 +49,7 @@ test('validates seeded monitor data', async () => {
   );
   assert.equal(data.budgetItems.find((item) => item.id === 'budget-current-estimate')?.amount, 933400);
   assert.equal(data.budgetItems.find((item) => item.id === 'budget-with-additional')?.amount, 1003400);
+  assert.equal(data.budgetItems.find((item) => item.id === 'budget-with-additional')?.title, 'Максимальная сумма всех оценённых статей расходов');
 });
 
 test('keeps public link registry synchronized with monitor links', async () => {

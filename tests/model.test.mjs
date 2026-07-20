@@ -33,7 +33,8 @@ const sample = {
   risks: [{ id: 'r1', directionId: 'b', status: 'action_needed', visibility: ['owner'] }],
   budgetItems: [
     { id: 'budget-project-limit', amount: 1000000, visibility: ['owner'] },
-    { id: 'budget-current-estimate', amount: 955000, visibility: ['owner'] }
+    { id: 'budget-current-estimate', amount: 955000, visibility: ['owner'] },
+    { id: 'budget-with-additional', amount: 1010000, visibility: ['owner'] }
   ],
   seriesFilters: [
     { id: 'all', title: 'Все' },
@@ -135,7 +136,7 @@ test('builds health summary', () => {
   assert.equal(health.openActions, 4);
   assert.equal(health.averageReadiness, 30);
   assert.equal(health.budgetEstimate, 955000);
-  assert.equal(health.budgetHeadroom, 45000);
+  assert.equal(health.budgetMaximum, 1010000);
 });
 
 test('builds direction detail', () => {
@@ -228,16 +229,19 @@ test('builds detailed and customer budget views', () => {
     ]
   };
   const org = buildBudgetView(budget, 'org', 'Рабочее ядро');
+  const ignoredLegacyScenario = buildBudgetView(budget, 'org', '250 всего');
   const customer = buildBudgetView(budget, 'customer', 'Рабочее ядро');
   const owner = buildBudgetView(budget, 'org', 'Рабочее ядро', 'owner');
   assert.equal(org.total, 130);
   assert.equal(org.reserve, 30);
   assert.equal(org.lines.length, 2);
-  assert.equal(org.scenarios[0].total, 130);
+  assert.equal(org.scenario.label, 'Единая смета');
+  assert.equal(ignoredLegacyScenario.total, 130);
   assert.deepEqual(org.unestimatedLines, []);
   assert.equal(customer.lines.length, 0);
   assert.equal(customer.total, 130);
   assert.equal(customer.potentialTotal, 50);
+  assert.equal(customer.potentialCount, 1);
   assert.equal(customer.totalWithAdditional, 180);
   assert.equal(owner.total, 185);
   assert.equal(owner.lines.length, 3);
