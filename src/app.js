@@ -93,7 +93,7 @@ function classifyKind(kind) {
 function render() {
   const data = state.data;
   const actionBoard = buildActionBoard(data, state.role);
-  if (els.healthPanel) els.healthPanel.innerHTML = renderHealthPanel(buildHealthSummary(data, state.role));
+  if (els.healthPanel) els.healthPanel.innerHTML = renderHealthPanel(buildHealthSummary(data, state.role), { showBudget: state.audience !== 'customer' });
   if (els.eventSeries) els.eventSeries.innerHTML = renderAnniversarySeries(buildAnniversarySeries(data, state.role, state.seriesFilter));
   if (els.projectMap) els.projectMap.innerHTML = renderProjectMap(buildProjectMap(data, state.role));
   if (els.wellbeingMap) els.wellbeingMap.innerHTML = renderWellbeingMap(buildWellbeingSummary(data, state.role));

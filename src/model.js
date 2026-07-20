@@ -244,6 +244,20 @@ export function buildActionBoard(data, roleId, now = new Date()) {
   const visibleDirections = wellbeingLast(filterVisible(data.directions, roleId));
   const directionById = new Map(visibleDirections.map((direction, index) => [direction.id, { ...direction, sortOrder: index }]));
   const primaryOwner = (owner) => String(owner || '').split('/').map((part) => part.trim()).find(Boolean) || 'Не назначен';
+  const normalizeOwner = (value) => String(value || '')
+    .toLocaleLowerCase('ru')
+    .replaceAll('ё', 'е')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const visibleTeam = filterVisible(data.teamFunctions || [], roleId)
+    .sort((left, right) => Number(left.order ?? 999) - Number(right.order ?? 999));
+  const taskBelongsToPerson = (task, person) => {
+    const owner = normalizeOwner(task.owner);
+    const aliases = [person.name, ...(person.taskAliases || [])]
+      .map(normalizeOwner)
+      .filter(Boolean);
+    return aliases.some((alias) => owner.includes(alias));
+  };
   const allVisibleTasks = filterVisible(data.tasks, roleId).filter((task) => task.status !== 'archived');
   const tasks = allVisibleTasks
     .filter((task) => OPEN_STATUSES.has(task.status))
@@ -281,18 +295,42 @@ export function buildActionBoard(data, roleId, now = new Date()) {
       sortOrder: group.id === 'wellbeing-system' ? 10000 : (group.tasks[0]?.directionSortOrder ?? 999)
     }))
     .sort((left, right) => left.sortOrder - right.sortOrder || left.title.localeCompare(right.title, 'ru'));
-  const ownerGroups = groupTasks(tasks, (task) => task.ownerGroup, (task) => task.ownerGroup)
-    .map((group) => {
-      const person = (data.teamFunctions || []).find((item) => item.name === group.title);
-      return {
+  const ownerGroups = visibleTeam.length
+    ? [
+        ...visibleTeam.map((person) => {
+          const personTasks = tasks.filter((task) => taskBelongsToPerson(task, person));
+          return {
+            id: person.id,
+            title: person.name,
+            tasks: personTasks,
+            color: personTasks[0]?.directionColor || '#8fac45',
+            currentRole: person.currentRole || 'Функциональная роль уточняется',
+            functions: person.eventFunctions || [],
+            statusLabel: person.statusLabel || ''
+          };
+        }),
+        ...(() => {
+          const otherTasks = tasks.filter((task) => !visibleTeam.some((person) => taskBelongsToPerson(task, person)));
+          return otherTasks.length ? [{
+            id: 'other-roles',
+            title: 'Другие роли и подрядчики',
+            tasks: otherTasks,
+            color: otherTasks[0]?.directionColor || '#8fac45',
+            currentRole: 'Профильные исполнители вне основного состава орггруппы',
+            functions: [],
+            statusLabel: ''
+          }] : [];
+        })()
+      ]
+    : groupTasks(tasks, (task) => task.ownerGroup, (task) => task.ownerGroup)
+      .map((group) => ({
         ...group,
         color: group.tasks[0]?.directionColor || '#8fac45',
-        currentRole: person?.currentRole || 'Функциональная роль уточняется',
-        functions: person?.eventFunctions || [],
-        statusLabel: person?.statusLabel || ''
-      };
-    })
-    .sort((left, right) => right.tasks.length - left.tasks.length || left.title.localeCompare(right.title, 'ru'));
+        currentRole: 'Функциональная роль уточняется',
+        functions: [],
+        statusLabel: ''
+      }))
+      .sort((left, right) => right.tasks.length - left.tasks.length || left.title.localeCompare(right.title, 'ru'));
 
   const trackProgress = visibleDirections.map((direction) => {
     const directionTasks = allVisibleTasks.filter((task) => task.directionId === direction.id);
@@ -374,6 +412,7 @@ export function buildBudgetView(budget, audience, scenarioId, roleId = audience 
   const ceiling = Number(budget.meta.ceiling) || 0;
   const isUnestimated = (line) => line.type === 'неоценено' || line.priceStatus === 'не оценено';
   const isPotential = (line) => Number(line.candidateAmount) > 0 && line.activationStatus !== 'active';
+  const potentialTotal = lines.filter(isPotential).reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0);
   return {
     scenario,
     scenarios,
@@ -389,7 +428,8 @@ export function buildBudgetView(budget, audience, scenarioId, roleId = audience 
     lines: audience === 'org' ? lines.filter((line) => !isUnestimated(line) && !isPotential(line)) : [],
     unestimatedLines: audience === 'org' ? lines.filter(isUnestimated) : [],
     potentialLines: audience === 'org' ? lines.filter(isPotential) : [],
-    potentialTotal: lines.filter(isPotential).reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0),
+    potentialTotal,
+    totalWithAdditional: total + potentialTotal,
     cutCandidates: audience === 'org' ? lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount) : [],
     cutCandidateTotal: lines.filter((line) => line.cutCandidate && line.amount > 0).reduce((sum, line) => sum + line.amount, 0),
     managerView: roleId === 'owner',

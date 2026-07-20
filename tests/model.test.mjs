@@ -174,6 +174,23 @@ test('builds audience action board and marks overdue tasks', () => {
   assert.deepEqual(board.trackProgress.map((item) => [item.title, item.score]), [['A', 20], ['B', 0]]);
 });
 
+test('aligns owner task cards with the active-team tracker and its explicit order', () => {
+  const board = buildActionBoard({
+    ...sample,
+    teamFunctions: [
+      { id: 'niyaz', order: 3, name: 'Нияз Кашапов', taskAliases: ['Нияз'], currentRole: 'Ведущий', eventFunctions: ['спорт'], visibility: ['owner'] },
+      { id: 'igor', order: 4, name: 'Игорь Коган', taskAliases: ['Игорь'], currentRole: 'Контроль сайта', eventFunctions: ['сайт'], visibility: ['owner'] },
+      { id: 'dmitry', order: 1, name: 'Дмитрий Коган', currentRole: 'Руководитель проекта', eventFunctions: ['управление'], visibility: ['owner'] },
+      { id: 'nastya', order: 2, name: 'Настя Бурд', taskAliases: ['Бурд'], currentRole: 'Роль уточняется', eventFunctions: [], visibility: ['owner'] }
+    ]
+  }, 'owner', new Date('2026-07-06T12:00:00+03:00'));
+
+  assert.deepEqual(board.groups.owner.map((group) => group.title), ['Дмитрий Коган', 'Настя Бурд', 'Нияз Кашапов', 'Игорь Коган']);
+  assert.deepEqual(board.groups.owner.map((group) => group.currentRole), ['Руководитель проекта', 'Роль уточняется', 'Ведущий', 'Контроль сайта']);
+  assert.equal(board.groups.owner.find((group) => group.title === 'Нияз Кашапов').tasks[0].id, 't1');
+  assert.equal(board.groups.owner.find((group) => group.title === 'Настя Бурд').tasks.length, 0);
+});
+
 test('builds decisions and risks for a role', () => {
   const data = {
     ...sample,
@@ -206,6 +223,7 @@ test('builds detailed and customer budget views', () => {
     lines: [
       { id: 'a', block: 'A', item: 'Ядро', type: 'ядро', priceStatus: 'лимит', amounts: { 'Рабочее ядро': 100 }, quantities: { 'Рабочее ядро': '1' } },
       { id: 'r', block: 'Резерв', item: 'Резерв', type: 'резерв', priceStatus: 'решение', amounts: { 'Рабочее ядро': 30 }, quantities: { 'Рабочее ядро': '1' } },
+      { id: 'p', block: 'Дополнительно', item: 'Неутверждённая статья', type: 'потенциальная статья', priceStatus: 'не активировано', activationStatus: 'not_activated', candidateAmount: 50, amounts: { 'Рабочее ядро': 0 }, quantities: { 'Рабочее ядро': '—' } },
       { id: 'm', block: 'Управление и после', item: 'Руководство', type: 'ядро', priceStatus: 'решение', amounts: { 'Рабочее ядро': 55 }, quantities: { 'Рабочее ядро': '1' } }
     ]
   };
@@ -219,6 +237,8 @@ test('builds detailed and customer budget views', () => {
   assert.deepEqual(org.unestimatedLines, []);
   assert.equal(customer.lines.length, 0);
   assert.equal(customer.total, 130);
+  assert.equal(customer.potentialTotal, 50);
+  assert.equal(customer.totalWithAdditional, 180);
   assert.equal(owner.total, 185);
   assert.equal(owner.lines.length, 3);
   assert.equal(owner.managerView, true);

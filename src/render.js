@@ -20,12 +20,12 @@ function formatRub(value) {
   return `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(Number(value || 0))} ₽`;
 }
 
-export function renderHealthPanel(health) {
-  const budgetCards = Number.isFinite(health.budgetEstimate) && Number.isFinite(health.budgetLimit)
+export function renderHealthPanel(health, { showBudget = true } = {}) {
+  const budgetCards = showBudget && Number.isFinite(health.budgetEstimate) && Number.isFinite(health.budgetLimit)
     ? `
       <article class="metric metric-hero">
-        <span class="metric-value small">≈ ${formatRub(health.budgetEstimate)}</span>
-        <span class="metric-label">текущая пользовательская оценка</span>
+        <span class="metric-value small">${formatRub(health.budgetEstimate)}</span>
+        <span class="metric-label">утверждённые статьи расходов</span>
       </article>
       <article class="metric">
         <span class="metric-value small">${formatRub(Math.abs(health.budgetHeadroom))}</span>
@@ -431,11 +431,11 @@ export function renderActionBoard(board, grouping = 'owner', taskComments = []) 
           <summary>
             <div class="action-owner-summary">
               <strong>${escapeHtml(group.title)}</strong>
-              ${activeGrouping === 'owner' ? `<small>${escapeHtml(group.currentRole || 'Функциональная роль уточняется')}</small>${group.functions?.length ? `<em>${group.functions.slice(0, 4).map(escapeHtml).join(' · ')}</em>` : ''}` : ''}
+              ${activeGrouping === 'owner' ? `<small>${escapeHtml(group.currentRole || 'Функциональная роль уточняется')}</small>${group.functions?.length ? `<em>${group.functions.slice(0, 4).map(escapeHtml).join(' · ')}</em>` : ''}${group.statusLabel ? `<em class="owner-status-label">${escapeHtml(group.statusLabel)}</em>` : ''}` : ''}
             </div>
             <span>${formatTaskCount(group.tasks.length)}</span>
           </summary>
-          <div class="action-list">${group.tasks.map(renderTask).join('')}</div>
+          <div class="action-list">${group.tasks.length ? group.tasks.map(renderTask).join('') : '<p class="empty owner-empty">Открытых задач сейчас нет.</p>'}</div>
         </details>
       `).join('') : '<p class="empty">Нет открытых задач для этой аудитории.</p>'}
     </div>
@@ -512,22 +512,31 @@ export function renderBudgetBoard(view, audience) {
   if (!view) return '<p class="empty">Бюджетные данные не загрузились.</p>';
   const maxBlock = Math.max(1, ...view.blocks.map((item) => item.amount));
   const headroomLabel = view.headroom >= 0 ? 'свободно до потолка' : 'превышение потолка';
+  const totalWithAdditional = Number(view.totalWithAdditional ?? (Number(view.total || 0) + Number(view.potentialTotal || 0)));
   return `
-    <div class="budget-scenarios" aria-label="Сценарии бюджета">
+    ${audience === 'org' ? `<div class="budget-scenarios" aria-label="Сценарии бюджета">
       ${view.scenarios.map((scenario) => `
         <button type="button" class="budget-scenario ${scenario.id === view.scenario.id ? 'active' : ''}" data-budget-scenario="${escapeHtml(scenario.id)}" aria-pressed="${scenario.id === view.scenario.id}">
           <span>${escapeHtml(scenario.id)}</span><strong>${formatRub(scenario.total)}</strong>
           ${scenario.note ? `<small>${escapeHtml(scenario.note)}</small>` : ''}
         </button>
       `).join('')}
-    </div>
+    </div>` : ''}
     ${view.managerView ? '<p class="manager-budget-note">Локальная версия руководителя проекта · включает закрытый блок «Управление и после».</p>' : ''}
     <div class="budget-metrics">
-      <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>выбранный сценарий</span></article>
-      <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>потолок</span></article>
-      <article class="budget-metric ${view.headroom < 0 ? 'danger' : ''}"><strong>${formatRub(Math.abs(view.headroom))}</strong><span>${headroomLabel}</span></article>
-      <article class="budget-metric"><strong>${formatRub(view.reserve)}</strong><span>резерв</span></article>
-      <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>на участника</span></article>
+      ${audience === 'customer' ? `
+        <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>утверждённые статьи расходов</span></article>
+        <article class="budget-metric ${totalWithAdditional > view.ceiling ? 'danger' : ''}"><strong>${formatRub(totalWithAdditional)}</strong><span>с дополнительными неутверждёнными статьями</span></article>
+        <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>лимит</span></article>
+        <article class="budget-metric"><strong>${formatRub(view.reserve)}</strong><span>резерв</span></article>
+        <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>на участника по утверждённым статьям</span></article>
+      ` : `
+        <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>выбранный сценарий</span></article>
+        <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>потолок</span></article>
+        <article class="budget-metric ${view.headroom < 0 ? 'danger' : ''}"><strong>${formatRub(Math.abs(view.headroom))}</strong><span>${headroomLabel}</span></article>
+        <article class="budget-metric"><strong>${formatRub(view.reserve)}</strong><span>резерв</span></article>
+        <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>на участника</span></article>
+      `}
     </div>
     <div class="budget-layout">
       <section class="budget-blocks">
@@ -556,7 +565,7 @@ export function renderBudgetBoard(view, audience) {
         <summary><span>Потенциальные статьи для активации</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
         <div class="budget-candidate-list">
           ${view.potentialLines.length ? view.potentialLines.map((line) => `
-            <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p><small>${escapeHtml(line.nextStep || '')}</small></div><aside><span>${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>
+            <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p><small>${escapeHtml(line.nextStep || '')}</small></div><aside><span>${escapeHtml(line.block)} · ${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>
           `).join('') : '<p class="empty">Нет неактивированных статей с оценкой.</p>'}
         </div>
       </details>
@@ -569,6 +578,6 @@ export function renderBudgetBoard(view, audience) {
           `).join('') : '<p class="empty">В выбранном сценарии нет активных кандидатов на сокращение.</p>'}
         </div>
       </section>
-    ` : '<p class="customer-boundary">Версия заказчиков показывает сценарии и блоки. Построчные действия, рабочие владельцы и закупочные комментарии остаются в версии орггруппы.</p>'}
+    ` : '<p class="customer-boundary">Сумма с дополнительными статьями включает известные оценки неутверждённых позиций. Неоценённые расходы в неё не входят. Построчные действия, рабочие владельцы и закупочные комментарии остаются в версии орггруппы.</p>'}
   `;
 }

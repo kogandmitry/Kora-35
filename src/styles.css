@@ -1208,6 +1208,8 @@ textarea {
 .action-owner-summary strong { color: var(--ink); font-size: 18px; }
 .action-owner-summary small { color: #4f6650; font-size: 12px; font-weight: 800; line-height: 1.35; }
 .action-owner-summary em { color: var(--muted); font-size: 11px; font-style: normal; line-height: 1.35; }
+.action-owner-summary .owner-status-label { color: #735f00; font-weight: 900; text-transform: uppercase; }
+.owner-empty { margin: 0; padding: 14px; }
 .owner-action-card[open] > summary { border-bottom: 1px solid #cad8c3; background: #e5efde; }
 
 /* Details kept under the hood to reduce working-page noise. */

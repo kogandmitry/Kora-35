@@ -29,8 +29,14 @@ test('validates seeded monitor data', async () => {
   assert.equal(new Set(data.publicLinks.map((item) => item.syncGroup)).size, 1);
   assert.equal(data.teamFunctions.some((item) => item.id === 'konstantin'), false);
   assert.deepEqual([...data.teamFunctions].sort((left, right) => left.order - right.order).slice(0, 5).map((item) => item.name), [
-    'Дмитрий Коган', 'Дмитрий Кузьмич', 'Нияз Кашапов', 'Евгения Сенина', 'Гузель'
+    'Дмитрий Коган', 'Дмитрий Кузьмич', 'Нияз Кашапов', 'Евгения Сенина', 'Гузель (фамилия уточняется)'
   ]);
+  assert.equal(data.teamFunctions.find((item) => item.id === 'igor')?.name, 'Игорь Коган');
+  assert.equal(data.teamFunctions.find((item) => item.id === 'igor')?.eventFunctions.includes('ремонт ноутбука'), false);
+  assert.equal(data.tasks.some((item) => item.id === 'task-igor-laptop'), false);
+  assert.equal(data.tasks.find((item) => item.id === 'task-igor-event-site-control')?.owner, 'Игорь Коган / Дмитрий Коган');
+  assert.equal(data.budgetItems.find((item) => item.id === 'budget-current-estimate')?.amount, 933400);
+  assert.equal(data.budgetItems.find((item) => item.id === 'budget-with-additional')?.amount, 1003400);
 });
 
 test('keeps public link registry synchronized with monitor links', async () => {
@@ -46,6 +52,15 @@ test('keeps public link registry synchronized with monitor links', async () => {
     data.publicLinks.map((item) => item.liveUrl),
     registry.links.map((item) => item.liveUrl)
   );
+});
+
+test('keeps the customer monitor focused on track readiness and aggregate budget', async () => {
+  const html = await readFile(new URL('../customer/index.html', import.meta.url), 'utf8');
+  assert.match(html, /id="trackProgressBoard"/);
+  assert.match(html, /Ключевые показатели бюджета/);
+  assert.doesNotMatch(html, /Решения и ключевые риски/);
+  assert.doesNotMatch(html, /Семьи сотрудников/);
+  assert.doesNotMatch(html, /childrenJourneyBoard/);
 });
 
 test('rejects missing project title', () => {
@@ -160,6 +175,18 @@ test('validates detailed budget data', async () => {
   assert.equal(budget.lines.find((line) => line.id === 'cake')?.amounts['Рабочее ядро'], 15000);
   assert.equal(budget.lines.some((line) => line.id === 'snacks' || line.id === 'candidate_cake'), false);
   assert.equal(budget.lines.find((line) => line.id === 'candidate_3d_glasses_rental')?.priceStatus, 'не оценено');
+  assert.equal(budget.lines.find((line) => line.id === 'lina')?.item, 'Йога или стретчинг. Фитнес-тренер');
+  for (const movedId of ['artifact_contest_gifts', 'quiz_other', 'workshops', 'boardgames', 'sports', 'ops', 'candidate_3d_glasses_rental', 'candidate_teen_volunteers']) {
+    assert.equal(budget.lines.find((line) => line.id === movedId)?.block, 'Дополнительно (пересмотреть)', `${movedId} must be in review category`);
+  }
+  assert.match(budget.lines.find((line) => line.id === 'sports')?.parentItem || '', /100 ₽\/час/);
+  const publicLines = budget.lines.filter((line) => line.block !== 'Управление и после');
+  const approvedTotal = publicLines.reduce((sum, line) => sum + (Number(line.amounts?.['Рабочее ядро']) || 0), 0);
+  const additionalTotal = publicLines
+    .filter((line) => Number(line.candidateAmount) > 0 && line.activationStatus !== 'active')
+    .reduce((sum, line) => sum + Number(line.candidateAmount), 0);
+  assert.equal(approvedTotal, 933400);
+  assert.equal(approvedTotal + additionalTotal, 1003400);
   for (const removedId of ['unestimated_7', 'unestimated_9', 'unestimated_10', 'unestimated_11', 'unestimated_12', 'unestimated_13', 'waste', 'rain', 'generator', 'state_awards', 'extended_video', 'reserve_extra', 'candidate_org_team_functional_compensation']) {
     assert.equal(budget.lines.some((line) => line.id === removedId), false, `${removedId} must stay deleted`);
   }

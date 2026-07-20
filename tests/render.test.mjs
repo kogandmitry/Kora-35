@@ -22,7 +22,8 @@ test('escapes html text', () => {
 });
 
 test('renders health panel with key metrics', () => {
-  const html = renderHealthPanel({ daysLeft: 32, eventDateLabel: '15 августа', eventTimeStaff: '10:00–15:00', eventTimeOrganizers: 'с 08:30', averageReadiness: 45, openActions: 7, directionCount: 6, lastUpdated: '2026-07-14', budgetEstimate: 955000, budgetLimit: 1000000, budgetHeadroom: 45000 });
+  const health = { daysLeft: 32, eventDateLabel: '15 августа', eventTimeStaff: '10:00–15:00', eventTimeOrganizers: 'с 08:30', averageReadiness: 45, openActions: 7, directionCount: 6, lastUpdated: '2026-07-14', budgetEstimate: 955000, budgetLimit: 1000000, budgetHeadroom: 45000 };
+  const html = renderHealthPanel(health);
   assert.match(html, /32/);
   assert.match(html, /45%/);
   assert.match(html, /7/);
@@ -30,6 +31,7 @@ test('renders health panel with key metrics', () => {
   assert.match(html, /15 августа/);
   assert.match(html, /10:00–15:00/);
   assert.match(html, /с 08:30/);
+  assert.doesNotMatch(renderHealthPanel(health, { showBudget: false }), /955 000 ₽|955 000 ₽/);
 });
 
 test('renders direction card with drilldown button', () => {
@@ -180,7 +182,10 @@ test('renders action board with owner and due date', () => {
     tasks: [task],
     groups: {
       track: [{ id: 'program', title: 'Программа', color: '#6fb24a', tasks: [task] }],
-      owner: [{ id: 'Нияз', title: 'Нияз', tasks: [task] }]
+      owner: [
+        { id: 'niyaz', title: 'Нияз Кашапов', currentRole: 'Ведущий; координация активностей на базе', functions: ['спорт', 'награждения'], statusLabel: 'согласовать', tasks: [task] },
+        { id: 'igor', title: 'Игорь Коган', currentRole: 'Контроль сайта мероприятия', functions: ['сайт'], tasks: [] }
+      ]
     },
     overdueCount: 0,
     blockedCount: 0,
@@ -192,7 +197,12 @@ test('renders action board with owner and due date', () => {
   assert.match(html, /По трекам/);
   assert.match(html, /1 задача/);
   assert.match(html, /data-action-group-view="track"/);
-  assert.match(renderActionBoard(board, 'owner'), /data-action-group-view="owner"/);
+  const ownerHtml = renderActionBoard(board, 'owner');
+  assert.match(ownerHtml, /data-action-group-view="owner"/);
+  assert.match(ownerHtml, /Нияз Кашапов/);
+  assert.match(ownerHtml, /координация активностей на базе/);
+  assert.match(ownerHtml, /Игорь Коган/);
+  assert.match(ownerHtml, /Открытых задач сейчас нет/);
 });
 
 test('renders compact track progress with direct values', () => {
@@ -231,24 +241,30 @@ test('renders decision board and risk mitigation', () => {
 test('renders customer budget without operational table', () => {
   const html = renderBudgetBoard({
     scenario: { id: 'Рабочее ядро' }, scenarios: [{ id: 'Рабочее ядро', total: 992500 }], total: 992500, ceiling: 1000000,
-    headroom: 7500, participants: 300, perPerson: 3308.33, reserve: 30000, options: 0, unestimatedCount: 15,
+    headroom: 7500, participants: 300, perPerson: 3308.33, reserve: 30000, options: 0, unestimatedCount: 15, potentialTotal: 70000, totalWithAdditional: 1062500,
     blocks: [{ title: 'Питание', amount: 176500 }], lines: [], sourceVersion: 'Смета', asOf: '2026-07-19'
   }, 'customer');
   assert.match(html, /992 500 ₽|992 500 ₽/);
-  assert.match(html, /Версия заказчиков/);
+  assert.match(html, /1 062 500 ₽|1 062 500 ₽/);
+  assert.match(html, /утверждённые статьи расходов/);
+  assert.match(html, /с дополнительными неутверждёнными статьями/);
+  assert.match(html, /Неоценённые расходы в неё не входят/);
+  assert.doesNotMatch(html, /budget-scenarios/);
   assert.doesNotMatch(html, /budget-table/);
 });
 
 test('renders unestimated and potential budget lines under closed details', () => {
   const line = { block: 'Питание', item: 'Торт', quantity: '—', amount: 0, priceStatus: 'не оценено', owner: 'питание', nextStep: 'получить КП' };
+  const candidate = { block: 'Дополнительно (пересмотреть)', item: 'Волонтёрство', candidateAmount: 5000, priceStatus: 'не активировано', basis: 'идея', nextStep: 'согласовать' };
   const html = renderBudgetBoard({
     scenario: { id: 'Рабочее ядро' }, scenarios: [{ id: 'Рабочее ядро', total: 100 }], total: 100, ceiling: 1000,
     headroom: 900, participants: 10, perPerson: 10, reserve: 0, options: 0, unestimatedCount: 1,
-    blocks: [{ title: 'Питание', amount: 100 }], lines: [], unestimatedLines: [line], potentialLines: [], potentialTotal: 0,
+    blocks: [{ title: 'Питание', amount: 100 }], lines: [], unestimatedLines: [line], potentialLines: [candidate], potentialTotal: 5000,
     cutCandidates: [], cutCandidateTotal: 0, sourceVersion: 'Смета', asOf: '2026-07-20'
   }, 'org');
   assert.match(html, /Неоценённые расходы/);
   assert.doesNotMatch(html, /под\s+капот/i);
   assert.match(html, /Торт/);
+  assert.match(html, /Дополнительно \(пересмотреть\) · не активировано/);
   assert.doesNotMatch(html, /budget-underhood budget-unestimated" open/);
 });
