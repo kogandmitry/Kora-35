@@ -126,7 +126,7 @@ test('validates detailed budget data', async () => {
   const budget = JSON.parse(await readFile(new URL('../data/kora35-budget.json', import.meta.url), 'utf8'));
   const result = validateBudgetData(budget);
   assert.equal(result.ok, true, result.errors.join('\n'));
-  assert.equal(budget.lines.length, 61);
-  assert.equal(budget.scenarios.find((scenario) => scenario.id === 'Рабочее ядро')?.total, 1118300);
+  assert.equal(budget.lines.length, 63);
+  assert.equal(budget.scenarios.find((scenario) => scenario.id === 'Рабочее ядро')?.total, 1108400);
   assert.equal(budget.lines.find((line) => line.id === 'custom_1784502249652')?.priceStatus, 'задано пользователем');
 });

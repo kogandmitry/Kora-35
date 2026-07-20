@@ -270,7 +270,7 @@ export function buildActionBoard(data, roleId, now = new Date()) {
     .map((group) => ({
       ...group,
       color: group.tasks[0]?.directionColor || '#8fac45',
-      sortOrder: group.tasks[0]?.directionSortOrder ?? 999
+      sortOrder: group.id === 'wellbeing-system' ? 10000 : (group.tasks[0]?.directionSortOrder ?? 999)
     }))
     .sort((left, right) => left.sortOrder - right.sortOrder || left.title.localeCompare(right.title, 'ru'));
   const ownerGroups = groupTasks(tasks, (task) => task.ownerGroup, (task) => task.ownerGroup)
@@ -297,16 +297,32 @@ export function buildDecisionBoard(data, roleId) {
   return { decisions, risks };
 }
 
+export function buildTeamFunctionsView(data, roleId) {
+  const items = filterVisible(data.teamFunctions || [], roleId);
+  const statusOrder = { active: 0, action_needed: 1, to_confirm: 2, contact_needed: 3, potential: 4 };
+  return {
+    items: [...items].sort((left, right) =>
+      (statusOrder[left.status] ?? 9) - (statusOrder[right.status] ?? 9)
+      || String(left.name).localeCompare(String(right.name), 'ru')
+    ),
+    activeCount: items.filter((item) => item.status === 'active').length,
+    confirmationCount: items.filter((item) => item.status !== 'active').length,
+    futureFunctionCount: items.reduce((sum, item) => sum + (item.futureFunctions || []).length, 0)
+  };
+}
+
 export function buildBudgetView(budget, audience, scenarioId) {
   if (!budget) return null;
   const scenario = budget.scenarios.find((item) => item.id === scenarioId)
     || budget.scenarios.find((item) => item.id === budget.meta.workingScenario)
     || budget.scenarios[0];
-  const lines = (budget.lines || []).map((line) => ({
-    ...line,
-    amount: Number(line.amounts?.[scenario.id]) || 0,
-    quantity: line.quantities?.[scenario.id] || '—'
-  }));
+  const lines = (budget.lines || [])
+    .map((line) => ({
+      ...line,
+      amount: Number(line.amounts?.[scenario.id]) || 0,
+      quantity: line.quantities?.[scenario.id] || '—'
+    }))
+    .sort((left, right) => Number(left.order || 999) - Number(right.order || 999) || String(left.item).localeCompare(String(right.item), 'ru'));
   const blocks = new Map();
   for (const line of lines) {
     if (line.amount > 0) blocks.set(line.block, (blocks.get(line.block) || 0) + line.amount);
@@ -326,6 +342,10 @@ export function buildBudgetView(budget, audience, scenarioId) {
     unestimatedCount: lines.filter((line) => line.type === 'неоценено' || line.priceStatus === 'не оценено').length,
     blocks: [...blocks].map(([title, amount]) => ({ title, amount })).sort((a, b) => b.amount - a.amount),
     lines: audience === 'org' ? lines : [],
+    potentialLines: audience === 'org' ? lines.filter((line) => Number(line.candidateAmount) > 0 && line.activationStatus !== 'active') : [],
+    potentialTotal: lines.filter((line) => Number(line.candidateAmount) > 0 && line.activationStatus !== 'active').reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0),
+    cutCandidates: audience === 'org' ? lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount) : [],
+    cutCandidateTotal: lines.filter((line) => line.cutCandidate && line.amount > 0).reduce((sum, line) => sum + line.amount, 0),
     sourceVersion: budget.meta.sourceVersion,
     asOf: budget.meta.asOf
   };

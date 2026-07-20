@@ -319,21 +319,41 @@ function formatTaskCount(value) {
   return `${count} ${noun}`;
 }
 
-export function renderActionBoard(board, grouping = 'track') {
+export function renderActionBoard(board, grouping = 'track', taskComments = []) {
   const tasks = board.tasks || [];
   const activeGrouping = grouping === 'owner' ? 'owner' : 'track';
   const groups = board.groups?.[activeGrouping] || (tasks.length ? [{ id: 'all', title: 'Все задачи', tasks }] : []);
+  const commentsByTask = new Map();
+  for (const comment of taskComments) {
+    if (!commentsByTask.has(comment.taskId)) commentsByTask.set(comment.taskId, []);
+    commentsByTask.get(comment.taskId).push(comment);
+  }
   const renderTask = (task) => `
-    <article class="action-row status-${escapeHtml(task.status)} ${task.overdue ? 'is-overdue' : ''}">
-      <span class="action-status">${escapeHtml(STATUS_LABELS[task.status] || task.status)}</span>
-      <div class="action-task-main">
-        <strong>${escapeHtml(task.title)}</strong>
-        <div class="action-meta">
-          <small><b>Трек:</b> ${escapeHtml(task.directionTitle || 'Без трека')}</small>
-          <small><b>Ответственные:</b> ${escapeHtml(task.owner || 'владелец уточняется')}</small>
+    <article class="action-row status-${escapeHtml(task.status)} ${task.overdue ? 'is-overdue' : ''}" data-task-id="${escapeHtml(task.id)}">
+      <div class="action-row-grid">
+        <span class="action-status">${escapeHtml(STATUS_LABELS[task.status] || task.status)}</span>
+        <div class="action-task-main">
+          <strong>${escapeHtml(task.title)}</strong>
+          <div class="action-meta">
+            <small><b>Трек:</b> ${escapeHtml(task.directionTitle || 'Без трека')}</small>
+            <small><b>Ответственные:</b> ${escapeHtml(task.owner || 'владелец уточняется')}</small>
+          </div>
         </div>
+        <time datetime="${escapeHtml(task.dueDate || '')}">${task.overdue ? 'просрочено · ' : ''}${escapeHtml(formatDate(task.dueDate))}</time>
       </div>
-      <time datetime="${escapeHtml(task.dueDate || '')}">${task.overdue ? 'просрочено · ' : ''}${escapeHtml(formatDate(task.dueDate))}</time>
+      <details class="task-comments">
+        <summary>＋ Прокомментировать${commentsByTask.get(task.id)?.length ? ` · ${commentsByTask.get(task.id).length}` : ''}</summary>
+        <form class="task-comment-form" data-task-comment-form data-task-id="${escapeHtml(task.id)}">
+          <label><span>Имя</span><input name="author" autocomplete="name" placeholder="Участник орггруппы"></label>
+          <label><span>Комментарий</span><textarea name="comment" rows="2" required placeholder="Идея, уточнение или предложение по этой задаче"></textarea></label>
+          <button type="submit">Добавить комментарий</button>
+        </form>
+        <div class="task-comment-list">
+          ${(commentsByTask.get(task.id) || []).map((comment) => `
+            <article><strong>${escapeHtml(comment.author || 'Орггруппа')}</strong><p>${escapeHtml(comment.text)}</p><small>${escapeHtml(comment.createdAt)}</small></article>
+          `).join('')}
+        </div>
+      </details>
     </article>
   `;
   return `
@@ -343,6 +363,7 @@ export function renderActionBoard(board, grouping = 'track') {
       <article><strong>${board.blockedCount}</strong><span>блокеров</span></article>
       <article><strong>${board.ownerUnknownCount}</strong><span>владельцев нужно назначить</span></article>
     </div>
+    <p class="task-comment-warning">Комментарии сохраняются только в этом браузере. После согласования они переносятся в канонические задачи проекта и обе версии монитора.</p>
     <div class="action-group-controls" role="group" aria-label="Группировка задач">
       <span>Показать задачи:</span>
       <button type="button" class="action-group-button" data-action-group="track" aria-pressed="${activeGrouping === 'track'}">По трекам</button>
@@ -355,6 +376,28 @@ export function renderActionBoard(board, grouping = 'track') {
           <div class="action-list">${group.tasks.map(renderTask).join('')}</div>
         </details>
       `).join('') : '<p class="empty">Нет открытых задач для этой аудитории.</p>'}
+    </div>
+  `;
+}
+
+export function renderTeamFunctionsBoard(view) {
+  const items = view.items || [];
+  return `
+    <div class="team-function-summary">
+      <article><strong>${items.length}</strong><span>сотрудников в трекере</span></article>
+      <article><strong>${view.activeCount}</strong><span>роль подтверждена работой</span></article>
+      <article><strong>${view.confirmationCount}</strong><span>нужно согласовать</span></article>
+      <article><strong>${view.futureFunctionCount}</strong><span>потенциальных функций после выезда</span></article>
+    </div>
+    <div class="team-function-grid">
+      ${items.map((item) => `
+        <article class="team-function-card status-${escapeHtml(item.status || 'potential')}">
+          <div class="team-function-head"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.currentRole)}</span></div><em>${escapeHtml(item.statusLabel || item.status)}</em></div>
+          <section><h3>На выезде</h3><ul>${(item.eventFunctions || []).map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul></section>
+          <section class="future-functions"><h3>После мероприятия</h3><ul>${(item.futureFunctions || []).map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul></section>
+          <p><b>Подтверждение:</b> ${escapeHtml(item.confirmation || 'требуется')}</p>
+        </article>
+      `).join('')}
     </div>
   `;
 }
@@ -434,6 +477,23 @@ export function renderBudgetBoard(view, audience) {
           </table>
         </div>
       </details>
+      <section class="budget-potential">
+        <div class="budget-subhead"><div><span>Не включено в сумму</span><h3>Потенциальные статьи для активации</h3></div><strong>${formatRub(view.potentialTotal)}</strong></div>
+        <div class="budget-candidate-list">
+          ${view.potentialLines.length ? view.potentialLines.map((line) => `
+            <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p><small>${escapeHtml(line.nextStep || '')}</small></div><aside><span>${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>
+          `).join('') : '<p class="empty">Нет неактивированных статей с оценкой.</p>'}
+        </div>
+      </section>
+      <section class="budget-cuts">
+        <div class="budget-subhead"><div><span>Финальный список</span><h3>Статьи-аутсайдеры — кандидаты на урезание</h3></div><strong>${formatRub(view.cutCandidateTotal)}</strong></div>
+        <p>Это список для решения, а не автоматическое сокращение. Выбранных кандидатов достаточно, чтобы закрыть текущее превышение потолка, но приоритеты нужно утвердить.</p>
+        <div class="budget-candidate-list cut-list">
+          ${view.cutCandidates.length ? view.cutCandidates.map((line) => `
+            <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.cutReason || 'Требуется решение о ценности и альтернативе.')}</p></div><aside><span>${escapeHtml(line.block)}</span><b>${formatRub(line.amount)}</b></aside></article>
+          `).join('') : '<p class="empty">В выбранном сценарии нет активных кандидатов на сокращение.</p>'}
+        </div>
+      </section>
     ` : '<p class="customer-boundary">Версия заказчиков показывает сценарии и блоки. Построчные действия, рабочие владельцы и закупочные комментарии остаются в версии орггруппы.</p>'}
   `;
 }

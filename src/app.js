@@ -6,6 +6,7 @@ import {
   buildDecisionBoard,
   buildHealthSummary,
   buildProjectMap,
+  buildTeamFunctionsView,
   buildWellbeingSummary,
   filterVisible,
   getDirectionDetail
@@ -20,6 +21,7 @@ import {
   renderHealthPanel,
   renderIncomingQueue,
   renderProjectMap,
+  renderTeamFunctionsBoard,
   renderWellbeingMap,
   renderSourceList
 } from './render.js';
@@ -31,6 +33,7 @@ const config = {
   budgetUrl: document.body.dataset.budgetUrl || './data/kora35-budget.json'
 };
 const STORE_KEY = `kora35-monitor-incoming-v2-${config.role}`;
+const TASK_COMMENT_STORE_KEY = `kora35-task-comments-v1-${config.role}`;
 const state = {
   data: null,
   budget: null,
@@ -39,13 +42,14 @@ const state = {
   budgetScenario: 'Рабочее ядро',
   actionGrouping: 'track',
   seriesFilter: 'all',
-  incoming: loadIncoming()
+  incoming: loadIncoming(),
+  taskComments: loadTaskComments()
 };
 
 const els = Object.fromEntries([
   'healthPanel', 'eventSeries', 'projectMap', 'wellbeingMap', 'directionGrid',
   'detail', 'detailContent', 'incomingForm', 'incomingQueue', 'sourceList',
-  'actionBoard', 'decisionBoard', 'budgetBoard'
+  'actionBoard', 'teamFunctionsBoard', 'decisionBoard', 'budgetBoard'
 ].map((id) => [id, document.querySelector(`#${id}`)]));
 
 function loadIncoming() {
@@ -58,6 +62,18 @@ function loadIncoming() {
 
 function saveIncoming() {
   localStorage.setItem(STORE_KEY, JSON.stringify(state.incoming));
+}
+
+function loadTaskComments() {
+  try {
+    return JSON.parse(localStorage.getItem(TASK_COMMENT_STORE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveTaskComments() {
+  localStorage.setItem(TASK_COMMENT_STORE_KEY, JSON.stringify(state.taskComments));
 }
 
 function classifyKind(kind) {
@@ -79,7 +95,8 @@ function render() {
   if (els.directionGrid) els.directionGrid.innerHTML = renderDirectionGrid(filterVisible(data.directions, state.role));
   if (els.incomingQueue) els.incomingQueue.innerHTML = renderIncomingQueue(state.incoming);
   if (els.sourceList) els.sourceList.innerHTML = renderSourceList(data.sources || []);
-  if (els.actionBoard) els.actionBoard.innerHTML = renderActionBoard(buildActionBoard(data, state.role), state.actionGrouping);
+  if (els.actionBoard) els.actionBoard.innerHTML = renderActionBoard(buildActionBoard(data, state.role), state.actionGrouping, state.taskComments);
+  if (els.teamFunctionsBoard) els.teamFunctionsBoard.innerHTML = renderTeamFunctionsBoard(buildTeamFunctionsView(data, state.role));
   if (els.decisionBoard) els.decisionBoard.innerHTML = renderDecisionBoard(buildDecisionBoard(data, state.role));
   if (els.budgetBoard) els.budgetBoard.innerHTML = renderBudgetBoard(buildBudgetView(state.budget, state.audience, state.budgetScenario), state.audience);
 }
@@ -137,6 +154,24 @@ els.actionBoard?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-action-group]');
   if (!button) return;
   state.actionGrouping = button.dataset.actionGroup;
+  render();
+});
+
+els.actionBoard?.addEventListener('submit', (event) => {
+  const formElement = event.target.closest('[data-task-comment-form]');
+  if (!formElement) return;
+  event.preventDefault();
+  const form = new FormData(formElement);
+  const text = String(form.get('comment') || '').trim();
+  if (!text) return;
+  state.taskComments.unshift({
+    id: crypto.randomUUID(),
+    taskId: formElement.dataset.taskId,
+    author: String(form.get('author') || '').trim() || 'Орггруппа',
+    text,
+    createdAt: new Date().toLocaleString('ru-RU')
+  });
+  saveTaskComments();
   render();
 });
 
