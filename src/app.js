@@ -28,8 +28,10 @@ import {
   renderTrackProgress
 } from './render.js';
 
+const locationParams = new URLSearchParams(window.location.search);
+const localOwnerMode = ['127.0.0.1', 'localhost'].includes(window.location.hostname) && locationParams.get('role') === 'owner';
 const config = {
-  role: document.body.dataset.role || 'public',
+  role: localOwnerMode ? 'owner' : (document.body.dataset.role || 'public'),
   audience: document.body.dataset.audience || 'public',
   dataUrl: document.body.dataset.dataUrl || './data/kora35-monitor.json',
   budgetUrl: document.body.dataset.budgetUrl || './data/kora35-budget.json'
@@ -103,7 +105,7 @@ function render() {
   if (els.actionBoard) els.actionBoard.innerHTML = renderActionBoard(actionBoard, state.actionGrouping, state.taskComments);
   if (els.teamFunctionsBoard) els.teamFunctionsBoard.innerHTML = renderTeamFunctionsBoard(buildTeamFunctionsView(data, state.role));
   if (els.decisionBoard) els.decisionBoard.innerHTML = renderDecisionBoard(buildDecisionBoard(data, state.role));
-  if (els.budgetBoard) els.budgetBoard.innerHTML = renderBudgetBoard(buildBudgetView(state.budget, state.audience, state.budgetScenario), state.audience);
+  if (els.budgetBoard) els.budgetBoard.innerHTML = renderBudgetBoard(buildBudgetView(state.budget, state.audience, state.budgetScenario, state.role), state.audience);
 }
 
 function openDirection(directionId) {

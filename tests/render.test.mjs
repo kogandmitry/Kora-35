@@ -245,7 +245,8 @@ test('renders unestimated and potential budget lines under closed details', () =
     blocks: [{ title: 'Питание', amount: 100 }], lines: [], unestimatedLines: [line], potentialLines: [], potentialTotal: 0,
     cutCandidates: [], cutCandidateTotal: 0, sourceVersion: 'Смета', asOf: '2026-07-20'
   }, 'org');
-  assert.match(html, /Под капотом · неоценённые расходы/);
+  assert.match(html, /Неоценённые расходы/);
+  assert.doesNotMatch(html, /под\s+капот/i);
   assert.match(html, /Торт/);
   assert.doesNotMatch(html, /budget-underhood budget-unestimated" open/);
 });

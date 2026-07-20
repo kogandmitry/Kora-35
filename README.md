@@ -46,4 +46,12 @@ npm run serve
 - `https://eliseyyauezhik.github.io/Kora-35/org/`
 - `https://eliseyyauezhik.github.io/Kora-35/customer/`
 
+Канонический реестр ссылок для поиска из мобильного ChatGPT хранится в `data/kora35-public-links.json`. Обе версии входят в одну группу синхронизации: изменение данных орггруппы отражается в версии заказчиков в пределах её информационной границы.
+
+Текущие рабочие публичные адреса форка:
+
+- `https://kogandmitry.github.io/Kora-35/org/`
+- `https://kogandmitry.github.io/Kora-35/customer/`
+- `https://kogandmitry.github.io/Kora-35/data/kora35-public-links.json` — машиночитаемый реестр для мобильного ChatGPT.
+
 Боевой контур должен быть перенесен на российский VPS с HTTPS, PostgreSQL, авторизацией и бэкапами.

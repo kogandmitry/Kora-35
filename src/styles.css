@@ -996,6 +996,8 @@ textarea {
 .budget-scenario.active { border: 2px solid var(--green); padding: 10px 12px; background: var(--green-soft); }
 .budget-scenario span { color: var(--muted); font-size: 12px; }
 .budget-scenario strong { color: var(--ink); font-size: 19px; }
+.budget-scenario small { color: #5f705b; font-size: 10px; line-height: 1.35; }
+.manager-budget-note { margin: -2px 0 12px; padding: 9px 11px; border-left: 4px solid var(--green); background: #eef6e8; color: #43553f; font-size: 12px; font-weight: 800; }
 .budget-metrics {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));

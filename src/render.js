@@ -513,9 +513,11 @@ export function renderBudgetBoard(view, audience) {
       ${view.scenarios.map((scenario) => `
         <button type="button" class="budget-scenario ${scenario.id === view.scenario.id ? 'active' : ''}" data-budget-scenario="${escapeHtml(scenario.id)}" aria-pressed="${scenario.id === view.scenario.id}">
           <span>${escapeHtml(scenario.id)}</span><strong>${formatRub(scenario.total)}</strong>
+          ${scenario.note ? `<small>${escapeHtml(scenario.note)}</small>` : ''}
         </button>
       `).join('')}
     </div>
+    ${view.managerView ? '<p class="manager-budget-note">Локальная версия руководителя проекта · включает закрытый блок «Управление и после».</p>' : ''}
     <div class="budget-metrics">
       <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>выбранный сценарий</span></article>
       <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>потолок</span></article>
@@ -532,7 +534,7 @@ export function renderBudgetBoard(view, audience) {
       </section>
       <aside class="budget-note">
         <strong>${view.unestimatedCount} неоценённых расходов</strong>
-        <p>Они убраны под капот и не увеличивают сумму сценария до появления оценки.</p>
+        <p>Они доступны в раскрывающемся разделе и не увеличивают сумму сценария до появления оценки.</p>
         <small>${escapeHtml(view.sourceVersion)} · актуальность ${escapeHtml(formatDate(view.asOf))}</small>
       </aside>
     </div>
@@ -542,12 +544,12 @@ export function renderBudgetBoard(view, audience) {
         ${renderBudgetTable(view.lines)}
       </details>
       <details class="budget-underhood budget-unestimated">
-        <summary><span>Под капотом · неоценённые расходы</span><strong>${view.unestimatedLines.length}</strong></summary>
+        <summary><span>Неоценённые расходы</span><strong>${view.unestimatedLines.length}</strong></summary>
         <p>Строки сохранены для контроля полноты, но скрыты из основного списка и не входят в сумму.</p>
         ${renderBudgetTable(view.unestimatedLines)}
       </details>
       <details class="budget-underhood budget-potential">
-        <summary><span>Под капотом · потенциальные статьи для активации</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
+        <summary><span>Потенциальные статьи для активации</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
         <div class="budget-candidate-list">
           ${view.potentialLines.length ? view.potentialLines.map((line) => `
             <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p><small>${escapeHtml(line.nextStep || '')}</small></div><aside><span>${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>

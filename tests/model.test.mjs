@@ -5,6 +5,7 @@ import {
   buildAnniversarySeries,
   buildBudgetView,
   buildDecisionBoard,
+  buildTeamFunctionsView,
   buildProjectMap,
   buildWellbeingSummary,
   buildHealthSummary,
@@ -187,21 +188,38 @@ test('builds decisions and risks for a role', () => {
   assert.equal(board.risks.length, 1);
 });
 
+test('orders team function cards by explicit project order', () => {
+  const view = buildTeamFunctionsView({
+    teamFunctions: [
+      { id: 'niyaz', order: 3, name: 'Нияз', status: 'active', visibility: ['coordinator'] },
+      { id: 'kuzmich', order: 2, name: 'Дмитрий Кузьмич', status: 'to_confirm', visibility: ['coordinator'] },
+      { id: 'kogan', order: 1, name: 'Дмитрий Коган', status: 'action_needed', visibility: ['coordinator'] }
+    ]
+  }, 'coordinator');
+  assert.deepEqual(view.items.map((item) => item.name), ['Дмитрий Коган', 'Дмитрий Кузьмич', 'Нияз']);
+});
+
 test('builds detailed and customer budget views', () => {
   const budget = {
     meta: { workingScenario: 'Рабочее ядро', ceiling: 1000000, sourceVersion: 'test', asOf: '2026-07-19' },
-    scenarios: [{ id: 'Рабочее ядро', total: 130, participants: 10 }],
+    scenarios: [{ id: 'Рабочее ядро', total: 185, participants: 10 }],
     lines: [
       { id: 'a', block: 'A', item: 'Ядро', type: 'ядро', priceStatus: 'лимит', amounts: { 'Рабочее ядро': 100 }, quantities: { 'Рабочее ядро': '1' } },
-      { id: 'r', block: 'Резерв', item: 'Резерв', type: 'резерв', priceStatus: 'решение', amounts: { 'Рабочее ядро': 30 }, quantities: { 'Рабочее ядро': '1' } }
+      { id: 'r', block: 'Резерв', item: 'Резерв', type: 'резерв', priceStatus: 'решение', amounts: { 'Рабочее ядро': 30 }, quantities: { 'Рабочее ядро': '1' } },
+      { id: 'm', block: 'Управление и после', item: 'Руководство', type: 'ядро', priceStatus: 'решение', amounts: { 'Рабочее ядро': 55 }, quantities: { 'Рабочее ядро': '1' } }
     ]
   };
   const org = buildBudgetView(budget, 'org', 'Рабочее ядро');
   const customer = buildBudgetView(budget, 'customer', 'Рабочее ядро');
+  const owner = buildBudgetView(budget, 'org', 'Рабочее ядро', 'owner');
   assert.equal(org.total, 130);
   assert.equal(org.reserve, 30);
   assert.equal(org.lines.length, 2);
   assert.equal(org.scenarios[0].total, 130);
   assert.deepEqual(org.unestimatedLines, []);
   assert.equal(customer.lines.length, 0);
+  assert.equal(customer.total, 130);
+  assert.equal(owner.total, 185);
+  assert.equal(owner.lines.length, 3);
+  assert.equal(owner.managerView, true);
 });

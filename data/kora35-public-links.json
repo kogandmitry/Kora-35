@@ -1,0 +1,29 @@
+{
+  "projectId": "kora35",
+  "title": "КОРА 35 — постоянные публичные мониторы",
+  "asOf": "2026-07-20",
+  "syncPolicy": "Обе версии обновляются в одном цикле; версия заказчиков получает только предназначенную ей информацию.",
+  "links": [
+    {
+      "id": "org-monitor",
+      "title": "Рабочий монитор орггруппы",
+      "url": "https://eliseyyauezhik.github.io/Kora-35/org/",
+      "liveUrl": "https://kogandmitry.github.io/Kora-35/org/",
+      "audience": "org",
+      "status": "live_fork_canonical_pending_merge"
+    },
+    {
+      "id": "customer-monitor",
+      "title": "Монитор заказчиков",
+      "url": "https://eliseyyauezhik.github.io/Kora-35/customer/",
+      "liveUrl": "https://kogandmitry.github.io/Kora-35/customer/",
+      "audience": "customer",
+      "status": "live_fork_canonical_pending_merge"
+    }
+  ],
+  "publication": {
+    "source": "GitHub Pages",
+    "liveRegistryUrl": "https://kogandmitry.github.io/Kora-35/data/kora35-public-links.json",
+    "rule": "Рабочая публикация обновляется из форка; целевые канонические URL начнут работать после слияния pull request в main исходного репозитория."
+  }
+}

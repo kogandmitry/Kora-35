@@ -337,7 +337,8 @@ export function buildTeamFunctionsView(data, roleId) {
   const statusOrder = { active: 0, action_needed: 1, to_confirm: 2, contact_needed: 3, potential: 4 };
   return {
     items: [...items].sort((left, right) =>
-      (statusOrder[left.status] ?? 9) - (statusOrder[right.status] ?? 9)
+      Number(left.order ?? 999) - Number(right.order ?? 999)
+      || (statusOrder[left.status] ?? 9) - (statusOrder[right.status] ?? 9)
       || String(left.name).localeCompare(String(right.name), 'ru')
     ),
     activeCount: items.filter((item) => item.status === 'active').length,
@@ -346,16 +347,17 @@ export function buildTeamFunctionsView(data, roleId) {
   };
 }
 
-export function buildBudgetView(budget, audience, scenarioId) {
+export function buildBudgetView(budget, audience, scenarioId, roleId = audience === 'org' ? 'coordinator' : 'customer') {
   if (!budget) return null;
+  const sourceLines = (budget.lines || []).filter((line) => line.block !== 'Управление и после' || roleId === 'owner');
   const scenarios = (budget.scenarios || []).map((item) => ({
     ...item,
-    total: (budget.lines || []).reduce((sum, line) => sum + (Number(line.amounts?.[item.id]) || 0), 0)
+    total: sourceLines.reduce((sum, line) => sum + (Number(line.amounts?.[item.id]) || 0), 0)
   }));
   const scenario = scenarios.find((item) => item.id === scenarioId)
     || scenarios.find((item) => item.id === budget.meta.workingScenario)
     || scenarios[0];
-  const lines = (budget.lines || [])
+  const lines = sourceLines
     .map((line) => ({
       ...line,
       amount: Number(line.amounts?.[scenario.id]) || 0,
@@ -388,6 +390,7 @@ export function buildBudgetView(budget, audience, scenarioId) {
     potentialTotal: lines.filter(isPotential).reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0),
     cutCandidates: audience === 'org' ? lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount) : [],
     cutCandidateTotal: lines.filter((line) => line.cutCandidate && line.amount > 0).reduce((sum, line) => sum + line.amount, 0),
+    managerView: roleId === 'owner',
     sourceVersion: budget.meta.sourceVersion,
     asOf: budget.meta.asOf
   };

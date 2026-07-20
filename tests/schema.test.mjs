@@ -25,6 +25,27 @@ test('validates seeded monitor data', async () => {
   const data = JSON.parse(await readFile(new URL('../data/kora35-monitor.json', import.meta.url), 'utf8'));
   const result = validateMonitorData(data);
   assert.equal(result.ok, true, result.errors.join('\n'));
+  assert.deepEqual(data.publicLinks.map((item) => item.id), ['org-monitor', 'customer-monitor']);
+  assert.equal(new Set(data.publicLinks.map((item) => item.syncGroup)).size, 1);
+  assert.equal(data.teamFunctions.some((item) => item.id === 'konstantin'), false);
+  assert.deepEqual([...data.teamFunctions].sort((left, right) => left.order - right.order).slice(0, 5).map((item) => item.name), [
+    'Дмитрий Коган', 'Дмитрий Кузьмич', 'Нияз Кашапов', 'Евгения Сенина', 'Гузель'
+  ]);
+});
+
+test('keeps public link registry synchronized with monitor links', async () => {
+  const [data, registry] = await Promise.all([
+    readFile(new URL('../data/kora35-monitor.json', import.meta.url), 'utf8').then(JSON.parse),
+    readFile(new URL('../data/kora35-public-links.json', import.meta.url), 'utf8').then(JSON.parse)
+  ]);
+  assert.deepEqual(
+    data.publicLinks.map((item) => item.url),
+    registry.links.map((item) => item.url)
+  );
+  assert.deepEqual(
+    data.publicLinks.map((item) => item.liveUrl),
+    registry.links.map((item) => item.liveUrl)
+  );
 });
 
 test('rejects missing project title', () => {
@@ -127,8 +148,11 @@ test('validates detailed budget data', async () => {
   const result = validateBudgetData(budget);
   assert.equal(result.ok, true, result.errors.join('\n'));
   assert.equal(budget.lines.length, 52);
-  assert.equal(budget.scenarios.find((scenario) => scenario.id === 'Рабочее ядро')?.total, 1028400);
-  assert.equal(budget.lines.find((line) => line.id === 'custom_1784502249652')?.priceStatus, 'задано пользователем');
+  assert.equal(budget.scenarios.find((scenario) => scenario.id === 'Рабочее ядро')?.total, 998400);
+  assert.equal(budget.lines.find((line) => line.id === 'custom_1784502249652')?.amounts['Рабочее ядро'], 20000);
+  assert.equal(budget.lines.find((line) => line.id === 'custom_1784502249652')?.block, 'Медиа и цифровой контур');
+  assert.equal(budget.lines.find((line) => line.id === 'candidate_daily_documentary_week')?.candidateAmount, 0);
+  assert.equal(budget.lines.find((line) => line.id === 'candidate_daily_documentary_week')?.owner, 'Евгения Сенина');
   assert.equal(budget.lines.find((line) => line.id === 'photo_video_event')?.amounts['Рабочее ядро'], 20000);
   assert.equal(budget.lines.find((line) => line.id === 'goldberg')?.activationStatus, 'not_activated');
   assert.equal(budget.lines.find((line) => line.id === 'candidate_cake')?.priceStatus, 'не оценено');
