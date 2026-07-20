@@ -26,7 +26,7 @@ const DEFAULT_SERIES_STAGES = [
   {
     id: 'legacy',
     title: '3. Выезд и продолжение',
-    summary: 'Корпоративный отдых 16 августа и следующие волны инициатив.'
+    summary: 'Отдых коллектива 16 августа и следующие волны инициатив.'
   }
 ];
 
@@ -51,6 +51,10 @@ export function isVisible(item, roleId) {
 
 export function filterVisible(items, roleId) {
   return (items || []).filter((item) => isVisible(item, roleId));
+}
+
+function wellbeingLast(items) {
+  return [...items].sort((left, right) => Number(left.id === 'wellbeing-system') - Number(right.id === 'wellbeing-system'));
 }
 
 export function getOpenActionCount(data, roleId) {
@@ -92,7 +96,7 @@ function clampPercent(value) {
 }
 
 export function buildProjectMap(data, roleId) {
-  const visibleDirections = filterVisible(data.directions, roleId);
+  const visibleDirections = wellbeingLast(filterVisible(data.directions, roleId));
   const nodes = visibleDirections.map((direction, index) => {
     const fallback = FALLBACK_NODE_POSITIONS[index % FALLBACK_NODE_POSITIONS.length];
     const x = clampPercent(direction.map?.x ?? fallback.x);
@@ -157,7 +161,7 @@ export function buildWellbeingSummary(data, roleId) {
 }
 
 export function buildAnniversarySeries(data, roleId, filterId = 'all') {
-  const visibleDirections = filterVisible(data.directions, roleId);
+  const visibleDirections = wellbeingLast(filterVisible(data.directions, roleId));
   const directionsById = new Map(visibleDirections.map((direction, index) => [
     direction.id,
     {
@@ -234,10 +238,12 @@ export function getDirectionDetail(data, directionId, roleId) {
 export function buildActionBoard(data, roleId, now = new Date()) {
   const today = now.toISOString().slice(0, 10);
   const statusOrder = { blocked: 0, action_needed: 1, in_progress: 2, not_started: 3, done: 4, archived: 5 };
-  const visibleDirections = filterVisible(data.directions, roleId);
+  const statusWeight = { done: 100, in_progress: 60, action_needed: 20, blocked: 0, not_started: 0 };
+  const visibleDirections = wellbeingLast(filterVisible(data.directions, roleId));
   const directionById = new Map(visibleDirections.map((direction, index) => [direction.id, { ...direction, sortOrder: index }]));
   const primaryOwner = (owner) => String(owner || '').split('/').map((part) => part.trim()).find(Boolean) || 'Не назначен';
-  const tasks = filterVisible(data.tasks, roleId)
+  const allVisibleTasks = filterVisible(data.tasks, roleId).filter((task) => task.status !== 'archived');
+  const tasks = allVisibleTasks
     .filter((task) => OPEN_STATUSES.has(task.status))
     .map((task) => {
       const direction = directionById.get(task.directionId);
@@ -274,11 +280,40 @@ export function buildActionBoard(data, roleId, now = new Date()) {
     }))
     .sort((left, right) => left.sortOrder - right.sortOrder || left.title.localeCompare(right.title, 'ru'));
   const ownerGroups = groupTasks(tasks, (task) => task.ownerGroup, (task) => task.ownerGroup)
+    .map((group) => {
+      const person = (data.teamFunctions || []).find((item) => item.name === group.title);
+      return {
+        ...group,
+        color: group.tasks[0]?.directionColor || '#8fac45',
+        currentRole: person?.currentRole || 'Функциональная роль уточняется',
+        functions: person?.eventFunctions || [],
+        statusLabel: person?.statusLabel || ''
+      };
+    })
     .sort((left, right) => right.tasks.length - left.tasks.length || left.title.localeCompare(right.title, 'ru'));
+
+  const trackProgress = visibleDirections.map((direction) => {
+    const directionTasks = allVisibleTasks.filter((task) => task.directionId === direction.id);
+    const total = directionTasks.length;
+    const score = total
+      ? Math.round(directionTasks.reduce((sum, task) => sum + (statusWeight[task.status] ?? 0), 0) / total)
+      : Number(direction.readiness || 0);
+    return {
+      id: direction.id,
+      title: direction.title,
+      color: direction.color || '#8fac45',
+      score,
+      total,
+      done: directionTasks.filter((task) => task.status === 'done').length,
+      inProgress: directionTasks.filter((task) => task.status === 'in_progress').length,
+      attention: directionTasks.filter((task) => ['action_needed', 'blocked', 'not_started'].includes(task.status)).length
+    };
+  });
 
   return {
     tasks,
     groups: { track: trackGroups, owner: ownerGroups },
+    trackProgress,
     overdueCount: tasks.filter((task) => task.overdue).length,
     blockedCount: tasks.filter((task) => task.status === 'blocked').length,
     ownerUnknownCount: tasks.filter((task) => !task.owner || task.owner.includes('назначить')).length
@@ -313,9 +348,13 @@ export function buildTeamFunctionsView(data, roleId) {
 
 export function buildBudgetView(budget, audience, scenarioId) {
   if (!budget) return null;
-  const scenario = budget.scenarios.find((item) => item.id === scenarioId)
-    || budget.scenarios.find((item) => item.id === budget.meta.workingScenario)
-    || budget.scenarios[0];
+  const scenarios = (budget.scenarios || []).map((item) => ({
+    ...item,
+    total: (budget.lines || []).reduce((sum, line) => sum + (Number(line.amounts?.[item.id]) || 0), 0)
+  }));
+  const scenario = scenarios.find((item) => item.id === scenarioId)
+    || scenarios.find((item) => item.id === budget.meta.workingScenario)
+    || scenarios[0];
   const lines = (budget.lines || [])
     .map((line) => ({
       ...line,
@@ -329,9 +368,11 @@ export function buildBudgetView(budget, audience, scenarioId) {
   }
   const total = lines.reduce((sum, line) => sum + line.amount, 0);
   const ceiling = Number(budget.meta.ceiling) || 0;
+  const isUnestimated = (line) => line.type === 'неоценено' || line.priceStatus === 'не оценено';
+  const isPotential = (line) => Number(line.candidateAmount) > 0 && line.activationStatus !== 'active';
   return {
     scenario,
-    scenarios: budget.scenarios,
+    scenarios,
     total,
     ceiling,
     headroom: ceiling - total,
@@ -339,11 +380,12 @@ export function buildBudgetView(budget, audience, scenarioId) {
     perPerson: total / (Number(scenario.participants) || 1),
     reserve: lines.filter((line) => line.type === 'резерв').reduce((sum, line) => sum + line.amount, 0),
     options: lines.filter((line) => line.type === 'опция').reduce((sum, line) => sum + line.amount, 0),
-    unestimatedCount: lines.filter((line) => line.type === 'неоценено' || line.priceStatus === 'не оценено').length,
+    unestimatedCount: lines.filter(isUnestimated).length,
     blocks: [...blocks].map(([title, amount]) => ({ title, amount })).sort((a, b) => b.amount - a.amount),
-    lines: audience === 'org' ? lines : [],
-    potentialLines: audience === 'org' ? lines.filter((line) => Number(line.candidateAmount) > 0 && line.activationStatus !== 'active') : [],
-    potentialTotal: lines.filter((line) => Number(line.candidateAmount) > 0 && line.activationStatus !== 'active').reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0),
+    lines: audience === 'org' ? lines.filter((line) => !isUnestimated(line) && !isPotential(line)) : [],
+    unestimatedLines: audience === 'org' ? lines.filter(isUnestimated) : [],
+    potentialLines: audience === 'org' ? lines.filter(isPotential) : [],
+    potentialTotal: lines.filter(isPotential).reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0),
     cutCandidates: audience === 'org' ? lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount) : [],
     cutCandidateTotal: lines.filter((line) => line.cutCandidate && line.amount > 0).reduce((sum, line) => sum + line.amount, 0),
     sourceVersion: budget.meta.sourceVersion,

@@ -170,6 +170,7 @@ test('builds audience action board and marks overdue tasks', () => {
   assert.deepEqual(board.groups.track.map((group) => group.title), ['A', 'B']);
   assert.deepEqual(board.groups.owner.map((group) => group.title), ['Дмитрий Коган', 'Нияз']);
   assert.equal(board.tasks[0].directionTitle, 'B');
+  assert.deepEqual(board.trackProgress.map((item) => [item.title, item.score]), [['A', 20], ['B', 0]]);
 });
 
 test('builds decisions and risks for a role', () => {
@@ -200,5 +201,7 @@ test('builds detailed and customer budget views', () => {
   assert.equal(org.total, 130);
   assert.equal(org.reserve, 30);
   assert.equal(org.lines.length, 2);
+  assert.equal(org.scenarios[0].total, 130);
+  assert.deepEqual(org.unestimatedLines, []);
   assert.equal(customer.lines.length, 0);
 });

@@ -5,6 +5,7 @@ import {
   renderActionBoard,
   renderAnniversarySeries,
   renderBudgetBoard,
+  renderChildrenJourney,
   renderDecisionBoard,
   renderDirectionCard,
   renderDirectionDetail,
@@ -12,7 +13,8 @@ import {
   renderIncomingQueue,
   renderProjectMap,
   renderWellbeingMap,
-  renderSourceList
+  renderSourceList,
+  renderTrackProgress
 } from '../src/render.js';
 
 test('escapes html text', () => {
@@ -191,6 +193,32 @@ test('renders action board with owner and due date', () => {
   assert.match(renderActionBoard(board, 'owner'), /data-action-group-view="owner"/);
 });
 
+test('renders compact track progress with direct values', () => {
+  const html = renderTrackProgress([{ id: 'children', title: 'Детский трек', color: '#f0c94b', score: 45, total: 5, done: 1, inProgress: 2, attention: 2 }]);
+  assert.match(html, /Детский трек/);
+  assert.match(html, /45%/);
+  assert.match(html, /готово 1/);
+});
+
+test('renders children journey with three stations and contest first', () => {
+  const html = renderChildrenJourney({
+    summary: 'Путь детского трека',
+    stations: [
+      { id: 'excursion', title: 'Экскурсия', dateLabel: '24 июня', status: 'done' },
+      { id: 'contest', title: 'Конкурс', dateLabel: 'сейчас', status: 'in_progress' },
+      { id: 'nature', title: 'Выезд', dateLabel: '16 августа', status: 'action_needed' }
+    ],
+    futureLabel: 'Другие активности',
+    announcements: [
+      { kind: 'contest', title: 'Придавая форму воображению. КОРА глазами детей', lead: 'Участие', details: 'Пять призов' },
+      { kind: 'excursion', title: 'Детская экскурсия · 24 июня', lead: 'Первая станция', details: 'Материалы' }
+    ]
+  });
+  assert.match(html, /children-route/);
+  assert.match(html, /Придавая форму воображению/);
+  assert.ok(html.indexOf('Придавая форму воображению') < html.indexOf('Детская экскурсия'));
+});
+
 test('renders decision board and risk mitigation', () => {
   const html = renderDecisionBoard({ decisions: [{ createdAt: '2026-07-19', text: 'Разделить монитор' }], risks: [{ title: 'Права GitHub', severity: 'high', mitigation: 'Выдать доступ' }] });
   assert.match(html, /Решения и предложения/);
@@ -207,4 +235,17 @@ test('renders customer budget without operational table', () => {
   assert.match(html, /992 500 ₽|992 500 ₽/);
   assert.match(html, /Версия заказчиков/);
   assert.doesNotMatch(html, /budget-table/);
+});
+
+test('renders unestimated and potential budget lines under closed details', () => {
+  const line = { block: 'Питание', item: 'Торт', quantity: '—', amount: 0, priceStatus: 'не оценено', owner: 'питание', nextStep: 'получить КП' };
+  const html = renderBudgetBoard({
+    scenario: { id: 'Рабочее ядро' }, scenarios: [{ id: 'Рабочее ядро', total: 100 }], total: 100, ceiling: 1000,
+    headroom: 900, participants: 10, perPerson: 10, reserve: 0, options: 0, unestimatedCount: 1,
+    blocks: [{ title: 'Питание', amount: 100 }], lines: [], unestimatedLines: [line], potentialLines: [], potentialTotal: 0,
+    cutCandidates: [], cutCandidateTotal: 0, sourceVersion: 'Смета', asOf: '2026-07-20'
+  }, 'org');
+  assert.match(html, /Под капотом · неоценённые расходы/);
+  assert.match(html, /Торт/);
+  assert.doesNotMatch(html, /budget-underhood budget-unestimated" open/);
 });

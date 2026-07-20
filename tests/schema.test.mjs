@@ -126,7 +126,14 @@ test('validates detailed budget data', async () => {
   const budget = JSON.parse(await readFile(new URL('../data/kora35-budget.json', import.meta.url), 'utf8'));
   const result = validateBudgetData(budget);
   assert.equal(result.ok, true, result.errors.join('\n'));
-  assert.equal(budget.lines.length, 63);
-  assert.equal(budget.scenarios.find((scenario) => scenario.id === 'Рабочее ядро')?.total, 1108400);
+  assert.equal(budget.lines.length, 52);
+  assert.equal(budget.scenarios.find((scenario) => scenario.id === 'Рабочее ядро')?.total, 1028400);
   assert.equal(budget.lines.find((line) => line.id === 'custom_1784502249652')?.priceStatus, 'задано пользователем');
+  assert.equal(budget.lines.find((line) => line.id === 'photo_video_event')?.amounts['Рабочее ядро'], 20000);
+  assert.equal(budget.lines.find((line) => line.id === 'goldberg')?.activationStatus, 'not_activated');
+  assert.equal(budget.lines.find((line) => line.id === 'candidate_cake')?.priceStatus, 'не оценено');
+  assert.equal(budget.lines.find((line) => line.id === 'candidate_3d_glasses_rental')?.priceStatus, 'не оценено');
+  for (const removedId of ['unestimated_7', 'unestimated_9', 'unestimated_10', 'unestimated_11', 'unestimated_12', 'unestimated_13', 'waste', 'rain', 'generator', 'state_awards', 'extended_video', 'reserve_extra', 'candidate_org_team_functional_compensation']) {
+    assert.equal(budget.lines.some((line) => line.id === removedId), false, `${removedId} must stay deleted`);
+  }
 });

@@ -319,7 +319,59 @@ function formatTaskCount(value) {
   return `${count} ${noun}`;
 }
 
-export function renderActionBoard(board, grouping = 'track', taskComments = []) {
+export function renderTrackProgress(items = []) {
+  return `
+    <div class="track-progress-list" aria-label="Степень реализации по трекам">
+      ${items.map((item) => `
+        <article class="track-progress-item" style="--track-color:${escapeHtml(item.color || '#8fac45')};--track-progress:${Math.max(0, Math.min(100, Number(item.score) || 0))}%">
+          <div class="track-progress-head"><strong>${escapeHtml(item.title)}</strong><b>${Math.round(Number(item.score) || 0)}%</b></div>
+          <div class="track-progress-bar" role="progressbar" aria-label="${escapeHtml(item.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Number(item.score) || 0)}"><i></i></div>
+          <small>${formatTaskCount(item.total)} · готово ${item.done} · в работе ${item.inProgress} · требуют действия ${item.attention}</small>
+        </article>
+      `).join('')}
+    </div>
+    <p class="track-progress-note">Расчёт: готово — 100%, в работе — 60%, требует действия — 20%, блокер или не начато — 0%. Система благополучия показана последней как продолжение после выезда.</p>
+  `;
+}
+
+function childJourneyIcon(id) {
+  const icons = {
+    excursion: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34h32M12 31V17l12-7 12 7v14M18 31v-8h12v8M17 18h3m8 0h3"/></svg>',
+    contest: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 36l7-23 21 7-7 20zM17 13l14 27M14 27l21 7M30 10l2 5m6-1-4 4"/></svg>',
+    nature: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M7 37h34M12 37l9-18 8 18M26 37l7-13 8 13M17 18l4-7 4 7"/></svg>'
+  };
+  return icons[id] || icons.contest;
+}
+
+export function renderChildrenJourney(journey) {
+  if (!journey) return '<p class="empty">Детская траектория уточняется.</p>';
+  return `
+    <p class="children-journey-intro">${escapeHtml(journey.summary || '')}</p>
+    <div class="children-route" aria-label="Динамика детского трека">
+      ${(journey.stations || []).map((station, index) => `
+        <article class="children-station status-${escapeHtml(station.status || 'not_started')}">
+          <span class="children-station-number">${index + 1}</span>
+          <span class="children-station-icon">${childJourneyIcon(station.id)}</span>
+          <small>${escapeHtml(station.dateLabel || '')}</small>
+          <strong>${escapeHtml(station.title)}</strong>
+          <p>${escapeHtml(station.description || '')}</p>
+        </article>
+      `).join('')}
+      <div class="children-route-future"><i></i><span>＋</span><p>${escapeHtml(journey.futureLabel || '')}</p></div>
+    </div>
+    <div class="children-announcements">
+      ${(journey.announcements || []).map((item) => `
+        <article class="children-announcement kind-${escapeHtml(item.kind || 'note')}">
+          <div><small>${item.kind === 'contest' ? 'Творческий конкурс' : 'Первая станция трека'}</small><h3>${escapeHtml(item.title)}</h3></div>
+          <p>${escapeHtml(item.lead || '')}</p>
+          <p class="children-announcement-detail">${escapeHtml(item.details || '')}</p>
+        </article>
+      `).join('')}
+    </div>
+  `;
+}
+
+export function renderActionBoard(board, grouping = 'owner', taskComments = []) {
   const tasks = board.tasks || [];
   const activeGrouping = grouping === 'owner' ? 'owner' : 'track';
   const groups = board.groups?.[activeGrouping] || (tasks.length ? [{ id: 'all', title: 'Все задачи', tasks }] : []);
@@ -365,14 +417,20 @@ export function renderActionBoard(board, grouping = 'track', taskComments = []) 
     </div>
     <p class="task-comment-warning">Комментарии сохраняются только в этом браузере. После согласования они переносятся в канонические задачи проекта и обе версии монитора.</p>
     <div class="action-group-controls" role="group" aria-label="Группировка задач">
-      <span>Показать задачи:</span>
-      <button type="button" class="action-group-button" data-action-group="track" aria-pressed="${activeGrouping === 'track'}">По трекам</button>
+      <span>Сгруппировать:</span>
       <button type="button" class="action-group-button" data-action-group="owner" aria-pressed="${activeGrouping === 'owner'}">По ответственным</button>
+      <button type="button" class="action-group-button" data-action-group="track" aria-pressed="${activeGrouping === 'track'}">По трекам</button>
     </div>
     <div class="action-groups" data-action-group-view="${activeGrouping}">
       ${groups.length ? groups.map((group) => `
-        <details class="action-group" open style="--action-group-color:${escapeHtml(group.color || '#8fac45')}">
-          <summary><strong>${escapeHtml(group.title)}</strong><span>${formatTaskCount(group.tasks.length)}</span></summary>
+        <details class="action-group ${activeGrouping === 'owner' ? 'owner-action-card' : ''}" style="--action-group-color:${escapeHtml(group.color || '#8fac45')}">
+          <summary>
+            <div class="action-owner-summary">
+              <strong>${escapeHtml(group.title)}</strong>
+              ${activeGrouping === 'owner' ? `<small>${escapeHtml(group.currentRole || 'Функциональная роль уточняется')}</small>${group.functions?.length ? `<em>${group.functions.slice(0, 4).map(escapeHtml).join(' · ')}</em>` : ''}` : ''}
+            </div>
+            <span>${formatTaskCount(group.tasks.length)}</span>
+          </summary>
           <div class="action-list">${group.tasks.map(renderTask).join('')}</div>
         </details>
       `).join('') : '<p class="empty">Нет открытых задач для этой аудитории.</p>'}
@@ -431,6 +489,21 @@ export function renderDecisionBoard(board) {
   `;
 }
 
+function renderBudgetTable(lines = []) {
+  return `
+    <div class="budget-table-wrap">
+      <table class="budget-table">
+        <thead><tr><th>Блок</th><th>Статья</th><th>Количество</th><th>Сумма</th><th>Статус цены</th><th>Ответственный</th><th>Следующий шаг</th></tr></thead>
+        <tbody>${lines.map((line) => `
+          <tr class="${line.amount === 0 ? 'zero-line' : ''}">
+            <td>${escapeHtml(line.block)}</td><td><strong>${escapeHtml(line.item)}</strong>${line.parentItem ? `<small>${escapeHtml(line.parentItem)}</small>` : ''}</td><td>${escapeHtml(line.quantity)}</td><td>${line.amount ? formatRub(line.amount) : '—'}</td><td>${escapeHtml(line.priceStatus)}</td><td>${escapeHtml(line.owner)}</td><td>${escapeHtml(line.nextStep)}</td>
+          </tr>
+        `).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
 export function renderBudgetBoard(view, audience) {
   if (!view) return '<p class="empty">Бюджетные данные не загрузились.</p>';
   const maxBlock = Math.max(1, ...view.blocks.map((item) => item.amount));
@@ -459,35 +532,31 @@ export function renderBudgetBoard(view, audience) {
       </section>
       <aside class="budget-note">
         <strong>${view.unestimatedCount} неоценённых расходов</strong>
-        <p>Они сохранены в реестре, но не увеличивают сумму сценария до появления оценки.</p>
+        <p>Они убраны под капот и не увеличивают сумму сценария до появления оценки.</p>
         <small>${escapeHtml(view.sourceVersion)} · актуальность ${escapeHtml(formatDate(view.asOf))}</small>
       </aside>
     </div>
     ${audience === 'org' ? `
       <details class="budget-details" open>
-        <summary>Построчные расходы · ${view.lines.length} строк</summary>
-        <div class="budget-table-wrap">
-          <table class="budget-table">
-            <thead><tr><th>Блок</th><th>Статья</th><th>Количество</th><th>Сумма</th><th>Статус цены</th><th>Ответственный</th><th>Следующий шаг</th></tr></thead>
-            <tbody>${view.lines.map((line) => `
-              <tr class="${line.amount === 0 ? 'zero-line' : ''}">
-                <td>${escapeHtml(line.block)}</td><td><strong>${escapeHtml(line.item)}</strong>${line.parentItem ? `<small>${escapeHtml(line.parentItem)}</small>` : ''}</td><td>${escapeHtml(line.quantity)}</td><td>${line.amount ? formatRub(line.amount) : '—'}</td><td>${escapeHtml(line.priceStatus)}</td><td>${escapeHtml(line.owner)}</td><td>${escapeHtml(line.nextStep)}</td>
-              </tr>
-            `).join('')}</tbody>
-          </table>
-        </div>
+        <summary>Построчные расходы выбранного сценария · ${view.lines.length} строк</summary>
+        ${renderBudgetTable(view.lines)}
       </details>
-      <section class="budget-potential">
-        <div class="budget-subhead"><div><span>Не включено в сумму</span><h3>Потенциальные статьи для активации</h3></div><strong>${formatRub(view.potentialTotal)}</strong></div>
+      <details class="budget-underhood budget-unestimated">
+        <summary><span>Под капотом · неоценённые расходы</span><strong>${view.unestimatedLines.length}</strong></summary>
+        <p>Строки сохранены для контроля полноты, но скрыты из основного списка и не входят в сумму.</p>
+        ${renderBudgetTable(view.unestimatedLines)}
+      </details>
+      <details class="budget-underhood budget-potential">
+        <summary><span>Под капотом · потенциальные статьи для активации</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
         <div class="budget-candidate-list">
           ${view.potentialLines.length ? view.potentialLines.map((line) => `
             <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p><small>${escapeHtml(line.nextStep || '')}</small></div><aside><span>${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>
           `).join('') : '<p class="empty">Нет неактивированных статей с оценкой.</p>'}
         </div>
-      </section>
+      </details>
       <section class="budget-cuts">
         <div class="budget-subhead"><div><span>Финальный список</span><h3>Статьи-аутсайдеры — кандидаты на урезание</h3></div><strong>${formatRub(view.cutCandidateTotal)}</strong></div>
-        <p>Это список для решения, а не автоматическое сокращение. Выбранных кандидатов достаточно, чтобы закрыть текущее превышение потолка, но приоритеты нужно утвердить.</p>
+        <p>Это список для решения, а не автоматическое сокращение. Приоритеты нужно утвердить до новых обязательств.</p>
         <div class="budget-candidate-list cut-list">
           ${view.cutCandidates.length ? view.cutCandidates.map((line) => `
             <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.cutReason || 'Требуется решение о ценности и альтернативе.')}</p></div><aside><span>${escapeHtml(line.block)}</span><b>${formatRub(line.amount)}</b></aside></article>
