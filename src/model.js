@@ -392,14 +392,15 @@ export function buildTeamFunctionsView(data, roleId) {
 
 export function buildBudgetView(budget, audience, _scenarioId, roleId = audience === 'org' ? 'coordinator' : 'customer') {
   if (!budget) return null;
-  const sourceLines = (budget.lines || []).filter((line) => line.block !== 'Управление и после' || roleId === 'owner');
+  const roundMoney = (value) => Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+  const sourceLines = budget.lines || [];
   const sourceScenario = (budget.scenarios || []).find((item) => item.id === budget.meta.workingScenario)
     || budget.scenarios?.[0];
   if (!sourceScenario) return null;
   const scenario = {
     ...sourceScenario,
-    label: 'Единая смета',
-    total: sourceLines.reduce((sum, line) => sum + (Number(line.amounts?.[sourceScenario.id]) || 0), 0)
+    label: 'Общая смета проекта',
+    total: roundMoney(sourceLines.reduce((sum, line) => sum + (Number(line.amounts?.[sourceScenario.id]) || 0), 0))
   };
   const lines = sourceLines
     .map((line) => ({
@@ -412,20 +413,20 @@ export function buildBudgetView(budget, audience, _scenarioId, roleId = audience
   for (const line of lines) {
     if (line.amount > 0) blocks.set(line.block, (blocks.get(line.block) || 0) + line.amount);
   }
-  const total = lines.reduce((sum, line) => sum + line.amount, 0);
+  const total = roundMoney(lines.reduce((sum, line) => sum + line.amount, 0));
   const ceiling = Number(budget.meta.ceiling) || 0;
   const isUnestimated = (line) => line.type === 'неоценено' || line.priceStatus === 'не оценено';
   const isPotential = (line) => Number(line.candidateAmount) > 0 && line.activationStatus !== 'active';
-  const potentialTotal = lines.filter(isPotential).reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0);
+  const potentialTotal = roundMoney(lines.filter(isPotential).reduce((sum, line) => sum + Number(line.candidateAmount || 0), 0));
   return {
     scenario,
     total,
     ceiling,
-    headroom: ceiling - total,
+    headroom: roundMoney(ceiling - total),
     participants: Number(scenario.participants) || 1,
-    perPerson: total / (Number(scenario.participants) || 1),
-    reserve: lines.filter((line) => line.type === 'резерв').reduce((sum, line) => sum + line.amount, 0),
-    options: lines.filter((line) => line.type === 'опция').reduce((sum, line) => sum + line.amount, 0),
+    perPerson: roundMoney(total / (Number(scenario.participants) || 1)),
+    reserve: roundMoney(lines.filter((line) => line.type === 'резерв').reduce((sum, line) => sum + line.amount, 0)),
+    options: roundMoney(lines.filter((line) => line.type === 'опция').reduce((sum, line) => sum + line.amount, 0)),
     unestimatedCount: lines.filter(isUnestimated).length,
     blocks: [...blocks].map(([title, amount]) => ({ title, amount })).sort((a, b) => b.amount - a.amount),
     lines: lines.filter((line) => !isUnestimated(line) && !isPotential(line)),
@@ -433,9 +434,9 @@ export function buildBudgetView(budget, audience, _scenarioId, roleId = audience
     potentialLines: lines.filter(isPotential),
     potentialCount: lines.filter(isPotential).length,
     potentialTotal,
-    totalWithAdditional: total + potentialTotal,
+    totalWithAdditional: roundMoney(total + potentialTotal),
     cutCandidates: lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount),
-    cutCandidateTotal: lines.filter((line) => line.cutCandidate && line.amount > 0).reduce((sum, line) => sum + line.amount, 0),
+    cutCandidateTotal: roundMoney(lines.filter((line) => line.cutCandidate && line.amount > 0).reduce((sum, line) => sum + line.amount, 0)),
     managerView: roleId === 'owner',
     sourceVersion: budget.meta.sourceVersion,
     asOf: budget.meta.asOf

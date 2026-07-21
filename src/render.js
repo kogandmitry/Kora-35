@@ -21,7 +21,9 @@ function displayPersonName(value) {
 }
 
 function formatRub(value) {
-  return `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(Number(value || 0))} ₽`;
+  const amount = Number(value || 0);
+  const fractionDigits = Number.isInteger(amount) ? 0 : 2;
+  return `${new Intl.NumberFormat('ru-RU', { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }).format(amount)} ₽`;
 }
 
 export function renderHealthPanel(health, { showBudget = true } = {}) {
@@ -29,7 +31,7 @@ export function renderHealthPanel(health, { showBudget = true } = {}) {
     ? `
       <article class="metric metric-hero">
         <span class="metric-value small">${formatRub(health.budgetEstimate)}</span>
-        <span class="metric-label">утверждённые статьи расходов</span>
+        <span class="metric-label">основная смета юбилейного проекта</span>
       </article>
       <article class="metric">
         <span class="metric-value small">${formatRub(health.budgetMaximum ?? health.budgetEstimate)}</span>
@@ -537,16 +539,16 @@ export function renderBudgetBoard(view, audience) {
   const maxBlock = Math.max(1, ...view.blocks.map((item) => item.amount));
   const totalWithAdditional = Number(view.totalWithAdditional ?? (Number(view.total || 0) + Number(view.potentialTotal || 0)));
   const potentialCount = Number(view.potentialCount ?? view.potentialLines?.length ?? 0);
+  const mainOverrun = Math.max(0, Number(view.total || 0) - Number(view.ceiling || 0));
   const showOperations = audience !== 'customer';
   return `
-    <p class="budget-model-note"><strong>Единая смета.</strong> Утверждённые строки формируют текущую сумму, а неутверждённые строки с известной оценкой — максимальную. Неоценённые позиции показаны отдельно и в максимум не входят.</p>
-    ${view.managerView ? '<p class="manager-budget-note">Локальная версия руководителя проекта · включает закрытый блок «Управление и после».</p>' : ''}
+    <p class="budget-model-note"><strong>Общий бюджет юбилейного проекта.</strong> Основная сумма включает выезд на «Литейщик», предъюбилейные события, управление, премии организаторам, цифровую инфраструктуру и работу после события. Деактивированные и неутверждённые строки с известной оценкой формируют максимальную сумму; неоценённые позиции в неё не входят.</p>
     <div class="budget-metrics">
-      <article class="budget-metric primary"><strong>${formatRub(view.total)}</strong><span>сумма утверждённых статей</span></article>
+      <article class="budget-metric primary ${view.total > view.ceiling ? 'danger' : ''}"><strong>${formatRub(view.total)}</strong><span>основная сумма сметы проекта</span></article>
       <article class="budget-metric ${totalWithAdditional > view.ceiling ? 'danger' : ''}"><strong>${formatRub(totalWithAdditional)}</strong><span>максимальная сумма всех оценённых статей</span></article>
       <article class="budget-metric"><strong>${formatRub(view.ceiling)}</strong><span>лимит</span></article>
       <article class="budget-metric"><strong>${formatRub(view.reserve)}</strong><span>резерв</span></article>
-      <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>на участника по утверждённым статьям</span></article>
+      <article class="budget-metric"><strong>${formatRub(view.perPerson)}</strong><span>условно на участника основной сметы</span></article>
     </div>
     <div class="budget-layout">
       <section class="budget-blocks">
@@ -561,9 +563,9 @@ export function renderBudgetBoard(view, audience) {
         <small>${escapeHtml(view.sourceVersion)} · актуальность ${escapeHtml(formatDate(view.asOf))}</small>
       </aside>
     </div>
-    ${audience === 'customer' ? '<p class="customer-boundary">Заказчикам показана полная финансовая структура без служебных полей «ответственный» и «следующий шаг». Закрытый блок управленческих расходов сюда не входит.</p>' : ''}
+    ${audience === 'customer' ? `<p class="customer-boundary">Заказчикам показана полная финансовая структура юбилейного проекта, включая управление, премии и инфраструктуру, но без служебных полей «ответственный» и «следующий шаг».${mainOverrun ? ` Основная смета превышает лимит на ${formatRub(mainOverrun)}.` : ''}</p>` : ''}
       <details class="budget-details" open>
-        <summary>Утверждённые статьи единой сметы · ${view.lines.length} строк</summary>
+        <summary>Статьи основной сметы проекта · ${view.lines.length} строк</summary>
         ${renderBudgetTable(view.lines, { showOperations })}
       </details>
       <details class="budget-underhood budget-unestimated">
@@ -572,7 +574,7 @@ export function renderBudgetBoard(view, audience) {
         ${renderBudgetTable(view.unestimatedLines, { showOperations })}
       </details>
       <details class="budget-underhood budget-potential">
-        <summary><span>Неутверждённые статьи с известной оценкой · ${potentialCount} поз.</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
+        <summary><span>Деактивированные и неутверждённые статьи с известной оценкой · ${potentialCount} поз.</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
         <div class="budget-candidate-list">
           ${view.potentialLines.length ? view.potentialLines.map((line) => `
             <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p>${showOperations && line.nextStep ? `<small>${escapeHtml(line.nextStep)}</small>` : ''}</div><aside><span>${escapeHtml(line.block)} · ${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>

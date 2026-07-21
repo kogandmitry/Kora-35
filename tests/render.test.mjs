@@ -290,13 +290,13 @@ test('renders detailed customer budget without internal operational fields', () 
   }, 'customer');
   assert.match(html, /992 500 ₽|992 500 ₽/);
   assert.match(html, /1 062 500 ₽|1 062 500 ₽/);
-  assert.match(html, /сумма утверждённых статей/);
+  assert.match(html, /основная сумма сметы проекта/);
   assert.match(html, /максимальная сумма всех оценённых статей/);
   assert.match(html, /Заказчикам показана полная финансовая структура/);
-  assert.match(html, /Утверждённые статьи единой сметы · 1 строк/);
+  assert.match(html, /Статьи основной сметы проекта · 1 строк/);
   assert.match(html, /Обед/);
   assert.match(html, /Доплата при изменении явки/);
-  assert.match(html, /Неутверждённые статьи с известной оценкой/);
+  assert.match(html, /Деактивированные и неутверждённые статьи с известной оценкой/);
   assert.doesNotMatch(html, /budget-scenarios/);
   assert.doesNotMatch(html, /data-budget-scenario/);
   assert.match(html, /customer-budget-table/);
@@ -315,8 +315,8 @@ test('renders unestimated and potential budget lines under closed details', () =
     cutCandidates: [], cutCandidateTotal: 0, sourceVersion: 'Смета', asOf: '2026-07-20'
   }, 'org');
   assert.match(html, /Неоценённые расходы/);
-  assert.match(html, /Единая смета/);
-  assert.match(html, /Неутверждённые статьи с известной оценкой · 1 поз\./);
+  assert.match(html, /Общий бюджет юбилейного проекта/);
+  assert.match(html, /Деактивированные и неутверждённые статьи с известной оценкой · 1 поз\./);
   assert.doesNotMatch(html, /budget-scenarios/);
   assert.doesNotMatch(html, /под\s+капот/i);
   assert.match(html, /Торт/);
