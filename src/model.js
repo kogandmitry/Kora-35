@@ -438,6 +438,7 @@ export function buildBudgetView(budget, audience, _scenarioId, roleId = audience
     cutCandidates: lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount),
     cutCandidateTotal: roundMoney(lines.filter((line) => line.cutCandidate && line.amount > 0).reduce((sum, line) => sum + line.amount, 0)),
     managerView: roleId === 'owner',
+    participantComposition: budget.meta.participantComposition || null,
     sourceVersion: budget.meta.sourceVersion,
     asOf: budget.meta.asOf
   };

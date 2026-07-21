@@ -232,7 +232,10 @@ test('orders team function cards by explicit project order', () => {
 
 test('builds detailed and customer budget views', () => {
   const budget = {
-    meta: { workingScenario: 'Рабочее ядро', ceiling: 1000000, sourceVersion: 'test', asOf: '2026-07-19' },
+    meta: {
+      workingScenario: 'Рабочее ядро', ceiling: 1000000, sourceVersion: 'test', asOf: '2026-07-19',
+      participantComposition: { employees: 217, guestsMax: 33, childrenMax: 50, totalMax: 300 }
+    },
     scenarios: [{ id: 'Рабочее ядро', total: 185, participants: 10 }],
     lines: [
       { id: 'a', block: 'A', item: 'Ядро', type: 'ядро', priceStatus: 'лимит', amounts: { 'Рабочее ядро': 100 }, quantities: { 'Рабочее ядро': '1' } },
@@ -258,6 +261,7 @@ test('builds detailed and customer budget views', () => {
   assert.equal(customer.potentialTotal, 50);
   assert.equal(customer.potentialCount, 1);
   assert.equal(customer.totalWithAdditional, 235);
+  assert.deepEqual(customer.participantComposition, { employees: 217, guestsMax: 33, childrenMax: 50, totalMax: 300 });
   assert.equal(owner.total, 185);
   assert.equal(owner.lines.length, 3);
   assert.equal(owner.managerView, true);

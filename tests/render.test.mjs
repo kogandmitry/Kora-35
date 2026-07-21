@@ -285,6 +285,7 @@ test('renders detailed customer budget without internal operational fields', () 
   const html = renderBudgetBoard({
     scenario: { id: 'Рабочее ядро' }, scenarios: [{ id: 'Рабочее ядро', total: 992500 }], total: 992500, ceiling: 1000000,
     headroom: 7500, participants: 300, perPerson: 3308.33, reserve: 30000, options: 0, unestimatedCount: 15, potentialTotal: 70000, totalWithAdditional: 1062500,
+    participantComposition: { employees: 217, guestsMax: 33, childrenMax: 50, totalMax: 300, note: '217 сотрудников + до 33 гостей + до 50 детей' },
     blocks: [{ title: 'Питание', amount: 176500 }], lines: [approved], unestimatedLines: [unestimated], potentialLines: [potential], potentialCount: 1,
     cutCandidates: [], cutCandidateTotal: 0, sourceVersion: 'Смета', asOf: '2026-07-19'
   }, 'customer');
@@ -294,6 +295,8 @@ test('renders detailed customer budget without internal operational fields', () 
   assert.match(html, /максимальная сумма всех оценённых статей/);
   assert.match(html, /Заказчикам показана полная финансовая структура/);
   assert.match(html, /Статьи основной сметы проекта · 1 строк/);
+  assert.match(html, /Расчётный состав выезда/);
+  assert.match(html, /217 сотрудников \+ до 33 гостей \+ до 50 детей/);
   assert.match(html, /Обед/);
   assert.match(html, /Доплата при изменении явки/);
   assert.match(html, /Деактивированные и неутверждённые статьи с известной оценкой/);

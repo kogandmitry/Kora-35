@@ -397,6 +397,7 @@ export function renderActionBoard(board, grouping = 'owner', taskComments = [], 
         <div class="action-task-main">
           ${task.priorityRank ? `<span class="task-priority-badge">${escapeHtml(task.priorityLabel || 'Первая очередь')} · ${escapeHtml(task.priorityRank)}</span>` : ''}
           <strong>${escapeHtml(task.title)}</strong>
+          ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
           <div class="action-meta">
             <small><b>Трек:</b> ${escapeHtml(task.directionTitle || 'Без трека')}</small>
             <small><b>Ответственные:</b> ${escapeHtml(task.owner || 'владелец уточняется')}</small>
@@ -539,10 +540,21 @@ export function renderBudgetBoard(view, audience) {
   const maxBlock = Math.max(1, ...view.blocks.map((item) => item.amount));
   const totalWithAdditional = Number(view.totalWithAdditional ?? (Number(view.total || 0) + Number(view.potentialTotal || 0)));
   const potentialCount = Number(view.potentialCount ?? view.potentialLines?.length ?? 0);
-  const mainOverrun = Math.max(0, Number(view.total || 0) - Number(view.ceiling || 0));
+  const mainOverrun = Math.round(Math.max(0, Number(view.total || 0) - Number(view.ceiling || 0)) * 100) / 100;
   const showOperations = audience !== 'customer';
   return `
     <p class="budget-model-note"><strong>Общий бюджет юбилейного проекта.</strong> Основная сумма включает выезд на «Литейщик», предъюбилейные события, управление, премии организаторам, цифровую инфраструктуру и работу после события. Деактивированные и неутверждённые строки с известной оценкой формируют максимальную сумму; неоценённые позиции в неё не входят.</p>
+    ${view.participantComposition ? `
+      <section class="participant-composition" aria-label="Расчётный состав участников выезда">
+        <p><strong>Расчётный состав выезда</strong><span>${escapeHtml(view.participantComposition.note || '')}</span></p>
+        <div>
+          <article><strong>${escapeHtml(view.participantComposition.employees)}</strong><span>сотрудников</span></article>
+          <article><strong>до ${escapeHtml(view.participantComposition.guestsMax)}</strong><span>гостей</span></article>
+          <article><strong>до ${escapeHtml(view.participantComposition.childrenMax)}</strong><span>детей</span></article>
+          <article class="total"><strong>до ${escapeHtml(view.participantComposition.totalMax)}</strong><span>участников всего</span></article>
+        </div>
+      </section>
+    ` : ''}
     <div class="budget-metrics">
       <article class="budget-metric primary ${view.total > view.ceiling ? 'danger' : ''}"><strong>${formatRub(view.total)}</strong><span>основная сумма сметы проекта</span></article>
       <article class="budget-metric ${totalWithAdditional > view.ceiling ? 'danger' : ''}"><strong>${formatRub(totalWithAdditional)}</strong><span>максимальная сумма всех оценённых статей</span></article>
