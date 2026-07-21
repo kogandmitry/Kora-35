@@ -389,10 +389,11 @@ export function renderActionBoard(board, grouping = 'owner', taskComments = [], 
     commentsByTask.get(comment.taskId).push(comment);
   }
   const renderTask = (task) => `
-    <article class="action-row status-${escapeHtml(task.status)} ${task.overdue ? 'is-overdue' : ''}" data-task-id="${escapeHtml(task.id)}">
+    <article class="action-row status-${escapeHtml(task.status)} ${task.overdue ? 'is-overdue' : ''} ${task.priorityRank ? 'is-first-priority' : ''}" data-task-id="${escapeHtml(task.id)}">
       <div class="action-row-grid">
         <span class="action-status">${escapeHtml(STATUS_LABELS[task.status] || task.status)}</span>
         <div class="action-task-main">
+          ${task.priorityRank ? `<span class="task-priority-badge">${escapeHtml(task.priorityLabel || 'Первая очередь')} · ${escapeHtml(task.priorityRank)}</span>` : ''}
           <strong>${escapeHtml(task.title)}</strong>
           <div class="action-meta">
             <small><b>Трек:</b> ${escapeHtml(task.directionTitle || 'Без трека')}</small>
@@ -516,14 +517,14 @@ export function renderDecisionBoard(board) {
   `;
 }
 
-function renderBudgetTable(lines = []) {
+function renderBudgetTable(lines = [], { showOperations = true } = {}) {
   return `
     <div class="budget-table-wrap">
-      <table class="budget-table">
-        <thead><tr><th>Блок</th><th>Статья</th><th>Количество</th><th>Сумма</th><th>Статус цены</th><th>Ответственный</th><th>Следующий шаг</th></tr></thead>
+      <table class="budget-table ${showOperations ? '' : 'customer-budget-table'}">
+        <thead><tr><th>Блок</th><th>Статья</th><th>Количество</th><th>Сумма</th><th>Статус цены</th>${showOperations ? '<th>Ответственный</th><th>Следующий шаг</th>' : ''}</tr></thead>
         <tbody>${lines.map((line) => `
           <tr class="${line.amount === 0 ? 'zero-line' : ''}">
-            <td>${escapeHtml(line.block)}</td><td><strong>${escapeHtml(line.item)}</strong>${line.parentItem ? `<small>${escapeHtml(line.parentItem)}</small>` : ''}</td><td>${escapeHtml(line.quantity)}</td><td>${line.amount ? formatRub(line.amount) : '—'}</td><td>${escapeHtml(line.priceStatus)}</td><td>${escapeHtml(line.owner)}</td><td>${escapeHtml(line.nextStep)}</td>
+            <td>${escapeHtml(line.block)}</td><td><strong>${escapeHtml(line.item)}</strong>${line.parentItem ? `<small>${escapeHtml(line.parentItem)}</small>` : ''}</td><td>${escapeHtml(line.quantity)}</td><td>${line.amount ? formatRub(line.amount) : '—'}</td><td>${escapeHtml(line.priceStatus)}</td>${showOperations ? `<td>${escapeHtml(line.owner)}</td><td>${escapeHtml(line.nextStep)}</td>` : ''}
           </tr>
         `).join('')}</tbody>
       </table>
@@ -536,6 +537,7 @@ export function renderBudgetBoard(view, audience) {
   const maxBlock = Math.max(1, ...view.blocks.map((item) => item.amount));
   const totalWithAdditional = Number(view.totalWithAdditional ?? (Number(view.total || 0) + Number(view.potentialTotal || 0)));
   const potentialCount = Number(view.potentialCount ?? view.potentialLines?.length ?? 0);
+  const showOperations = audience !== 'customer';
   return `
     <p class="budget-model-note"><strong>Единая смета.</strong> Утверждённые строки формируют текущую сумму, а неутверждённые строки с известной оценкой — максимальную. Неоценённые позиции показаны отдельно и в максимум не входят.</p>
     ${view.managerView ? '<p class="manager-budget-note">Локальная версия руководителя проекта · включает закрытый блок «Управление и после».</p>' : ''}
@@ -559,21 +561,21 @@ export function renderBudgetBoard(view, audience) {
         <small>${escapeHtml(view.sourceVersion)} · актуальность ${escapeHtml(formatDate(view.asOf))}</small>
       </aside>
     </div>
-    ${audience === 'org' ? `
+    ${audience === 'customer' ? '<p class="customer-boundary">Заказчикам показана полная финансовая структура без служебных полей «ответственный» и «следующий шаг». Закрытый блок управленческих расходов сюда не входит.</p>' : ''}
       <details class="budget-details" open>
         <summary>Утверждённые статьи единой сметы · ${view.lines.length} строк</summary>
-        ${renderBudgetTable(view.lines)}
+        ${renderBudgetTable(view.lines, { showOperations })}
       </details>
       <details class="budget-underhood budget-unestimated">
         <summary><span>Неоценённые расходы</span><strong>${view.unestimatedLines.length}</strong></summary>
         <p>Строки сохранены для контроля полноты, но скрыты из основного списка и не входят в сумму.</p>
-        ${renderBudgetTable(view.unestimatedLines)}
+        ${renderBudgetTable(view.unestimatedLines, { showOperations })}
       </details>
       <details class="budget-underhood budget-potential">
         <summary><span>Неутверждённые статьи с известной оценкой · ${potentialCount} поз.</span><strong>${formatRub(view.potentialTotal)}</strong></summary>
         <div class="budget-candidate-list">
           ${view.potentialLines.length ? view.potentialLines.map((line) => `
-            <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p><small>${escapeHtml(line.nextStep || '')}</small></div><aside><span>${escapeHtml(line.block)} · ${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>
+            <article><div><strong>${escapeHtml(line.item)}</strong><p>${escapeHtml(line.basis || '')}</p>${showOperations && line.nextStep ? `<small>${escapeHtml(line.nextStep)}</small>` : ''}</div><aside><span>${escapeHtml(line.block)} · ${escapeHtml(line.priceStatus)}</span><b>${formatRub(line.candidateAmount)}</b></aside></article>
           `).join('') : '<p class="empty">Нет неактивированных статей с оценкой.</p>'}
         </div>
       </details>
@@ -586,6 +588,5 @@ export function renderBudgetBoard(view, audience) {
           `).join('') : '<p class="empty">В единой смете нет активных кандидатов на сокращение.</p>'}
         </div>
       </section>
-    ` : '<p class="customer-boundary">Максимальная сумма включает утверждённые статьи и известные оценки неутверждённых позиций. Неоценённые расходы в неё не входят. Построчные действия, рабочие владельцы и закупочные комментарии остаются в версии орггруппы.</p>'}
   `;
 }

@@ -39,7 +39,17 @@ test('validates seeded monitor data', async () => {
   assert.equal(seninaLetterTask?.owner, 'Евгения Сенина / Дмитрий Коган');
   assert.match(seninaLetterTask?.title || '', /фотографию коллектива с 30-летия КОРА, снятую квадрокоптером/);
   assert.match(seninaLetterTask?.title || '', /от имени коллектива, а не директоров/);
+  assert.equal(seninaLetterTask?.priorityRank, 2);
   assert.equal(data.teamFunctions.find((item) => item.id === 'evgenia-senina')?.eventFunctions.includes('макет благодарственного письма'), true);
+  assert.deepEqual(
+    data.tasks.filter((item) => item.priorityLabel === 'Первая очередь').sort((left, right) => left.priorityRank - right.priorityRank).map((item) => item.id),
+    [
+      'task-accounting-liteyshchik-deposit',
+      'task-senina-thank-you-letter-layout',
+      'task-dmitry-elma-announcement-2026-07-22',
+      'task-dmitry-electronic-honor-board-2026-07-22'
+    ]
+  );
   assert.deepEqual(
     [
       'task-accounting-liteyshchik-deposit',
@@ -72,10 +82,11 @@ test('keeps public link registry synchronized with monitor links', async () => {
   );
 });
 
-test('keeps the customer monitor focused on track readiness and aggregate budget', async () => {
+test('keeps the customer monitor focused on track readiness and detailed public-safe budget', async () => {
   const html = await readFile(new URL('../customer/index.html', import.meta.url), 'utf8');
   assert.match(html, /id="trackProgressBoard"/);
-  assert.match(html, /Ключевые показатели бюджета/);
+  assert.match(html, /<h2>Подробный бюджет<\/h2>/);
+  assert.match(html, /id="budgetBoard"/);
   assert.doesNotMatch(html, /Решения и ключевые риски/);
   assert.doesNotMatch(html, /Семьи сотрудников/);
   assert.doesNotMatch(html, /childrenJourneyBoard/);
@@ -88,6 +99,8 @@ test('keeps the org monitor headings concise', async () => {
   assert.match(html, /<h2>Команда проекта<\/h2>/);
   assert.doesNotMatch(html, /Степень реализации по трекам/);
   assert.doesNotMatch(html, /Люди и продолжение/);
+  assert.doesNotMatch(html, /id="budgetBoard"/);
+  assert.doesNotMatch(html, /href="#budget"/);
 });
 
 test('rejects missing project title', () => {

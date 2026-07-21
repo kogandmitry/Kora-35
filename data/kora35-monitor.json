@@ -1574,10 +1574,12 @@
       "id": "task-accounting-liteyshchik-deposit",
       "directionId": "management",
       "subprojectId": "liteyshchik-operations",
-      "title": "Позвонить бухгалтеру базы «Литейщик»: уточнить итоговую сумму, размер и порядок передачи задатка",
+      "title": "Забронировать базу «Литейщик» и согласовать задаток: позвонить Люции, подтвердить сумму и порядок передачи",
       "status": "action_needed",
       "owner": "Дмитрий Коган",
       "dueDate": "2026-07-22",
+      "priorityLabel": "Первая очередь",
+      "priorityRank": 1,
       "visibility": [
         "owner",
         "coordinator"
@@ -1671,10 +1673,12 @@
       "id": "task-senina-thank-you-letter-layout",
       "directionId": "recognition",
       "subprojectId": "recognition-production",
-      "title": "Разработать макет благодарственного письма: вставить общую фотографию коллектива с 30-летия КОРА, снятую квадрокоптером; оформить письмо от имени коллектива, а не директоров",
+      "title": "Согласовать с Евгенией Сениной текст и макет благодарственного письма: использовать общую фотографию коллектива с 30-летия КОРА, снятую квадрокоптером; оформить письмо от имени коллектива, а не директоров",
       "status": "action_needed",
       "owner": "Евгения Сенина / Дмитрий Коган",
       "dueDate": "2026-07-22",
+      "priorityLabel": "Первая очередь",
+      "priorityRank": 2,
       "visibility": [
         "owner",
         "coordinator"
@@ -1744,6 +1748,36 @@
       "status": "action_needed",
       "owner": "Дмитрий Коган",
       "dueDate": "2026-07-22",
+      "visibility": [
+        "owner",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-dmitry-elma-announcement-2026-07-22",
+      "directionId": "communications",
+      "subprojectId": "track-curators",
+      "title": "Подготовить текст анонса выезда и приглашения сотрудников к участию для размещения в ELMA",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-22",
+      "priorityLabel": "Первая очередь",
+      "priorityRank": 3,
+      "visibility": [
+        "owner",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "task-dmitry-electronic-honor-board-2026-07-22",
+      "directionId": "recognition",
+      "subprojectId": "recognition-production",
+      "title": "Электронная Доска почёта: позвонить Борису Сорокину и Сергею Борисовичу, собрать кандидатуры и передать Хабиеву на утверждение",
+      "status": "action_needed",
+      "owner": "Дмитрий Коган",
+      "dueDate": "2026-07-22",
+      "priorityLabel": "Первая очередь",
+      "priorityRank": 4,
       "visibility": [
         "owner",
         "coordinator"
@@ -2642,6 +2676,31 @@
       "author": "Дмитрий Коган",
       "kind": "decision",
       "text": "В макете благодарственного письма использовать общую фотографию коллектива с 30-летия КОРА, снятую квадрокоптером. Текст и визуальную подачу оформить от имени коллектива, а не от имени директоров.",
+      "status": "accepted",
+      "visibility": [
+        "owner",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "update-move-detailed-budget-to-customer-2026-07-21",
+      "createdAt": "2026-07-21T21:15:00+03:00",
+      "author": "Дмитрий Коган",
+      "kind": "decision",
+      "text": "Подробный построчный бюджет перенесён из монитора орггруппы в монитор заказчиков. Заказчикам показываются утверждённые, неутверждённые оценённые и неоценённые строки без служебных полей ответственных и следующих шагов; закрытые управленческие расходы не раскрываются.",
+      "status": "accepted",
+      "visibility": [
+        "owner",
+        "customer",
+        "coordinator"
+      ]
+    },
+    {
+      "id": "update-dmitry-first-priority-2026-07-21",
+      "createdAt": "2026-07-21T21:30:00+03:00",
+      "author": "Дмитрий Коган",
+      "kind": "task_capture",
+      "text": "Первая очередь задач Дмитрия Когана на 22 июля: 1) забронировать базу «Литейщик» и согласовать задаток звонком Люции; 2) согласовать с Евгенией Сениной текст и макет благодарственного письма; 3) подготовить текст анонса в ELMA; 4) по электронной Доске почёта позвонить Борису Сорокину и Сергею Борисовичу и передать кандидатуры Хабиеву на утверждение.",
       "status": "accepted",
       "visibility": [
         "owner",

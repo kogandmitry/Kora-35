@@ -179,8 +179,8 @@ test('renders anniversary series with filter controls and artifacts', () => {
   assert.ok(html.indexOf('event-stage-grid') < html.indexOf('track-legend'));
 });
 
-test('renders action board with owner and due date', () => {
-  const task = { id: 'task-quote', title: 'Получить КП', owner: 'Нияз', directionTitle: 'Программа', dueDate: '2026-07-20', status: 'action_needed' };
+test('renders action board with owner, due date and first-priority marker', () => {
+  const task = { id: 'task-quote', title: 'Получить КП', owner: 'Нияз', directionTitle: 'Программа', dueDate: '2026-07-20', status: 'action_needed', priorityLabel: 'Первая очередь', priorityRank: 1 };
   const board = {
     tasks: [task],
     groups: {
@@ -203,6 +203,8 @@ test('renders action board with owner and due date', () => {
   assert.match(html, /data-task-status="done"/);
   assert.match(html, /✓ Выполнена/);
   assert.match(html, /data-task-status="archived"/);
+  assert.match(html, /Первая очередь · 1/);
+  assert.match(html, /is-first-priority/);
   const ownerHtml = renderActionBoard(board, 'owner');
   assert.match(ownerHtml, /data-action-group-view="owner"/);
   assert.match(ownerHtml, /Нияз Кашапов/);
@@ -276,20 +278,31 @@ test('renders decision board and risk mitigation', () => {
   assert.match(html, /Выдать доступ/);
 });
 
-test('renders customer budget as one unified estimate without operational table', () => {
+test('renders detailed customer budget without internal operational fields', () => {
+  const approved = { block: 'Питание', item: 'Обед', quantity: '300 чел.', amount: 120000, priceStatus: 'утверждено', owner: 'орггруппа', nextStep: 'заказать' };
+  const unestimated = { block: 'Питание', item: 'Доплата при изменении явки', quantity: '—', amount: 0, priceStatus: 'не оценено', owner: 'орггруппа', nextStep: 'уточнить' };
+  const potential = { block: 'Дополнительно', item: 'Опция', candidateAmount: 70000, priceStatus: 'не активировано', basis: 'требует решения', nextStep: 'согласовать' };
   const html = renderBudgetBoard({
     scenario: { id: 'Рабочее ядро' }, scenarios: [{ id: 'Рабочее ядро', total: 992500 }], total: 992500, ceiling: 1000000,
     headroom: 7500, participants: 300, perPerson: 3308.33, reserve: 30000, options: 0, unestimatedCount: 15, potentialTotal: 70000, totalWithAdditional: 1062500,
-    blocks: [{ title: 'Питание', amount: 176500 }], lines: [], sourceVersion: 'Смета', asOf: '2026-07-19'
+    blocks: [{ title: 'Питание', amount: 176500 }], lines: [approved], unestimatedLines: [unestimated], potentialLines: [potential], potentialCount: 1,
+    cutCandidates: [], cutCandidateTotal: 0, sourceVersion: 'Смета', asOf: '2026-07-19'
   }, 'customer');
   assert.match(html, /992 500 ₽|992 500 ₽/);
   assert.match(html, /1 062 500 ₽|1 062 500 ₽/);
   assert.match(html, /сумма утверждённых статей/);
   assert.match(html, /максимальная сумма всех оценённых статей/);
-  assert.match(html, /Максимальная сумма включает утверждённые статьи/);
+  assert.match(html, /Заказчикам показана полная финансовая структура/);
+  assert.match(html, /Утверждённые статьи единой сметы · 1 строк/);
+  assert.match(html, /Обед/);
+  assert.match(html, /Доплата при изменении явки/);
+  assert.match(html, /Неутверждённые статьи с известной оценкой/);
   assert.doesNotMatch(html, /budget-scenarios/);
   assert.doesNotMatch(html, /data-budget-scenario/);
-  assert.doesNotMatch(html, /budget-table/);
+  assert.match(html, /customer-budget-table/);
+  assert.doesNotMatch(html, /Ответственный/);
+  assert.doesNotMatch(html, /Следующий шаг/);
+  assert.doesNotMatch(html, /заказать|уточнить|согласовать/);
 });
 
 test('renders unestimated and potential budget lines under closed details', () => {

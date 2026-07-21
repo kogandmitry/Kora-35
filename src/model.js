@@ -274,6 +274,8 @@ export function buildActionBoard(data, roleId, now = new Date()) {
       };
     })
     .sort((left, right) => {
+      const priorityDelta = Number(left.priorityRank ?? 999) - Number(right.priorityRank ?? 999);
+      if (priorityDelta) return priorityDelta;
       if (left.overdue !== right.overdue) return left.overdue ? -1 : 1;
       const statusDelta = (statusOrder[left.status] ?? 9) - (statusOrder[right.status] ?? 9);
       if (statusDelta) return statusDelta;
@@ -426,13 +428,13 @@ export function buildBudgetView(budget, audience, _scenarioId, roleId = audience
     options: lines.filter((line) => line.type === 'опция').reduce((sum, line) => sum + line.amount, 0),
     unestimatedCount: lines.filter(isUnestimated).length,
     blocks: [...blocks].map(([title, amount]) => ({ title, amount })).sort((a, b) => b.amount - a.amount),
-    lines: audience === 'org' ? lines.filter((line) => !isUnestimated(line) && !isPotential(line)) : [],
-    unestimatedLines: audience === 'org' ? lines.filter(isUnestimated) : [],
-    potentialLines: audience === 'org' ? lines.filter(isPotential) : [],
+    lines: lines.filter((line) => !isUnestimated(line) && !isPotential(line)),
+    unestimatedLines: lines.filter(isUnestimated),
+    potentialLines: lines.filter(isPotential),
     potentialCount: lines.filter(isPotential).length,
     potentialTotal,
     totalWithAdditional: total + potentialTotal,
-    cutCandidates: audience === 'org' ? lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount) : [],
+    cutCandidates: lines.filter((line) => line.cutCandidate && line.amount > 0).sort((left, right) => right.amount - left.amount),
     cutCandidateTotal: lines.filter((line) => line.cutCandidate && line.amount > 0).reduce((sum, line) => sum + line.amount, 0),
     managerView: roleId === 'owner',
     sourceVersion: budget.meta.sourceVersion,

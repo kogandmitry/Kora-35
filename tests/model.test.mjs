@@ -192,6 +192,19 @@ test('aligns owner task cards with the active-team tracker and its explicit orde
   assert.equal(board.groups.owner.find((group) => group.title === 'Настя Бурд').tasks.length, 0);
 });
 
+test('places explicitly ranked first-priority tasks before overdue work', () => {
+  const board = buildActionBoard({
+    ...sample,
+    tasks: [
+      { id: 'old', directionId: 'a', title: 'Старая просроченная задача', status: 'action_needed', owner: 'Дмитрий Коган', dueDate: '2026-07-01', visibility: ['owner'] },
+      { id: 'p2', directionId: 'a', title: 'Приоритет 2', status: 'action_needed', owner: 'Дмитрий Коган', dueDate: '2026-07-22', priorityRank: 2, visibility: ['owner'] },
+      { id: 'p1', directionId: 'a', title: 'Приоритет 1', status: 'action_needed', owner: 'Дмитрий Коган', dueDate: '2026-07-22', priorityRank: 1, visibility: ['owner'] }
+    ]
+  }, 'owner', new Date('2026-07-21T12:00:00+03:00'));
+
+  assert.deepEqual(board.groups.owner[0].tasks.map((task) => task.id), ['p1', 'p2', 'old']);
+});
+
 test('builds decisions and risks for a role', () => {
   const data = {
     ...sample,
@@ -238,7 +251,9 @@ test('builds detailed and customer budget views', () => {
   assert.equal(org.scenario.label, 'Единая смета');
   assert.equal(ignoredLegacyScenario.total, 130);
   assert.deepEqual(org.unestimatedLines, []);
-  assert.equal(customer.lines.length, 0);
+  assert.equal(customer.lines.length, 2);
+  assert.equal(customer.potentialLines.length, 1);
+  assert.deepEqual(customer.unestimatedLines, []);
   assert.equal(customer.total, 130);
   assert.equal(customer.potentialTotal, 50);
   assert.equal(customer.potentialCount, 1);

@@ -1005,6 +1005,7 @@ textarea {
 .budget-details summary { cursor: pointer; color: var(--ink); font-weight: 900; }
 .budget-table-wrap { margin-top: 10px; overflow: auto; border: 1px solid var(--line); border-radius: 7px; }
 .budget-table { width: 100%; min-width: 1320px; border-collapse: collapse; background: #fff; font-size: 12px; }
+.budget-table.customer-budget-table { min-width: 860px; }
 .budget-table th { position: sticky; top: 0; z-index: 2; padding: 10px; border-bottom: 1px solid var(--line); background: #f4f7ef; color: var(--muted); text-align: left; text-transform: uppercase; }
 .budget-table td { padding: 9px 10px; border-bottom: 1px solid #edf0e9; vertical-align: top; line-height: 1.35; }
 .budget-table td:nth-child(4) { color: var(--ink); font-weight: 900; white-space: nowrap; }
@@ -1032,6 +1033,24 @@ textarea {
 .action-row.status-action_needed { background: #fffdf2; }
 .action-row.status-blocked,
 .action-row.is-overdue { background: #fff6f3; }
+.action-row.is-first-priority {
+  border-color: #b78c00;
+  border-left-color: #b78c00;
+  background: #fff9d9;
+  box-shadow: 0 5px 14px rgba(130, 96, 0, .14);
+}
+.task-priority-badge {
+  display: inline-block;
+  margin: 0 0 6px;
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #684b00;
+  background: #ffe58a;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
 .action-row-grid {
   display: grid;
   grid-template-columns: 112px minmax(0, 1fr) 136px;
@@ -1179,6 +1198,8 @@ textarea {
 @media (max-width: 720px) {
   .portal-grid { grid-template-columns: 1fr; }
   .portal-card { min-height: 250px; }
+  .section-head > div { min-width: 0; max-width: 100%; }
+  .section-head h2 { overflow-wrap: anywhere; }
   .action-summary,
   .budget-metrics { grid-template-columns: 1fr 1fr; }
   .action-row-grid { grid-template-columns: 1fr; }
